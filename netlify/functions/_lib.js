@@ -28,20 +28,14 @@ export const DEFAULT_PROFILE = {
   tgt: { ftp: 300, climb: 60000, sprint: 900, chain: 12 },
   seasonStart: "2026-03-16",
   ftpLog: [{ v: 180, d: "1 MAR 26", s: "SEASON BASELINE" }],
-  events: [
-    { id: "marmotte", name: "La Marmotte Granfondo", short: "LA MARMOTTE", loc: "BOURG D'OISANS",
-      date: "2026-07-05", km: 174, m: 5000, pr: "A",
-      cols: [{ n: "Col du Glandon", len: 21.3, g: 6.9, top: 1924 }, { n: "Col du Télégraphe", len: 11.9, g: 7.1, top: 1566 },
-             { n: "Col du Galibier", len: 18.1, g: 6.9, top: 2642 }, { n: "Alpe d'Huez", len: 13.8, g: 8.1, top: 1850 }] },
-    { id: "ventoux", name: "Ventoux Sportive", short: "VENTOUX", loc: "BÉDOIN",
-      date: "2026-06-14", km: 118, m: 2900, pr: "B",
-      cols: [{ n: "Mont Ventoux — Bédoin", len: 21.4, g: 7.5, top: 1909 }] }
-  ]
+  events: []
 };
 export const getProfile = async () => {
   const p = { ...DEFAULT_PROFILE, ...(await readJSON("profile.json", {})) };
   if (!p.startFtp || p.startFtp === 262) p.startFtp = 180;      // March baseline
   if (!p.startWeight) p.startWeight = 68;                        // March baseline
+  if (Array.isArray(p.events) && p.events.length && p.events.every(e => e.id === "marmotte" || e.id === "ventoux")) p.events = [];
+  p.ftpLog = (p.ftpLog || []).filter(e => !(e.v === 280 && /2 MAR 26/.test(e.d || "")));
   if (!(p.ftpLog || []).some(e => e.v === 180))
     p.ftpLog = [...(p.ftpLog || []), { v: 180, d: "1 MAR 26", s: "SEASON BASELINE" }];
   return p;

@@ -578,9 +578,9 @@ svg#rc-prof{display:block;width:100%;height:340px}
           <div class="panel chartpanel cascade" style="grid-column:span 8;--i:5"><h3>THE RACE SO FAR — 90 DAYS</h3><svg id="pmc" viewBox="0 0 1100 340" preserveAspectRatio="none"></svg></div>
           <div class="panel chartpanel cascade" style="grid-column:span 4;--i:6"><h3>WHERE THE EFFORT WENT — 28 DAYS</h3><div class="zbig" id="zstack"></div><div id="zrows28"></div></div>
           <div class="panel editorial cascade" style="grid-column:span 12;border-left-color:var(--bleu);--i:7">
-            <div class="pq">"The aerobic engine is the strongest it has been."</div>
+            <div class="pq" id="condpq">"The aerobic engine is the strongest it has been."</div>
             <div><div class="cl" style="color:var(--bleu)">READING THE NUMBERS · CLAUDE</div>
-            <p>Decoupling has halved since March. The FTP line is still climbing while fatigue peaks, which means <b>Thursday's fresh test should beat 280 W</b>. Everything says the block worked: hold your nerve through three quiet days and let the form arrive.</p></div>
+            <p id="condnote">Decoupling has halved since March. The FTP line is still climbing while fatigue peaks, which means <b>Thursday's fresh test should beat 280 W</b>. Everything says the block worked: hold your nerve through three quiet days and let the form arrive.</p></div>
           </div>
         </div>
       </div>
@@ -787,7 +787,7 @@ window.addEventListener("keydown",e=>{
   const map={1:"season",2:"plan",3:"analyse",4:"jerseys",5:"sync"};
   if(map[e.key])showScene(map[e.key]);
   if(e.key==="Escape"){closeDrawer();if(document.getElementById("recon").classList.contains("on"))closeRecon();}
-  if(e.key==="r"||e.key==="R")openRecon(nextA().id);
+  if(e.key==="r"||e.key==="R"){const a=nextA();if(a)openRecon(a.id);}
 });
 
 /* ═══ EVENTS MODEL ═══ */
@@ -820,6 +820,15 @@ function racePanelHTML(ev,dark){
 }
 function renderSeasonHead(){
   const a=nextA();
+  if(!a){
+    document.getElementById("kicker").textContent="THE SEASON";
+    document.getElementById("t-race").textContent="YOUR NEXT RACE";
+    const tj=document.getElementById("t-j");tj.removeAttribute("data-count");tj.textContent="—";
+    document.getElementById("t-jd").textContent="Add your first event in the rider profile";
+    document.getElementById("nextrace").innerHTML=`<div class="band"><div><div class="rn">NO OBJECTIVE<br/>SET</div><div class="ra">THE SEASON NEEDS A TARGET</div></div></div><div class="rb"><div class="jrow"><span class="ev" style="text-align:left">Add an event and every projection, flag and countdown re-aims itself around it.</span></div><button class="btn btn-ink" onclick="openDrawer()">ADD AN EVENT →</button></div>`;
+    document.getElementById("horizon").innerHTML=`<div class="panel" style="padding:22px 26px;color:var(--mist);font-size:13px">Nothing on the horizon yet.</div>`;
+    window.SEASON_FLAGS=[];drawMassif();return;
+  }
   document.getElementById("kicker").textContent="THE ROAD TO "+a.short;
   document.getElementById("herolede").innerHTML=`<b>3,240 TSS</b> stands between you and the start line in ${a.loc.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())}. Every ride from here is altitude banked, every number in this room is live.`;
   document.getElementById("t-race").textContent=a.short;
@@ -835,7 +844,9 @@ function renderSeasonHead(){
 }
 function renderObjectives(){
   const prc={A:"background:var(--jaune);color:var(--ink)",B:"background:var(--ink);color:#fff",C:"background:var(--bg);color:var(--ink2);border:1px solid var(--line)"};
-  document.getElementById("objlist").innerHTML=fut().map(e=>`
+  const fl=fut();
+  if(!fl.length){document.getElementById("objlist").innerHTML='<div style="padding:4px 0;color:var(--mist);font-size:12.5px">No events yet — add your first below and the season re-aims itself.</div>';return;}
+  document.getElementById("objlist").innerHTML=fl.map(e=>`
     <div class="objrow"><div class="pr" style="${prc[e.pr]}">${e.pr}</div>
     <div class="om"><div class="on2">${e.name}</div><div class="od">${evDate(e).toUpperCase()} · ${e.km} KM · ${fmtInt(e.m)} M</div></div>
     <button class="orecon orc" data-ev="${e.id}">RECON</button><button class="orecon oed" data-ev="${e.id}" title="Edit">✎</button><button class="orecon odl" data-ev="${e.id}" title="Delete" style="color:var(--polka)">✕</button><div class="ox">J-${J(e)}</div></div>`).join("");
@@ -910,7 +921,7 @@ document.querySelector(".sky").addEventListener("mousemove",e=>{
   mgroups.main.style.transform=`translateX(${dx*-7}px)`;
 });
 document.getElementById("hero-plan").addEventListener("click",()=>showScene("plan"));
-document.getElementById("hero-recon").addEventListener("click",()=>openRecon(nextA().id));
+document.getElementById("hero-recon").addEventListener("click",()=>{const a=nextA();a?openRecon(a.id):openDrawer();});
 
 /* ═══ PLAN ═══ */
 const WEEKS=Array.from({length:16},(_,i)=>({n:i+1}));
@@ -1201,17 +1212,17 @@ window.addEventListener("resize",()=>drawRMap());
 /* ═══ JERSEYS ═══ */
 function effRows20(){const L=window.LIVEM;
   if(L&&L.bests&&L.bests.m20)return `<div class="arow"><span>${L.bests.m20.d} · ${L.bests.m20.nm}</span><b>${L.bests.m20.v} W</b></div><div class="arow"><span>Computed from your Strava streams</span><b>LIVE</b></div>`;
-  if(L)return `<div class="arow"><span>No power streams synced yet</span><b>—</b></div>`;
+  if(L||window.CONNECTED)return `<div class="arow"><span>No power streams synced yet</span><b>—</b></div>`;
   return `<div class="arow"><span>2 Mar · Èze climb</span><b>268 W</b></div><div class="arow"><span>25 Feb · Threshold ×5</span><b>265 W</b></div>`;}
 function effRowsSprint(){const L=window.LIVEM,B=L&&L.bests;
   if(B&&(B.s5||B.m1||B.m5))return [B.s5&&`<div class="arow"><span>${B.s5.d} · ${B.s5.nm}</span><b>${B.s5.v} W · 5 s</b></div>`,
     B.m1&&`<div class="arow"><span>${B.m1.d} · ${B.m1.nm}</span><b>${B.m1.v} W · 1 min</b></div>`,
     B.m5&&`<div class="arow"><span>${B.m5.d} · ${B.m5.nm}</span><b>${B.m5.v} W · 5 min</b></div>`].filter(Boolean).join("");
-  if(L)return `<div class="arow"><span>No power streams synced yet</span><b>—</b></div>`;
+  if(L||window.CONNECTED)return `<div class="arow"><span>No power streams synced yet</span><b>—</b></div>`;
   return `<div class="arow"><span>12 Apr · crit simulation, fresh</span><b>892 W</b></div><div class="arow"><span>27 Feb · chaingang, 2,300 kJ in</span><b>648 W</b></div><div class="arow"><span>15 Feb · town-sign sprint</span><b>611 W</b></div>`;}
-function avgClimbTxt(){const L=window.LIVEM;return L&&L.avgClimbWk!=null?fmtInt(L.avgClimbWk)+" m / wk":"3,842 m";}
+function avgClimbTxt(){const L=window.LIVEM;if(L&&L.avgClimbWk!=null)return fmtInt(L.avgClimbWk)+" m / wk";return window.CONNECTED?"—":"3,842 m";}
 function chainScopeTxt(){return window.LIVEM?"this season":"ever";}
-function chainMaxTxt(){const L=window.LIVEM;return L&&L.chainMax!=null?String(L.chainMax):"14";}
+function chainMaxTxt(){const L=window.LIVEM;if(L&&L.chainMax!=null)return String(L.chainMax);return window.CONNECTED?"—":"14";}
 function renderJerseys(){
   document.getElementById("jwrap").innerHTML=`
   <div class="panel hov jersey cascade" style="--i:1">
@@ -1268,6 +1279,7 @@ function drawJerseyY(){
 }
 function drawJerseyP(){
   const L=(window.LIVEM&&window.LIVEM.monthly&&window.LIVEM.monthly.length)?window.LIVEM.monthly:null;
+  if(!L&&window.CONNECTED){document.getElementById("js-p").innerHTML='<text x="10" y="34" font-size="12" fill="#93A0AB" font-family="Inter">Monthly climbing appears after your first sync.</text>';return;}
   const m=L?L.map(x=>+(x.m/1000).toFixed(1)):[6.4,9.8,11.2,8.9,2.1];
   const labs=L?L.map(x=>x.label):["MAR","APR","MAY","JUN","JUL"];
   const bw=Math.max(36,(520-20)/m.length-26),mxv=Math.max(...m,0.1);
@@ -1365,7 +1377,7 @@ function updateAll(){
   drawJerseyY();
   const pctP=Math.max(0,Math.min(100,Math.round(climbed/S.tgt.climb*100)));
   set("jp-tgt",fmtInt(S.tgt.climb));setbar("jp-bar",pctP);
-  const wksLeft=Math.max(1,(new Date(nextA().date)-DNOW)/(7*864e5));
+  const na=nextA();const wksLeft=na?Math.max(1,(new Date(na.date)-DNOW)/(7*864e5)):1;
   set("jp-need",fmtInt(Math.max(0,Math.round((S.tgt.climb-climbed)/wksLeft)))+" m");
   const pctG=Math.max(0,Math.min(100,Math.round(sprintBest/S.tgt.sprint*100)));
   set("jg-tgt",S.tgt.sprint);setbar("jg-bar",pctG);
@@ -1472,6 +1484,7 @@ function renderRcTabs(){
   document.querySelectorAll(".rc-tab").forEach(b=>b.onclick=()=>{rcEv=b.dataset.ev;renderRcTabs();buildRecon();});
 }
 function openRecon(id){
+  if(!EVENTS.find(e=>e.id===id))return;
   rcEv=id;WF.weight=S.weight;
   document.getElementById("wf-weight").value=S.weight;
   document.getElementById("wfv-weight").textContent=S.weight.toFixed(1)+" kg";
@@ -1508,7 +1521,7 @@ function drawTraj(){
   const F=window.PMCF||[];if(!F.length)return;
   const past=F.slice(-30).map(d=>d.tsb);
   let ctl=F[F.length-1].ctl,atl=F[F.length-1].atl;
-  const a=nextA(),days=Math.max(7,J(a)),futr=[];
+  const a=nextA(),days=Math.max(7,a?J(a):28),futr=[];
   const liveLoad=window.LIVEM?Math.max(20,(F[F.length-1]||{}).atl||40):null;
   for(let d=1;d<=days;d++){
     let load=liveLoad!=null?liveLoad:TSSWK[Math.min(15,CURWK+Math.floor(d/7))]/7;
@@ -1527,8 +1540,8 @@ function drawTraj(){
     <line x1="${px(past.length-1)}" y1="10" x2="${px(past.length-1)}" y2="${H-14}" stroke="rgba(20,30,40,.18)" stroke-width="1.2"/>
     <circle cx="${px(n-1)}" cy="${py(race)}" r="5.5" fill="#FFD100" stroke="#141E28" stroke-width="2"/>
     <text x="${px(n-1)-10}" y="${py(race)-12}" text-anchor="end" font-size="12" font-family="Space Grotesk" font-weight="700" fill="#141E28">FORM ${race>=0?"+":""}${Math.round(race)}</text>`;
-  document.getElementById("traj-h").textContent=`FORM TRAJECTORY — PROJECTED TO ${a.short}`;
-  document.getElementById("traj-race").textContent=`${a.short} · J-${J(a)}`;
+  document.getElementById("traj-h").textContent=a?`FORM TRAJECTORY — PROJECTED TO ${a.short}`:"FORM TRAJECTORY";
+  document.getElementById("traj-race").textContent=a?`${a.short} · J-${J(a)}`:"NO EVENT SET";
 }
 /* ═══ INIT ═══ */
 window.SEASON_FLAGS=[];
@@ -1554,7 +1567,7 @@ const md=t=>(t||"").split("**").map((x,i)=>i%2?`<strong>${x}</strong>`:x).join("
     const prof=await api("/api/profile");
     applyProfile(prof,cfg.connected);
     if(cfg.connected){
-      LIVE=true;
+      LIVE=true;window.CONNECTED=true;purgeDemo();
       document.getElementById("livebadge").textContent="LIVE · "+(cfg.athlete||"CONNECTED");
       document.getElementById("btn-connect").textContent="RECONNECT STRAVA";
       if(MAPTOKEN)loadMapbox();
@@ -1571,7 +1584,7 @@ const md=t=>(t||"").split("**").map((x,i)=>i%2?`<strong>${x}</strong>`:x).join("
 function applyProfile(p,connected){
   S.ftp=p.ftp;S.weight=p.weight;S.maxhr=p.maxhr;S.rhr=p.rhr;S.lthr=p.lthr;
   S.tgt={...S.tgt,...(p.tgt||{})};startFtp=p.startFtp||startFtp;
-  if(p.events&&p.events.length){EVENTS.length=0;p.events.forEach(e=>EVENTS.push(e));}
+  if(Array.isArray(p.events)){EVENTS.length=0;p.events.forEach(e=>EVENTS.push(e));}
   if(p.ftpLog&&p.ftpLog.length){FTPLOG.length=0;p.ftpLog.forEach(e=>FTPLOG.push(e));}
   if(connected){DNOW=new Date();SEASON0=new Date((p.seasonStart||"2026-03-16")+"T00:00:00");}
   document.getElementById("v-ftp").innerHTML=S.ftp+"<i>W</i>";
@@ -1583,6 +1596,7 @@ function applyProfile(p,connected){
   document.getElementById("v-tclimb").innerHTML=(S.tgt.climb/1000)+"<i>k m</i>";
   document.getElementById("v-tsprint").innerHTML=S.tgt.sprint+"<i>W</i>";
   document.getElementById("v-tchain").innerHTML=S.tgt.chain+"<i>wk</i>";
+  const _l0=FTPLOG[0];document.getElementById("pf-when").textContent=_l0?("SET "+_l0.d+" · "+_l0.s):"—";
   renderLog();updateAll();
 }
 
@@ -1753,10 +1767,10 @@ drawRMap=function(){if(GLACTIVE){if(GLMARK){
 }return;}_drawRMap();};
 
 /* ── Claude coach ── */
-async function refreshCoachNote(){
+async function refreshCoachNote(force){
   try{
     const last=+localStorage.getItem("vx_coach_t")||0;
-    if(Date.now()-last<12*3600*1000&&localStorage.getItem("vx_coach")){
+    if(!force&&Date.now()-last<12*3600*1000&&localStorage.getItem("vx_coach")){
       document.getElementById("coachnote").innerHTML=md(localStorage.getItem("vx_coach"));return;}
 const d=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"weekly"})});
     if(d.text){localStorage.setItem("vx_coach",d.text);localStorage.setItem("vx_coach_t",String(Date.now()));
@@ -1906,6 +1920,56 @@ applyLive=function(m){
   renderWkFront();renderDays();drawTraj();
   patchLiveChrome(m);
   animateBars(document.querySelector(".scene.on")||document.body);
+};
+
+
+/* ═══ v1.2 — connected means zero demo residue ═══ */
+const _rrs2=renderRideSel;
+renderRideSel=function(){
+  if(window.CONNECTED&&!RIDES.length){
+    document.getElementById("ridesel").innerHTML='<div class="rsel" style="cursor:default"><div class="rn">No rides synced yet</div><div class="rd">PRESS SYNC NOW IN SOURCES</div></div>';
+    ["rhud","rsegs","rzones"].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML="";});
+    document.getElementById("rh-name").textContent="";document.getElementById("rh-meta").textContent="";
+    document.getElementById("rwave").innerHTML="";document.getElementById("relev").innerHTML="";
+    return;}
+  _rrs2();};
+const _lr3=loadRide;loadRide=function(){if(window.CONNECTED&&!RIDES.length)return;return _lr3();};
+const _rb2=renderBests;renderBests=function(){
+  if(window.CONNECTED&&!BESTS.length){document.getElementById("bests").innerHTML='<div class="bestrow"><span class="bl">—</span><span class="bd">Peak power appears once rides with a power meter are synced.</span></div>';return;}
+  _rb2();};
+const _rwf2=renderWkFront;renderWkFront=function(){
+  if(window.CONNECTED&&!window.LIVEM){document.getElementById("wkslab").textContent="THIS WEEK";
+    document.getElementById("wkfront").innerHTML='<div class="wf7" style="grid-column:1/-1;cursor:default"><div class="n">Your real riding week appears after the first sync.</div></div>';return;}
+  _rwf2();};
+const _rd2=renderDays;renderDays=function(){
+  if(window.CONNECTED&&!window.LIVEM){document.getElementById("days").innerHTML='<div class="stg" style="grid-column:1/-1;cursor:default;min-height:100px"><div class="nm">Your riding week appears after the first sync.</div><div class="ds">Press SYNC NOW in Sources.</div></div>';return;}
+  _rd2();};
+function purgeDemo(){
+  climbed=0;sprintBest=0;chainNow=0;BESTS=[];window.PMCF=[];
+  TSSWK=new Array(16).fill(0);RIDES=[];STREAM=[];ROUTE=[];cursor=null;
+  document.getElementById("coachpq").textContent='"The season, in your own numbers."';
+  document.getElementById("coachnote").innerHTML="Your weekly note from Claude generates from live data after each sync.";
+  const cp=document.getElementById("condpq");if(cp)cp.textContent='"Reading your live numbers."';
+  const cn=document.getElementById("condnote");if(cn)cn.textContent="Interpretation appears once your history is synced.";
+  const ph=document.getElementById("planhead");
+  if(ph){ph.style.gridTemplateColumns="1fr";
+    ph.innerHTML='<div class="panel readnote"><span class="al" style="color:#C4761B">MORNING READINESS · PHASE 2</span><p>The Ultrahuman Ring and Garmin band connect in the next build. Until then this panel stays honest — no fabricated numbers.</p></div>';}
+  document.getElementById("pmc").innerHTML='<text x="24" y="46" font-size="15" fill="#93A0AB" font-family="Inter">Press SYNC NOW in Sources to draw this from your full ride history.</text>';
+  document.getElementById("zrows28").innerHTML='<div class="zrow"><span class="znm">Zone analysis appears after your first sync.</span></div>';
+  document.getElementById("zstack").innerHTML='<i style="width:100%;background:var(--hair)"></i>';
+  const tj=document.getElementById("traj");if(tj)tj.innerHTML='<text x="12" y="44" font-size="12" fill="#93A0AB" font-family="Inter">Projection appears after your first sync.</text>';
+  const t2=document.getElementById("t2v");t2.removeAttribute("data-count");t2.textContent="0";
+  document.getElementById("t2s").textContent="awaiting your first sync";
+  const t3=document.getElementById("t3v");t3.removeAttribute("data-count");t3.textContent="0";
+  document.getElementById("t3s").textContent="awaiting your first sync";
+  document.getElementById("evercount").textContent="0.00";
+  renderRideSel();renderBests();renderJerseys();drawJerseyY();drawJerseyP();renderLadder();
+  renderWkFront();renderDays();renderWeeks();updateAll();
+}
+const _al2=applyLive;
+applyLive=function(m){
+  _al2(m);
+  if(COACH&&m.syncedAt&&+new Date(m.syncedAt)>(+localStorage.getItem("vx_coach_t")||0))refreshCoachNote(true);
 };
 
 </script>
