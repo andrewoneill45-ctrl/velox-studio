@@ -34,12 +34,12 @@ export default async (req) => {
   } else {
     context.recent = { pmcTail: (metrics.pmc || []).slice(-14), weeks: metrics.weeks, curWeek: metrics.curWeek,
       bests: metrics.bests, tssSeason: metrics.tssSeason, chain: metrics.chain };
-    ask = "Write this week's coach note: 90–120 words on current form and exactly what to do this week.";
+    ask = "Write this week's coach note: 70–100 words, four sentences maximum, on current form and exactly what to do this week.";
   }
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "content-type": "application/json", "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
-    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: 700,
+    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "weekly" ? 380 : 700,
       system: "You are the directeur sportif for a single amateur rider. UK English. Confident, warm, specific. Use **bold** for key numbers. No preamble, no sign-off.",
       messages: [{ role: "user", content: ask + "\n\nDATA:\n" + JSON.stringify(context) }] })});
   if (!r.ok) return json({ error: "anthropic_" + r.status, detail: await r.text() }, 502);
