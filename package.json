@@ -1,0 +1,9 @@
+{
+  "name": "velox-studio",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "VeloX Studio — personal cycling performance platform",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}

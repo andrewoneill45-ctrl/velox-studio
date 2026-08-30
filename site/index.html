@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VeloX Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800;900&family=Fraunces:ital,opsz,wght@0,9..144,540;0,9..144,620;1,9..144,460&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#F4F6F5; --panel:#FFFFFF; --ink:#141E28; --ink2:#44515D; --mist:#93A0AB;
+  --line:#E3E8EB; --hair:#ECF0F2;
+  --jaune:#FFD100; --jaune-ink:#8A6D00; --polka:#E23A2E; --vert:#189B69; --bleu:#26496E; --ember:#E8611F;
+  --sp:cubic-bezier(.3,1.35,.45,1); --ease:cubic-bezier(.22,.7,.2,1);
+  --sh:0 1px 2px rgba(20,30,40,.04),0 16px 44px rgba(20,30,40,.07);
+  --shh:0 2px 4px rgba(20,30,40,.05),0 26px 64px rgba(20,30,40,.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg)}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh}
+body::before{content:"";position:fixed;inset:-20%;z-index:0;pointer-events:none;
+  background:radial-gradient(38% 30% at 16% 10%,rgba(255,209,0,.09),transparent 60%),
+             radial-gradient(34% 28% at 86% 6%,rgba(38,73,110,.08),transparent 60%),
+             radial-gradient(44% 34% at 70% 94%,rgba(232,97,31,.06),transparent 60%);
+  animation:aur 30s ease-in-out infinite alternate}
+@keyframes aur{to{transform:translate(-2.5%,2%) scale(1.05)}}
+::selection{background:var(--jaune);color:var(--ink)}
+.sg{font-family:'Space Grotesk',monospace}
+
+/* ── RAIL ── */
+.rail{position:fixed;z-index:60;left:0;top:0;bottom:0;width:78px;display:flex;flex-direction:column;align-items:center;
+  padding:20px 0;gap:8px;background:rgba(255,255,255,.72);backdrop-filter:blur(16px);border-right:1px solid var(--line)}
+.rail .logo{margin-bottom:18px}
+.rail .logo svg{width:30px;height:30px;display:block}
+.rail button{width:48px;height:48px;border:none;border-radius:14px;background:none;cursor:pointer;position:relative;
+  display:flex;align-items:center;justify-content:center;transition:background .25s var(--ease),transform .2s var(--ease)}
+.rail button svg{width:21px;height:21px;stroke:var(--mist);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:stroke .25s}
+.rail button:hover{background:var(--hair)}
+.rail button:active{transform:scale(.92)}
+.rail button.on{background:var(--ink)}
+.rail button.on svg{stroke:#fff}
+.rail button .tip{position:absolute;left:60px;top:50%;transform:translateY(-50%) translateX(-6px);opacity:0;pointer-events:none;
+  background:var(--ink);color:#fff;font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.14em;
+  padding:7px 11px;border-radius:8px;white-space:nowrap;transition:all .25s var(--ease)}
+.rail button:hover .tip{opacity:1;transform:translateY(-50%) translateX(0)}
+.rail .spacer{flex:1}
+.rail .key{font-family:'Space Grotesk';font-size:8px;font-weight:700;color:var(--mist);letter-spacing:.1em;writing-mode:vertical-rl;opacity:.6}
+
+/* ── FRAME ── */
+.main{margin-left:78px;position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column}
+.ctx{position:sticky;top:0;z-index:40;height:64px;display:flex;align-items:center;gap:22px;padding:0 40px;
+  background:rgba(244,246,245,.82);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.ctx .scenename{font-family:'Fraunces',serif;font-style:italic;font-weight:460;font-size:19px;letter-spacing:.01em;min-width:150px}
+.ctx .meta{font-family:'Space Grotesk';font-size:9.5px;font-weight:700;letter-spacing:.16em;color:var(--mist)}
+.ctx .meta b{color:var(--ink)}
+.ctx .grow{flex:1}
+.ctx .wkg{font-family:'Space Grotesk';font-size:11px;font-weight:700;letter-spacing:.08em}
+.ctx .wkg small{color:var(--mist);font-size:9px;letter-spacing:.14em;margin-right:7px}
+.ava{width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;flex-shrink:0;
+  background:linear-gradient(135deg,var(--ember),#C7920C);color:#fff;font-family:'Archivo';font-weight:900;font-size:12px;
+  box-shadow:0 0 0 2px #fff,0 0 0 3.5px var(--line);transition:transform .2s var(--ease)}
+.ava:hover{transform:scale(1.06)}
+
+.scene{display:none;flex:1}
+.scene.on{display:block}
+.wrap{max-width:1560px;margin:0 auto;padding:0 44px}
+.wm{position:absolute;right:30px;top:88px;z-index:0;font-family:'Fraunces',serif;font-style:italic;font-weight:620;
+  font-size:118px;letter-spacing:-.02em;color:var(--ink);opacity:.028;pointer-events:none;user-select:none;white-space:nowrap}
+.slab{font-family:'Space Grotesk';font-size:10px;font-weight:700;letter-spacing:.24em;color:var(--mist);margin:44px 0 16px}
+.slab b{color:var(--ink)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);position:relative;
+  transition:transform .3s var(--ease),box-shadow .35s var(--ease)}
+.panel.hov:hover{transform:translateY(-3px);box-shadow:var(--shh)}
+.g12{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+
+/* scene choreography */
+.cascade{opacity:0;transform:translateY(26px)}
+.scene.on .cascade{animation:casc .6s var(--sp) forwards;animation-delay:calc(var(--i,0)*70ms)}
+@keyframes casc{to{opacity:1;transform:none}}
+.scene.out .cascade{animation:cascout .18s var(--ease) forwards}
+@keyframes cascout{to{opacity:0;transform:translateY(-14px)}}
+@keyframes popn{0%{transform:scale(1)}45%{transform:scale(1.12)}100%{transform:scale(1)}}
+.pop{animation:popn .32s var(--sp)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ── SEASON ── */
+.sky{position:relative;overflow:hidden;border-bottom:1px solid var(--line);padding-top:52px;
+  background:linear-gradient(180deg,#E9F0F3 0%,#F1F5F4 55%,var(--bg) 100%)}
+.sky .sun{position:absolute;right:12%;top:14%;width:120px;height:120px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,209,0,.5),rgba(255,209,0,0) 70%)}
+#massif{position:relative;display:block;width:100%;height:clamp(240px,19vw,330px);margin-top:10px}
+.sky .title{position:relative;z-index:3;max-width:1560px;margin:0 auto;padding:0 44px}
+.sky h1{max-width:680px}
+.sky .kick{font-family:'Space Grotesk';font-size:10px;font-weight:700;letter-spacing:.28em;color:var(--bleu)}
+.sky h1{font-family:'Fraunces',serif;font-weight:540;font-size:clamp(32px,3.4vw,52px);line-height:1.06;letter-spacing:-.015em;margin-top:12px}
+.sky .lede{margin-top:14px;font-size:14px;line-height:1.6;color:var(--ink2);max-width:440px}
+.sky .lede b{color:var(--ink);font-weight:600}
+.skyactions{margin-top:22px;display:flex;gap:12px}
+.btn{border:none;cursor:pointer;font-family:'Space Grotesk';font-weight:700;letter-spacing:.14em;border-radius:12px;
+  transition:transform .2s var(--ease),box-shadow .25s var(--ease)}
+.btn:active{transform:scale(.96)}
+.btn-ink{background:var(--ink);color:var(--jaune);font-size:10.5px;padding:14px 22px}
+.btn-ink:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(20,30,40,.22)}
+.btn-ghost{background:rgba(255,255,255,.7);border:1px solid var(--line);color:var(--ink);font-size:10.5px;padding:14px 20px}
+.strip{position:relative;z-index:4;margin-top:22px}
+.strip .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--line);border-radius:18px;
+  overflow:hidden;background:var(--line);box-shadow:var(--shh)}
+.tile{background:var(--panel);padding:30px 32px 26px;position:relative;transition:background .25s}
+.tile:hover{background:#FDFEFE}
+.tile .tl{font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.22em;color:var(--mist)}
+.tile .tn{font-family:'Archivo';font-weight:900;font-size:58px;letter-spacing:-.035em;line-height:1;margin-top:14px;font-variant-numeric:tabular-nums}
+.tile .tn small{font-size:18px;color:var(--mist);font-weight:800;letter-spacing:0;margin-left:4px}
+.tile .ts{margin-top:10px;font-size:12px;color:var(--ink2)}
+.tile .ts b{color:var(--ink);font-weight:600}
+.tile .tbar{margin-top:14px;height:5px;border-radius:3px;background:var(--hair);overflow:hidden}
+.tile .tbar i{display:block;height:100%;border-radius:3px;width:0;transition:width 1.1s var(--ease)}
+.seasonlow{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-top:16px}
+.racepanel{display:flex;overflow:hidden}
+.racepanel .band{background:var(--bleu);color:#fff;min-width:210px;padding:28px;display:flex;flex-direction:column;justify-content:space-between}
+.racepanel .band .rn{font-family:'Archivo';font-weight:900;font-size:19px;line-height:1.15;letter-spacing:.02em}
+.racepanel .band .ra{font-family:'Space Grotesk';font-size:10px;font-weight:700;opacity:.75;margin-top:10px;letter-spacing:.1em}
+.racepanel .rb{flex:1;padding:26px 30px;display:flex;flex-direction:column;justify-content:space-between;gap:16px}
+.racepanel .jrow{display:flex;align-items:baseline;justify-content:space-between;gap:20px}
+.racepanel .j{font-family:'Archivo';font-weight:900;font-size:52px;letter-spacing:-.03em}
+.racepanel .j small{font-size:13px;letter-spacing:.12em;color:var(--mist);font-weight:800}
+.racepanel .ev{font-size:12.5px;color:var(--ink2);text-align:right;line-height:1.7}
+.editorial{padding:30px 34px;border-left:4px solid var(--jaune);display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:start}
+.editorial .pq{font-family:'Fraunces',serif;font-style:italic;font-weight:460;font-size:24px;line-height:1.3;max-width:240px;color:var(--ink)}
+.editorial .cl{font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.22em;color:var(--jaune-ink);margin-bottom:10px}
+.editorial p{font-size:13.5px;line-height:1.75;color:var(--ink2)}
+.editorial b{color:var(--ink);font-weight:600}
+
+/* ── PLAN ── */
+.planhead{display:grid;grid-template-columns:340px 1fr;gap:16px}
+.dial{padding:28px;display:flex;gap:22px;align-items:center}
+.dial svg{width:118px;height:118px;flex-shrink:0}
+.dial .dv{font-family:'Fraunces',serif;font-style:italic;font-size:26px;color:var(--vert)}
+.dial .dm{font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.18em;color:var(--mist);margin-top:6px}
+.dial .rows{margin-top:14px;font-size:12px;color:var(--ink2)}
+.dial .rows div{display:flex;justify-content:space-between;gap:18px;padding:3.5px 0}
+.dial .rows b{font-family:'Space Grotesk';font-weight:700;color:var(--ink)}
+.readnote{padding:28px 32px}
+.readnote .al{font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.22em;color:var(--vert);display:block;margin-bottom:10px}
+.readnote p{font-size:13.5px;line-height:1.75;color:var(--ink2);max-width:900px}
+.readnote b{color:var(--ink);font-weight:600}
+.weekstrip{display:flex;gap:6px;margin:18px 0 14px;flex-wrap:wrap}
+.wkt{padding:10px 0;width:64px;text-align:center;border:1px solid var(--line);border-radius:11px;background:var(--panel);cursor:pointer;
+  transition:all .22s var(--ease)}
+.wkt:hover{transform:translateY(-2px)}
+.wkt .n{font-family:'Space Grotesk';font-size:11.5px;font-weight:700}
+.wkt .t{font-size:7.5px;color:var(--mist);font-family:'Space Grotesk';letter-spacing:.08em;margin-top:2px}
+.wkt.on{background:var(--ink);border-color:var(--ink)}
+.wkt.on .n{color:#fff}.wkt.on .t{color:rgba(255,255,255,.55)}
+.wkt.ev{box-shadow:inset 0 -3px 0 var(--jaune)}
+.stagegrid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--line);border:1px solid var(--line);
+  border-radius:18px;overflow:hidden;box-shadow:var(--sh)}
+.stg{background:var(--panel);min-height:320px;padding:22px 20px 18px;position:relative;display:flex;flex-direction:column;cursor:pointer;overflow:hidden;
+  transition:background .25s}
+.stg:hover{background:#FBFDFC}
+.stg .day{font-family:'Space Grotesk';font-size:10px;font-weight:700;letter-spacing:.2em;color:var(--mist)}
+.stg .prof{width:100%;height:56px;margin:16px 0 12px}
+.stg .nm{font-weight:600;font-size:14.5px;line-height:1.3}
+.stg .ds{font-size:11px;color:var(--mist);margin-top:6px;line-height:1.5}
+.stg .chips{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap}
+.chip{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.1em;padding:3px 8px;border-radius:6px}
+.stg .foot{margin-top:auto;display:flex;align-items:flex-end;justify-content:space-between;padding-top:16px}
+.stg .tss{font-family:'Archivo';font-weight:900;font-size:34px;letter-spacing:-.03em}
+.stg .tss small{font-size:10px;color:var(--mist);letter-spacing:.12em;font-weight:800}
+.tick{width:20px;height:20px;border-radius:50%;background:var(--vert);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px}
+.miss{width:20px;height:20px;border-radius:50%;border:1.5px dashed var(--mist)}
+.stg .stx{position:absolute;inset:8px;background:var(--ink);color:#DEE7EC;border-radius:12px;padding:16px;overflow:auto;
+  font-size:11.5px;line-height:1.65;opacity:0;transform:translateY(10px);pointer-events:none;transition:all .3s var(--sp)}
+.stg:hover .stx,.stg.pin .stx{opacity:1;transform:none}
+.stg .stx b{color:#fff;font-weight:600}
+
+/* ── ANALYSE ── */
+.modetabs{display:flex;gap:26px;margin:34px 0 6px}
+.modetabs button{border:none;background:none;cursor:pointer;font-family:'Space Grotesk';font-size:11px;font-weight:700;
+  letter-spacing:.2em;color:var(--mist);padding:10px 2px;position:relative;transition:color .25s}
+.modetabs button.on{color:var(--ink)}
+.modetabs button::after{content:"";position:absolute;left:0;right:100%;bottom:0;height:2.5px;background:var(--jaune);transition:right .4s var(--sp)}
+.modetabs button.on::after{right:0}
+.stt{padding:26px 28px 22px}
+.stt .sl{font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.2em;color:var(--mist)}
+.stt .sv{font-family:'Archivo';font-weight:900;font-size:44px;letter-spacing:-.03em;margin-top:12px;font-variant-numeric:tabular-nums}
+.stt .sv small{font-size:15px;color:var(--mist);font-weight:800}
+.stt .tr{font-size:11.5px;color:var(--ink2);margin-top:6px}
+.stt svg{display:block;width:100%;height:34px;margin-top:14px}
+.chartpanel{padding:28px 30px}
+.chartpanel h3{font-family:'Space Grotesk';font-size:9.5px;font-weight:700;letter-spacing:.22em;color:var(--mist);margin-bottom:18px}
+svg#pmc{display:block;width:100%;height:340px}
+.zbig{display:flex;height:12px;border-radius:6px;overflow:hidden;margin-bottom:16px}
+.zrow{display:flex;align-items:center;gap:12px;padding:8.5px 0;border-top:1px dashed var(--hair)}
+.zrow:first-of-type{border-top:none}
+.zrow .zd{width:9px;height:9px;border-radius:3px}
+.zrow .zn{font-family:'Space Grotesk';font-size:10.5px;font-weight:700;min-width:26px;color:var(--ink2)}
+.zrow .znm{font-size:11px;color:var(--mist);flex:1}
+.zrow .zp{font-family:'Space Grotesk';font-size:12px;font-weight:700;min-width:40px;text-align:right}
+.zrow .zt{font-family:'Space Grotesk';font-size:10px;color:var(--mist);min-width:52px;text-align:right}
+.ridebar{display:flex;gap:10px;margin:18px 0 16px;flex-wrap:wrap}
+.rsel{padding:14px 18px;border:1px solid var(--line);border-radius:14px;background:var(--panel);cursor:pointer;transition:all .22s var(--ease)}
+.rsel:hover{transform:translateY(-2px);box-shadow:var(--sh)}
+.rsel .rn{font-family:'Space Grotesk';font-size:12px;font-weight:700;white-space:nowrap}
+.rsel .rd{font-size:8.5px;color:var(--mist);margin-top:3px;font-family:'Space Grotesk';letter-spacing:.08em}
+.rsel.on{background:var(--ink);border-color:var(--ink)}
+.rsel.on .rn{color:#fff}.rsel.on .rd{color:rgba(255,255,255,.5)}
+.cockpit{position:relative;overflow:hidden}
+canvas#rmap{display:block;width:100%;height:47vh;min-height:420px;touch-action:none;cursor:crosshair}
+.hud{position:absolute;top:20px;left:20px;display:flex;flex-direction:column;gap:8px;z-index:3;pointer-events:none;max-width:190px}
+.hudchip{background:rgba(255,255,255,.82);backdrop-filter:blur(10px);border:1px solid rgba(20,30,40,.08);border-radius:12px;
+  padding:10px 14px;min-width:150px;box-shadow:0 6px 20px rgba(20,30,40,.08)}
+.hudchip .l{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.18em;color:var(--mist)}
+.hudchip .v{font-family:'Space Grotesk';font-size:17px;font-weight:700;margin-top:3px;font-variant-numeric:tabular-nums}
+.hudchip .v .u{font-size:10px;color:var(--mist);margin-left:2px}
+.ridetitle{position:absolute;right:24px;top:20px;text-align:right;z-index:3;pointer-events:none;max-width:44%}
+.ridetitle h3{font-family:'Fraunces',serif;font-weight:540;font-size:21px;letter-spacing:-.01em;text-shadow:0 1px 8px rgba(244,246,245,.9)}
+.ridetitle .rm{font-family:'Space Grotesk';font-size:9px;font-weight:700;color:var(--ink2);margin-top:6px;letter-spacing:.12em}
+.maplg{position:absolute;right:24px;bottom:14px;display:flex;gap:10px;z-index:3;pointer-events:none;background:rgba(255,255,255,.6);backdrop-filter:blur(6px);padding:6px 10px;border-radius:9px}
+.maplg span{display:flex;align-items:center;gap:4px;font-family:'Space Grotesk';font-size:8px;font-weight:700;color:var(--ink2)}
+.maplg i{width:8px;height:8px;border-radius:2.5px}
+.wavepanel{padding:22px 26px 14px}
+.wavelab{font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.2em;color:var(--mist);margin-bottom:10px}
+svg#rwave{display:block;width:100%;height:170px;touch-action:none;cursor:crosshair}
+svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshair;margin-top:6px}
+.sidecol .panel{margin-bottom:16px}
+.rz{padding:22px 26px}
+.rz .zrow{cursor:pointer;border-radius:8px;padding-left:6px;padding-right:6px;transition:background .2s}
+.rz .zrow:hover{background:var(--hair)}
+.rz .zrow.act{background:rgba(20,30,40,.05)}
+.seglist{padding:8px 0}
+.segrow{display:flex;align-items:baseline;gap:14px;padding:14px 26px;border-top:1px solid var(--hair)}
+.segrow:first-child{border-top:none}
+.segrow .rule{width:3px;align-self:stretch;border-radius:2px}
+.segrow .sm{flex:1}
+.segrow .sl{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.14em;color:var(--mist)}
+.segrow .sd{font-size:11.5px;color:var(--ink2);margin-top:4px;line-height:1.5}
+.segrow .sv{font-family:'Archivo';font-weight:900;font-size:19px;letter-spacing:-.02em}
+.aipanel{padding:26px 30px;border-left:4px solid var(--ember)}
+.aihead{display:flex;justify-content:space-between;align-items:center}
+.aihead .al{font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.24em;color:var(--ember)}
+.aibtn{padding:11px 22px;border:none;border-radius:10px;background:var(--ink);color:#fff;cursor:pointer;
+  font-family:'Space Grotesk';font-size:9.5px;font-weight:700;letter-spacing:.14em}
+.aibtn:disabled{background:var(--line);color:var(--mist)}
+.aitext{font-size:13.5px;line-height:1.8;color:var(--ink2);white-space:pre-wrap;margin-top:16px;display:none;max-width:1000px}
+.aitext strong{color:var(--ink);font-weight:600}
+
+#rmapgl{position:absolute;inset:0;display:none}
+#rmapgl.on{display:block}
+.sysrow{display:flex;gap:12px;padding:10px 0;border-top:1px dashed var(--hair);font-size:12.5px;align-items:baseline}
+.sysrow:first-child{margin-top:14px}
+.sysrow .ok,.sysrow .bad{font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.1em;padding:3px 9px;border-radius:7px;flex-shrink:0}
+.sysrow .ok{background:#E2F1EA;color:var(--vert)}
+.sysrow .bad{background:#FBE5E3;color:var(--polka)}
+.sysrow .si{color:var(--mist);font-size:11px;margin-left:auto;text-align:right}
+.mapboxgl-canvas{outline:none}
+/* ── SEASON EXTRAS ── */
+.wkfront{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--sh)}
+.wf7{background:var(--panel);padding:16px 14px 14px;cursor:pointer;position:relative;transition:background .25s}
+.wf7:hover{background:#FBFDFC}
+.wf7 .d{font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.18em;color:var(--mist)}
+.wf7 .n{font-size:12px;font-weight:600;margin-top:8px;line-height:1.35;min-height:32px}
+.wf7 .t{font-family:'Archivo';font-weight:900;font-size:24px;letter-spacing:-.02em;margin-top:8px}
+.wf7 .t small{font-size:9px;color:var(--mist);letter-spacing:.1em;font-weight:800}
+.wf7 .rule{position:absolute;left:0;top:0;bottom:0;width:3.5px}
+.wf7.key{background:var(--ink)}
+.wf7.key .d{color:rgba(255,255,255,.55)}.wf7.key .n{color:#fff}.wf7.key .t{color:var(--jaune)}.wf7.key .t small{color:rgba(255,255,255,.5)}
+.wf7 .done{position:absolute;right:10px;top:12px;width:16px;height:16px;border-radius:50%;background:var(--vert);color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center}
+.g2{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-top:16px}
+svg#traj{display:block;width:100%;height:150px;margin-top:6px}
+.trajfoot{display:flex;justify-content:space-between;font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.14em;color:var(--mist);margin-top:8px}
+.bestrow{display:flex;align-items:baseline;gap:14px;padding:11px 0;border-top:1px dashed var(--hair)}
+.bestrow:first-of-type{border-top:none}
+.bestrow .bl{font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.16em;color:var(--mist);min-width:66px}
+.bestrow .bv{font-family:'Archivo';font-weight:900;font-size:26px;letter-spacing:-.02em}
+.bestrow .bv small{font-size:11px;color:var(--mist);font-weight:800}
+.bestrow .bd{font-size:11px;color:var(--ink2);margin-left:auto;text-align:right}
+/* ── JERSEYS ── */
+.jgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.jersey{overflow:hidden;cursor:default}
+.jersey .jh{padding:16px 28px;display:flex;justify-content:space-between;align-items:center}
+.jersey .jt{font-family:'Archivo';font-weight:900;font-size:14px;letter-spacing:.08em}
+.jersey .js{font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.12em;opacity:.75}
+.jersey .jb{padding:24px 28px 20px;display:grid;grid-template-columns:1fr 1fr;gap:8px 30px;align-items:end}
+.jersey .big{font-family:'Archivo';font-weight:900;font-size:46px;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.jersey .big small{font-size:14px;color:var(--mist);font-weight:800;letter-spacing:0}
+.jersey .note{font-size:12px;color:var(--ink2);line-height:1.6}
+.jersey .bar{grid-column:1/-1;height:7px;border-radius:4px;background:var(--hair);overflow:hidden}
+.jersey .bar i{display:block;height:100%;border-radius:4px;width:0;transition:width 1.1s var(--ease)}
+.jdeep{border-top:1px solid var(--hair);padding:20px 28px 24px}
+.jdeep .jl{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.2em;color:var(--mist);margin:14px 0 9px}
+.jdeep .jl:first-child{margin-top:0}
+.jdeep svg{display:block;width:100%}
+.arow{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px dashed var(--hair);font-size:12px;color:var(--ink2)}
+.arow b{font-family:'Space Grotesk';font-weight:700;color:var(--ink);white-space:nowrap}
+.aproj{font-size:12.5px;line-height:1.7;color:var(--ink2);margin-top:12px}
+.aproj b{color:var(--ink);font-weight:600}
+.hy{background:var(--jaune);color:var(--ink)}
+.hp{background:#fff;border-bottom:1px solid var(--line);position:relative}
+.hg{background:var(--vert);color:#fff}
+.hw{background:var(--ink);color:#fff}
+svg.dots{position:absolute;inset:0}
+.passport{padding:30px 34px}
+.passport .evr{display:flex;align-items:baseline;gap:14px}
+.passport .n{font-family:'Archivo';font-weight:900;font-size:64px;letter-spacing:-.04em}
+.passport .u{font-family:'Space Grotesk';font-size:11px;font-weight:700;color:var(--mist);letter-spacing:.16em}
+.lrow{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:22px}
+.lstep{border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center;transition:all .25s var(--ease)}
+.lstep:hover{transform:translateY(-2px)}
+.lstep.hit{background:var(--ink);border-color:var(--ink)}
+.lstep .st{font-family:'Archivo';font-weight:900;font-size:20px}
+.lstep.hit .st{color:var(--jaune)}
+.lstep .ln{font-size:10.5px;font-weight:600;margin-top:5px}
+.lstep.hit .ln{color:#fff}
+.lstep .lm{font-family:'Space Grotesk';font-size:9px;font-weight:700;color:var(--mist);margin-top:3px}
+.lstep.hit .lm{color:rgba(255,255,255,.55)}
+
+/* ── SYNC ── */
+.intgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.int{display:flex;align-items:center;gap:16px;padding:22px 24px}
+.int .logo2{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;
+  font-family:'Archivo';font-weight:900;font-size:14px;color:#fff;flex-shrink:0}
+.int .in{font-weight:600;font-size:14.5px}
+.int .is{font-size:11px;color:var(--mist);margin-top:3px}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:6px}
+.tog{width:46px;height:27px;border-radius:14px;background:var(--line);position:relative;cursor:pointer;margin-left:auto;flex-shrink:0;transition:background .3s var(--sp)}
+.tog i{position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:left .3s var(--sp)}
+.tog.on{background:var(--vert)}.tog.on i{left:22px}
+.flowpanel{padding:26px 30px;font-size:13px;line-height:1.75;color:var(--ink2);margin-top:16px}
+.flowpanel b{color:var(--ink);font-weight:600}
+
+/* ── PROFILE DRAWER ── */
+.scrim{position:fixed;inset:0;z-index:70;background:rgba(20,30,40,.34);backdrop-filter:blur(3px);
+  opacity:0;pointer-events:none;transition:opacity .35s var(--ease)}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;z-index:80;width:460px;max-width:94vw;background:var(--bg);
+  border-left:1px solid var(--line);box-shadow:-30px 0 80px rgba(20,30,40,.18);
+  transform:translateX(103%);transition:transform .5s var(--sp);overflow-y:auto;padding:28px 28px 60px}
+.drawer.on{transform:none}
+.drawer .dhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.drawer .dhead .dt{font-family:'Fraunces',serif;font-style:italic;font-size:21px}
+.dclose{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:14px;color:var(--ink)}
+.dsect{font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.22em;color:var(--mist);margin:26px 0 10px}
+.dcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--sh)}
+.pfhero2{display:flex;gap:16px;align-items:center}
+.pav{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--ember),#C7920C);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-family:'Archivo';font-weight:900;font-size:19px;flex-shrink:0;
+  box-shadow:0 0 0 3px #fff,0 0 0 4.5px var(--line)}
+.pfhero2 .pn{font-family:'Fraunces',serif;font-weight:540;font-size:20px}
+.pfhero2 .ps{font-family:'Space Grotesk';font-size:9.5px;font-weight:700;letter-spacing:.1em;color:var(--mist);margin-top:5px}
+.pfhero2 .ps b{color:var(--ink)}
+.intent{margin-top:9px;font-size:12.5px;color:var(--ink2);font-style:italic;font-family:'Fraunces',serif;outline:none;
+  border-bottom:1px dashed var(--line);padding-bottom:3px}
+.frow{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-top:1px dashed var(--hair)}
+.frow:first-child{border-top:none;padding-top:0}
+.frow .fl{font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.16em;color:var(--mist)}
+.step{display:flex;align-items:center;gap:11px}
+.sbtn{width:31px;height:31px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;
+  font-size:16px;display:flex;align-items:center;justify-content:center;transition:transform .15s var(--ease)}
+.sbtn:active{transform:scale(.9)}
+.sval{font-family:'Space Grotesk';font-size:15px;font-weight:700;min-width:78px;text-align:center;font-variant-numeric:tabular-nums}
+.sval i{font-style:normal;font-size:9.5px;color:var(--mist);margin-left:2px}
+.ftpbig{display:flex;align-items:baseline;gap:9px}
+.ftpbig .n{font-family:'Archivo';font-weight:900;font-size:48px;letter-spacing:-.04em;line-height:1}
+.ftpbig .u{font-family:'Space Grotesk';font-size:13px;font-weight:700;color:var(--mist)}
+.when{font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.14em;color:var(--mist);margin-top:7px}
+.logbtn{margin-top:14px;width:100%;padding:12px;border:none;border-radius:11px;background:var(--ink);color:#fff;cursor:pointer;
+  font-family:'Space Grotesk';font-size:10px;font-weight:700;letter-spacing:.14em}
+.zline{display:flex;align-items:center;gap:11px;padding:7.5px 0;border-top:1px dashed var(--hair)}
+.zline:first-child{border-top:none}
+.zline .za{font-family:'Space Grotesk';font-size:10px;font-weight:700;min-width:24px}
+.zline .zr{font-family:'Space Grotesk';font-size:11.5px;font-weight:700;min-width:100px}
+.zline .zn2{font-size:10.5px;color:var(--mist);flex:1}
+.zline .zbar{width:70px;height:4px;border-radius:2px;background:var(--hair);overflow:hidden}
+.zline .zbar i{display:block;height:100%;border-radius:2px}
+.objrow{display:flex;align-items:center;gap:13px;padding:13px 0;border-top:1px solid var(--hair)}
+.objrow:first-child{border-top:none;padding-top:0}
+.objrow .pr{width:28px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-family:'Archivo';font-weight:900;font-size:12px;flex-shrink:0}
+.objrow .om{flex:1}
+.objrow .on2{font-weight:600;font-size:13px}
+.objrow .od{font-size:9.5px;color:var(--mist);margin-top:3px;font-family:'Space Grotesk';letter-spacing:.06em}
+.objrow .orecon{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.12em;color:var(--bleu);
+  border:1px solid var(--line);border-radius:7px;padding:5px 9px;background:#fff;cursor:pointer}
+.objrow .ox{font-family:'Space Grotesk';font-size:10px;font-weight:700;color:var(--ink2)}
+.inp{border:1px solid var(--line);border-radius:9px;padding:8px 11px;font-family:'Space Grotesk';font-size:12px;font-weight:700;color:var(--ink);background:#fff;max-width:190px}
+
+/* ── RECON (dark) ── */
+#wipe{position:fixed;inset:0;z-index:120;pointer-events:none;display:none}
+#wipe svg{position:absolute;inset:0;width:100%;height:100%}
+#wipe.go{display:block}
+#wipe .w1{transform:translateX(-103%)}
+#wipe.go .w1{animation:wipeacross .92s cubic-bezier(.7,.02,.26,.99) forwards}
+@keyframes wipeacross{0%{transform:translateX(-103%)}45%{transform:translateX(0)}55%{transform:translateX(0)}100%{transform:translateX(103%)}}
+#recon{position:fixed;inset:0;z-index:100;display:none;overflow-y:auto;background:#0E151C;color:#E8EEF2}
+#recon.on{display:block;animation:reconin .5s var(--ease)}
+@keyframes reconin{from{opacity:0}to{opacity:1}}
+.rc-top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:16px;padding:18px 34px;
+  background:rgba(14,21,28,.88);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.07)}
+.rc-kick{font-family:'Space Grotesk';font-size:9.5px;font-weight:700;letter-spacing:.26em;color:var(--jaune)}
+.rc-tabs{display:flex;gap:8px;flex:1;overflow-x:auto;scrollbar-width:none}
+.rc-tab{flex-shrink:0;padding:9px 16px;border-radius:11px;border:1px solid rgba(255,255,255,.12);cursor:pointer;
+  font-family:'Space Grotesk';font-size:10px;font-weight:700;letter-spacing:.08em;color:#93A2AE;background:none;transition:all .25s}
+.rc-tab.on{background:var(--jaune);border-color:var(--jaune);color:#17222C}
+#rc-close{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:none;color:#E8EEF2;font-size:15px;cursor:pointer}
+.rc-wrap{max-width:1460px;margin:0 auto;padding:34px 40px;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:26px}
+.rc-hero h1{font-family:'Fraunces',serif;font-weight:540;font-size:42px;letter-spacing:-.015em}
+.rc-hero .rc-sub{font-family:'Space Grotesk';font-size:10.5px;font-weight:700;letter-spacing:.16em;color:#93A2AE;margin-top:10px}
+.rc-hero .rc-sub b{color:var(--jaune)}
+.rc-card{background:#141D26;border:1px solid rgba(255,255,255,.07);border-radius:18px;margin-top:20px}
+svg#rc-prof{display:block;width:100%;height:340px}
+.rc-proflab{display:flex;justify-content:space-between;padding:0 22px 14px;font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.12em;color:#5E6E7A}
+.rc-splith,.rc-split{display:grid;grid-template-columns:1.7fr .5fr .5fr .8fr .6fr .7fr .7fr;gap:8px;padding:13px 22px}
+.rc-splith{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.16em;color:#5E6E7A;border-bottom:1px solid rgba(255,255,255,.07);padding-bottom:10px}
+.rc-split{border-bottom:1px solid rgba(255,255,255,.05);font-family:'Space Grotesk';font-size:12.5px;font-weight:700;align-items:baseline}
+.rc-split .cn{font-family:'Inter';font-weight:600;font-size:13.5px}
+.rc-split .cw{color:var(--jaune)}
+.rc-split .dim{color:#7C8B96;font-size:11px}
+.rc-finish{display:flex;align-items:baseline;gap:16px;padding:22px;flex-wrap:wrap}
+.rc-finish .fn{font-family:'Archivo';font-weight:900;font-size:54px;letter-spacing:-.03em;color:var(--jaune)}
+.rc-finish .fb{font-family:'Space Grotesk';font-size:10.5px;font-weight:700;letter-spacing:.1em;color:#93A2AE}
+.rc-side .rc-card{margin-top:0;margin-bottom:18px;padding:20px}
+.rc-sl{font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.22em;color:#93A2AE;margin-bottom:14px}
+.wf{margin-bottom:16px}
+.wf .wl{display:flex;justify-content:space-between;font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.1em;color:#93A2AE;margin-bottom:8px}
+.wf .wl b{color:#E8EEF2;font-size:11.5px}
+.wf input[type=range]{width:100%;accent-color:var(--jaune);cursor:pointer}
+.rc-ghostbtn{width:100%;padding:13px;border:none;border-radius:12px;background:var(--jaune);color:#17222C;cursor:pointer;
+  font-family:'Space Grotesk';font-size:10px;font-weight:700;letter-spacing:.14em}
+.rc-gread{display:flex;justify-content:space-between;margin-top:12px;font-family:'Space Grotesk';font-size:10.5px;font-weight:700}
+.rc-gread .g1{color:var(--jaune)}.rc-gread .g2{color:#7C8B96}
+.rc-note{font-size:13px;line-height:1.75;color:#B9C6CF}
+.rc-note b{color:#E8EEF2;font-weight:600}
+.rc-note .al{display:block;font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.22em;color:var(--ember);margin-bottom:9px}
+@keyframes gpulse{0%,100%{r:6}50%{r:8}}
+.gdot{animation:gpulse 1.6s ease-in-out infinite}
+
+/* ── MOBILE FALLBACK ── */
+@media(max-width:980px){
+  .rail{top:auto;bottom:0;left:0;right:0;width:auto;height:64px;flex-direction:row;justify-content:space-around;padding:6px 8px;border-right:none;border-top:1px solid var(--line)}
+  .rail .logo,.rail .spacer,.rail .key,.rail .tip{display:none}
+  .main{margin-left:0;padding-bottom:70px}
+  .wrap{padding:0 18px}
+  .ctx{padding:0 18px;gap:12px}
+  .ctx .scenename{min-width:0;font-size:16px}
+  .ctx .meta{display:none}
+  .wm{display:none}
+  .sky{padding-top:30px}
+  #massif{height:200px}
+  .sky .title{padding:0 18px}
+  .strip{margin-top:14px}
+  .strip .g4,.seasonlow,.planhead,.jgrid,.intgrid{grid-template-columns:1fr}
+  .stagegrid{grid-template-columns:1fr 1fr}
+  .g12>*{grid-column:1/-1!important}
+  .tile .tn{font-size:44px}
+  .lrow{grid-template-columns:repeat(3,1fr)}
+  .wkfront{grid-template-columns:repeat(2,1fr)}
+  .g2{grid-template-columns:1fr}
+  .rc-wrap{grid-template-columns:1fr;padding:20px}
+  .drawer{width:100vw;max-width:100vw}
+  canvas#rmap{min-height:300px;height:44vh}
+}
+</style>
+</head>
+<body>
+
+<aside class="rail">
+  <span class="logo"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.4" fill="none" stroke="#141E28" stroke-width="2"/><path d="M7.4 7.4 L16.6 16.6 M16.6 7.4 L7.4 16.6" stroke="#141E28" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="12" r="2.2" fill="#FFD100" stroke="#141E28" stroke-width="1.1"/></svg></span>
+  <button class="on" data-s="season"><svg viewBox="0 0 24 24"><path d="M3 19 L9 8 L13 14 L17 6 L21 19 Z"/></svg><span class="tip">SEASON · 1</span></button>
+  <button data-s="plan"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10 h16 M8 3 v4 M16 3 v4"/></svg><span class="tip">PLAN · 2</span></button>
+  <button data-s="analyse"><svg viewBox="0 0 24 24"><path d="M3 12 h4 l2 -6 4 12 2 -6 h6"/></svg><span class="tip">ANALYSE · 3</span></button>
+  <button data-s="jerseys"><svg viewBox="0 0 24 24"><path d="M7 4 h10 v3 c0 4 -2 6 -5 6 s-5 -2 -5 -6 Z M12 13 v4 M8 20 h8"/></svg><span class="tip">JERSEYS · 4</span></button>
+  <button data-s="sync"><svg viewBox="0 0 24 24"><path d="M8 12 a4 4 0 0 1 4 -4 h5 M17 8 l-2.5 -2.5 M17 8 l-2.5 2.5 M16 12 a4 4 0 0 1 -4 4 H7 M7 16 l2.5 -2.5 M7 16 l2.5 2.5"/></svg><span class="tip">SYNC · 5</span></button>
+  <span class="spacer"></span>
+  <span class="key">VELOX STUDIO</span>
+</aside>
+
+<div class="main">
+  <div class="ctx">
+    <span class="scenename" id="ctx-name">The Season</span>
+    <span class="meta" id="ctx-meta">S12/16 · <b>3,240 TSS</b> TO THE START LINE</span>
+    <span class="grow"></span>
+    <span class="wkg"><small>POWER : WEIGHT</small><span id="hd-wkg">3.73</span> W/kg</span>
+    <button class="ava" id="openprof">AO</button>
+  </div>
+
+  <!-- SEASON -->
+  <section class="scene on" id="s-season">
+    <div class="sky cascade" style="--i:0">
+      <span class="sun"></span>
+      <svg id="massif" viewBox="0 0 1600 560" preserveAspectRatio="xMidYMax slice"></svg>
+      <div class="title">
+        <div class="kick" id="kicker">THE ROAD AHEAD</div>
+        <h1 id="heroline">Week twelve.<br/>The mountains are coming.</h1>
+        <p class="lede" id="herolede"></p>
+        <div class="skyactions">
+          <button class="btn btn-ink" id="hero-recon">ENTER THE RECON ROOM →</button>
+          <button class="btn btn-ghost" id="hero-plan">THIS WEEK'S PLAN</button>
+        </div>
+      </div>
+    </div>
+    <div class="wrap strip cascade" style="--i:1">
+      <div class="g4">
+        <div class="tile"><div class="tl">DAYS TO <span id="t-race">THE RACE</span></div><div class="tn"><span data-count id="t-j">34</span></div><div class="ts" id="t-jd"></div></div>
+        <div class="tile"><div class="tl" id="t2l">TSS STILL TO BANK</div><div class="tn"><span data-count id="t2v">3240</span></div><div class="ts" id="t2s">of <b>8,460</b> this season · on schedule</div><div class="tbar"><i id="t2b" data-w="62" style="background:var(--ink)"></i></div></div>
+        <div class="tile"><div class="tl">SEASON CLIMBING</div><div class="tn"><span data-count id="t3v">38420</span><small>m</small></div><div class="ts" id="t3s"><b>4.34 Everests</b> banked so far</div><div class="tbar"><i id="t3b" data-w="64" style="background:var(--polka)"></i></div></div>
+        <div class="tile"><div class="tl">FTP PROGRESS</div><div class="tn"><span data-count id="t-ftp">280</span><small>W</small></div><div class="ts" id="t-ftps"></div><div class="tbar"><i id="t-ftpbar" data-w="47" style="background:var(--jaune)"></i></div></div>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="seasonlow">
+        <div class="panel hov racepanel cascade" id="nextrace" style="--i:2"></div>
+        <div class="panel hov editorial cascade" style="--i:3">
+          <div class="pq" id="coachpq">"Sunday's Èze effort is knocking on the door."</div>
+          <div><div class="cl">COACH'S NOTE · CLAUDE</div>
+          <p id="coachnote"><b>268 W for 22 minutes</b> on the Èze climb is 95.7% of your FTP, held with heart-rate decoupling of just 1.8%. Absorb this block, then test on Thursday. If it confirms, the yellow jersey target moves within reach a month early, and every col in the Recon Room gets recalculated around the new number.</p></div>
+        </div>
+      </div>
+      <div class="slab cascade" style="--i:4">THE WEEK IN FRONT OF YOU — <b>S12</b> · CLICK ANY DAY TO OPEN THE ROADBOOK</div>
+      <div class="wkfront cascade" id="wkfront" style="--i:5"></div>
+      <div class="g2">
+        <div class="panel hov chartpanel cascade" style="--i:6"><h3 id="traj-h">FORM TRAJECTORY — PROJECTED TO RACE DAY</h3><svg id="traj" viewBox="0 0 560 150" preserveAspectRatio="none"></svg><div class="trajfoot"><span>30 DAYS AGO</span><span>TODAY</span><span id="traj-race">RACE DAY</span></div></div>
+        <div class="panel hov chartpanel cascade" style="--i:7"><h3>SEASON BESTS — PEAK POWER</h3><div id="bests"></div></div>
+      </div>
+      <div class="slab cascade" style="--i:8">ON THE HORIZON</div>
+      <div id="horizon" class="cascade" style="--i:9"></div>
+    </div>
+  </section>
+
+  <!-- PLAN -->
+  <section class="scene" id="s-plan">
+    <div class="wrap" style="position:relative"><div class="wm">Roadbook</div>
+      <div class="slab cascade" style="--i:0">THIS MORNING — <b>RING &amp; BAND · 06:12</b></div>
+      <div class="planhead">
+        <div class="panel hov dial cascade" style="--i:1">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="52" fill="none" stroke="var(--hair)" stroke-width="9"/>
+            <circle cx="60" cy="60" r="52" fill="none" stroke="var(--vert)" stroke-width="9" stroke-linecap="round"
+              stroke-dasharray="326.7" stroke-dashoffset="29.4" transform="rotate(-90 60 60)"/>
+            <text x="60" y="57" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="26" fill="var(--ink)">91</text>
+            <text x="60" y="74" text-anchor="middle" font-family="Space Grotesk" font-weight="700" font-size="8" letter-spacing="2" fill="var(--mist)">READY</text>
+          </svg>
+          <div>
+            <div class="dv">Feu vert</div>
+            <div class="dm">CLEARED TO TRAIN</div>
+            <div class="rows">
+              <div><span>Sleep</span><b>7h42 · 91%</b></div>
+              <div><span>HRV</span><b>68 ms ▲</b></div>
+              <div><span>Resting HR</span><b>47 bpm</b></div>
+              <div><span>Skin temp</span><b>+0.1 °C</b></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel hov readnote cascade" style="--i:2">
+          <span class="al">READINESS · CLAUDE</span>
+          <p>HRV back above baseline and a full night banked: <b>cleared for today's threshold work</b>. Form is still −18, so hold the plan at four efforts, not five. If the legs argue in effort two, call it and spin home — Saturday's simulation matters more than a perfect Tuesday. Fuel before, not after.</p>
+        </div>
+      </div>
+      <div class="slab cascade" style="--i:3">ROADBOOK — <b>16 STAGES</b> · HOVER A DAY FOR THE WORKOUT</div>
+      <div class="weekstrip cascade" id="wksel" style="--i:4"></div>
+      <div class="stagegrid cascade" id="days" style="--i:5"></div>
+    </div>
+  </section>
+
+  <!-- ANALYSE -->
+  <section class="scene" id="s-analyse">
+    <div class="wrap" style="position:relative"><div class="wm">Analyse</div>
+      <div class="modetabs cascade" style="--i:0">
+        <button class="on" data-v="cond">CONDITION</button>
+        <button data-v="rides">RIDE ANALYSIS</button>
+      </div>
+      <div id="v-cond">
+        <div class="g12">
+          <div class="panel hov stt cascade" style="grid-column:span 3;--i:1"><div class="sl">FTP ESTIMATE</div><div class="sv" id="cd-ftp">280<small> W</small></div><div class="tr">+6 W over eight weeks</div><svg data-spark="266,268,270,271,273,274,276,280" data-c="#26496E"></svg></div>
+          <div class="panel hov stt cascade" style="grid-column:span 3;--i:2"><div class="sl">FITNESS · CTL</div><div class="sv">58</div><div class="tr">+14 in four weeks</div><svg data-spark="40,42,44,47,49,52,55,58" data-c="#26496E"></svg></div>
+          <div class="panel hov stt cascade" style="grid-column:span 3;--i:3"><div class="sl">DECOUPLING</div><div class="sv">3.2<small> %</small></div><div class="tr">Halved since March</div><svg data-spark="6.1,5.8,5.2,4.8,4.4,3.9,3.5,3.2" data-c="#189B69"></svg></div>
+          <div class="panel hov stt cascade" style="grid-column:span 3;--i:4"><div class="sl">POWER : WEIGHT</div><div class="sv" id="cd-wkg">3.73<small> W/kg</small></div><div class="tr" id="cd-wkgn"></div><svg data-spark="3.55,3.57,3.60,3.61,3.64,3.65,3.68,3.73" data-c="#8A6D00"></svg></div>
+          <div class="panel chartpanel cascade" style="grid-column:span 8;--i:5"><h3>THE RACE SO FAR — 90 DAYS</h3><svg id="pmc" viewBox="0 0 1100 340" preserveAspectRatio="none"></svg></div>
+          <div class="panel chartpanel cascade" style="grid-column:span 4;--i:6"><h3>WHERE THE EFFORT WENT — 28 DAYS</h3><div class="zbig" id="zstack"></div><div id="zrows28"></div></div>
+          <div class="panel editorial cascade" style="grid-column:span 12;border-left-color:var(--bleu);--i:7">
+            <div class="pq">"The aerobic engine is the strongest it has been."</div>
+            <div><div class="cl" style="color:var(--bleu)">READING THE NUMBERS · CLAUDE</div>
+            <p>Decoupling has halved since March. The FTP line is still climbing while fatigue peaks, which means <b>Thursday's fresh test should beat 280 W</b>. Everything says the block worked: hold your nerve through three quiet days and let the form arrive.</p></div>
+          </div>
+        </div>
+      </div>
+      <div id="v-rides" style="display:none">
+        <div class="ridebar cascade" id="ridesel" style="--i:1"></div>
+        <div class="g12">
+          <div class="panel cockpit cascade" style="grid-column:span 8;--i:2">
+            <div id="rmapgl"></div>
+            <canvas id="rmap"></canvas>
+            <div class="hud" id="rhud"></div>
+            <div class="ridetitle"><h3 id="rh-name"></h3><div class="rm" id="rh-meta"></div></div>
+            <div class="maplg" id="rmaplg"></div>
+          </div>
+          <div class="sidecol" style="grid-column:span 4">
+            <div class="panel rz cascade" id="rzones" style="--i:3"></div>
+            <div class="panel seglist cascade" id="rsegs" style="--i:4"></div>
+          </div>
+          <div class="panel wavepanel cascade" style="grid-column:span 12;--i:5">
+            <div class="wavelab">POWER — SWEEP TO SCRUB THE RIDE · CLICK A ZONE TO ISOLATE</div>
+            <svg id="rwave" viewBox="0 0 1200 170" preserveAspectRatio="none"></svg>
+            <svg id="relev" viewBox="0 0 1200 52" preserveAspectRatio="none"></svg>
+          </div>
+          <div class="panel aipanel cascade" style="grid-column:span 12;--i:6">
+            <div class="aihead"><span class="al">DEBRIEF · CLAUDE</span><button class="aibtn" id="raibtn">ANALYSE THIS RIDE</button></div>
+            <div class="aitext" id="raitext"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- JERSEYS -->
+  <section class="scene" id="s-jerseys">
+    <div class="wrap" style="position:relative"><div class="wm">Jerseys</div>
+      <div class="slab cascade" style="--i:0">FOUR JERSEYS — <b>ONE SEASON</b></div>
+      <div class="jgrid" id="jwrap"></div>
+      <div class="slab cascade" style="--i:5">CLIMBING PASSPORT</div>
+      <div class="panel passport cascade" style="--i:6">
+        <div class="evr"><span class="n" data-count data-dec="2" id="evercount">4.34</span><span class="u">EVERESTS THIS SEASON</span></div>
+        <div class="lrow" id="ladder"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SYNC -->
+  <section class="scene" id="s-sync">
+    <div class="wrap" style="position:relative"><div class="wm">Sources</div>
+      <div class="slab cascade" style="--i:0">CONNECTED SOURCES — <b id="livebadge">DEMO DATA</b></div>
+      <div class="panel cascade" id="syspanel" style="--i:1;padding:22px 26px;margin-bottom:16px">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="btn btn-ink" id="btn-connect">CONNECT STRAVA</button>
+          <button class="btn btn-ghost" id="btn-sync">SYNC NOW</button>
+          <button class="btn btn-ghost" id="btn-check">RUN SYSTEM CHECK</button>
+          <span class="sg" id="sysmsg" style="font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--mist)"></span>
+        </div>
+        <div id="sysout"></div>
+      </div>
+      <div class="intgrid cascade" id="ints" style="--i:1"></div>
+      <div class="panel flowpanel cascade" style="--i:2">
+        <b>How your data flows.</b> Rides land from Strava seconds after the Karoo uploads (webhook live). The ring and band feed sleep, HRV and recovery each morning: Claude reads the lot, scores your readiness by 06:30, and writes the coach's note every Monday at 07:00. Change a number in your rider profile and every projection in the building recalculates before you have let go of the button.
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer">
+  <div class="dhead"><span class="dt">Rider Profile</span><button class="dclose" id="dclose">✕</button></div>
+  <div class="dsect">THE NUMBERS THAT RING EVERYTHING</div>
+  <div class="dcard pfhero2">
+    <div class="pav">AO</div>
+    <div style="flex:1">
+      <div class="pn">Andrew O'Neill</div>
+      <div class="ps"><b id="pf-wkg">3.73</b> W/KG · SAISON 2026</div>
+      <div class="intent" contenteditable="true" spellcheck="false">Arrive at the A-race the strongest I have ever been.</div>
+    </div>
+  </div>
+  <div class="dsect">FTP — TIME-STAMPED</div>
+  <div class="dcard">
+    <div class="ftpbig"><span class="n" id="pf-ftp">280</span><span class="u">WATTS</span></div>
+    <div class="when" id="pf-when">SET 2 MAR 2026 · ÈZE-CONFIRMED</div>
+    <div class="frow" style="margin-top:12px;border-top:1px dashed var(--hair);padding-top:12px"><span class="fl">ADJUST</span>
+      <div class="step" data-k="ftp"><button class="sbtn" data-d="-1">−</button><span class="sval" id="v-ftp">280<i>W</i></span><button class="sbtn" data-d="1">+</button></div></div>
+    <button class="logbtn" id="logftp">LOG THIS FTP · STAMP TODAY</button>
+    <div class="dsect" style="margin:16px 0 4px">HISTORY</div>
+    <div id="ftplog"></div>
+  </div>
+  <div class="dsect">BODY</div>
+  <div class="dcard">
+    <div class="frow"><span class="fl">WEIGHT</span><div class="step" data-k="weight"><button class="sbtn" data-d="-1">−</button><span class="sval" id="v-weight">75.0<i>kg</i></span><button class="sbtn" data-d="1">+</button></div></div>
+    <div class="frow"><span class="fl">MAX HEART RATE</span><div class="step" data-k="maxhr"><button class="sbtn" data-d="-1">−</button><span class="sval" id="v-maxhr">185<i>bpm</i></span><button class="sbtn" data-d="1">+</button></div></div>
+    <div class="frow"><span class="fl">RESTING HR</span><div class="step" data-k="rhr"><button class="sbtn" data-d="-1">−</button><span class="sval" id="v-rhr">47<i>bpm</i></span><button class="sbtn" data-d="1">+</button></div></div>
+    <div class="frow"><span class="fl">THRESHOLD HR</span><div class="step" data-k="lthr"><button class="sbtn" data-d="-1">−</button><span class="sval" id="v-lthr">168<i>bpm</i></span><button class="sbtn" data-d="1">+</button></div></div>
+  </div>
+  <div class="dsect">POWER ZONES — LIVE FROM FTP</div>
+  <div class="dcard" id="pf-zones"></div>
+  <div class="dsect">SEASON TARGETS — THESE RING THE JERSEYS</div>
+  <div class="dcard">
+    <div class="frow"><span class="fl">FTP TARGET</span><div class="step" data-k="tftp"><button class="sbtn" data-d="-1">−</button><span class="sval" id="v-tftp">300<i>W</i></span><button class="sbtn" data-d="1">+</button></div></div>
+    <div class="frow"><span class="fl">CLIMBING</span><div class="step" data-k="tclimb"><button class="sbtn" data-d="-1">−</button><span class="sval" id="v-tclimb">60<i>k m</i></span><button class="sbtn" data-d="1">+</button></div></div>
+    <div class="frow"><span class="fl">SPRINT</span><div class="step" data-k="tsprint"><button class="sbtn" data-d="-1">−</button><span class="sval" id="v-tsprint">900<i>W</i></span><button class="sbtn" data-d="1">+</button></div></div>
+    <div class="frow"><span class="fl">CHAIN</span><div class="step" data-k="tchain"><button class="sbtn" data-d="-1">−</button><span class="sval" id="v-tchain">12<i>wk</i></span><button class="sbtn" data-d="1">+</button></div></div>
+  </div>
+  <div class="dsect">OBJECTIVES — EVERYTHING BUILDS FROM THESE</div>
+  <div class="dcard" id="objlist"></div>
+  <div class="dsect">ADD AN EVENT</div>
+  <div class="dcard">
+    <div class="frow" style="border:none;padding-top:0"><span class="fl">NAME</span><input class="inp" id="ev-name" placeholder="Étape du Tour"/></div>
+    <div class="frow"><span class="fl">DATE</span><input class="inp" id="ev-date" type="date" value="2026-08-16"/></div>
+    <div class="frow"><span class="fl">DISTANCE</span><input class="inp" id="ev-km" type="number" value="140" style="width:84px"/><span class="fl" style="letter-spacing:0">KM</span></div>
+    <div class="frow"><span class="fl">CLIMBING</span><input class="inp" id="ev-m" type="number" value="3400" style="width:84px"/><span class="fl" style="letter-spacing:0">M</span></div>
+    <div class="frow"><span class="fl">TERRAIN</span><select class="inp" id="ev-char"><option value="alpine">Alpine · several cols</option><option value="giant">One giant col</option><option value="rolling">Rolling · punchy</option></select></div>
+    <div class="frow"><span class="fl">PRIORITY</span><select class="inp" id="ev-pr"><option>A</option><option selected>B</option><option>C</option></select></div>
+    <button class="logbtn" id="ev-add">ADD TO THE SEASON</button>
+  </div>
+</aside>
+
+<div id="wipe"><svg class="w1" viewBox="0 0 100 100" preserveAspectRatio="none">
+  <path d="M0 0 H100 V100 H0 Z" fill="#0E151C"/>
+  <path d="M0 62 L14 38 L26 55 L40 22 L55 48 L68 30 L82 52 L100 34 V0 H0 Z" fill="#17222C"/>
+  <path d="M0 78 L18 58 L34 72 L52 44 L70 66 L86 52 L100 64 V0 H0 Z" fill="#1E2A36" opacity=".8"/>
+</svg></div>
+
+<div id="recon">
+  <div class="rc-top">
+    <span class="rc-kick">RECON ROOM</span>
+    <div class="rc-tabs" id="rc-tabs"></div>
+    <button id="rc-close">✕</button>
+  </div>
+  <div class="rc-wrap">
+    <div>
+      <div class="rc-hero"><h1 id="rc-name"></h1><div class="rc-sub" id="rc-meta"></div></div>
+      <div class="rc-card"><svg id="rc-prof" viewBox="0 0 1200 340" preserveAspectRatio="none"></svg><div class="rc-proflab" id="rc-proflab"></div></div>
+      <div class="rc-card">
+        <div class="rc-splith"><span>COL</span><span>KM</span><span>AVG</span><span>TARGET</span><span>W/KG</span><span>VAM</span><span>TIME</span></div>
+        <div id="rc-splits"></div>
+        <div class="rc-finish"><span class="fn" id="rc-fin"></span><span class="fb" id="rc-finband"></span></div>
+      </div>
+    </div>
+    <div class="rc-side">
+      <div class="rc-card">
+        <div class="rc-sl">WHAT-IF ENGINE — DRAG TO RE-RUN THE RACE</div>
+        <div class="wf"><div class="wl"><span>RACE WEIGHT</span><b id="wfv-weight">75.0 kg</b></div><input type="range" id="wf-weight" min="65" max="85" step="0.5"/></div>
+        <div class="wf"><div class="wl"><span>FTP RAMP / WEEK</span><b id="wfv-ramp">+0.75 W</b></div><input type="range" id="wf-ramp" min="0" max="1.5" step="0.05" value="0.75"/></div>
+        <div class="wf"><div class="wl"><span>WEEKLY TSS</span><b id="wfv-tss">520</b></div><input type="range" id="wf-tss" min="300" max="700" step="10" value="520"/></div>
+        <div class="rc-gread"><span>FTP ON THE DAY</span><b class="g1" id="wf-ftpday"></b></div>
+        <div class="rc-gread"><span>W/KG ON THE DAY</span><b class="g1" id="wf-wkgday"></b></div>
+      </div>
+      <div class="rc-card">
+        <div class="rc-sl">RACE YOUR GHOST</div>
+        <button class="rc-ghostbtn" id="rc-ghost">RUN · TODAY-YOU vs MARCH-YOU</button>
+        <div class="rc-gread"><span class="g1">● TODAY</span><b class="g1" id="g-now">—</b></div>
+        <div class="rc-gread"><span class="g2">● MARCH</span><b class="g2" id="g-then">—</b></div>
+        <div class="rc-gread"><span>GAP AT THE LINE</span><b class="g1" id="g-gap">—</b></div>
+      </div>
+      <div class="rc-card rc-note"><span class="al">RECON · CLAUDE</span><span id="rc-notetext"></span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══ STATE ═══ */
+const S={ftp:280,weight:75.0,maxhr:185,rhr:47,lthr:168,tgt:{ftp:300,climb:60000,sprint:900,chain:12}};
+let startFtp=262,climbed=38420,sprintBest=892,chainNow=9;
+let DNOW=new Date("2026-06-01T08:00:00");
+let SEASON0=new Date("2026-03-16");
+const fmtInt=n=>n.toLocaleString("en-GB");
+const todayStr=()=>new Date().toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"2-digit"}).toUpperCase();
+function pop(el){if(!el)return;el.classList.remove("pop");void el.offsetWidth;el.classList.add("pop");}
+function countUp(el){
+  const raw=el.dataset.count||el.textContent.replace(/[^\d.]/g,"");
+  const tgt=parseFloat(el.dataset.final||raw),dec=+(el.dataset.dec||0);
+  if(isNaN(tgt))return;const t0=performance.now(),D=950;
+  const step=ts=>{const p=Math.min(1,(ts-t0)/D),e=1-Math.pow(1-p,3);
+    el.textContent=dec?(tgt*e).toFixed(dec):fmtInt(Math.round(tgt*e));
+    if(p<1)requestAnimationFrame(step);};
+  requestAnimationFrame(step);
+}
+function animateBars(scope){scope.querySelectorAll("[data-w]").forEach(b=>{b.style.width="0";
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{b.style.width=b.dataset.w+"%";}));});}
+
+/* ═══ SCENES ═══ */
+const SCN={season:"The Season",plan:"The Roadbook",analyse:"The Laboratory",jerseys:"The Jerseys",sync:"The Sources"};
+let curScene="season";
+function enterFX(sc){animateBars(sc);sc.querySelectorAll("[data-count]").forEach(countUp);}
+function showScene(id){
+  if(id===curScene)return;
+  const from=document.getElementById("s-"+curScene),to=document.getElementById("s-"+id);
+  document.querySelectorAll(".rail button[data-s]").forEach(b=>b.classList.toggle("on",b.dataset.s===id));
+  from.classList.add("out");
+  setTimeout(()=>{
+    from.classList.remove("on","out");
+    to.classList.add("on");
+    document.getElementById("ctx-name").textContent=SCN[id];
+    window.scrollTo(0,0);enterFX(to);
+    if(id==="analyse"){requestAnimationFrame(drawRMap);if(window.GL)setTimeout(()=>GL.resize(),80);}
+    if(id==="season")requestAnimationFrame(drawMassif);
+  },190);
+  curScene=id;
+}
+document.querySelectorAll(".rail button[data-s]").forEach(b=>b.addEventListener("click",()=>showScene(b.dataset.s)));
+window.addEventListener("keydown",e=>{
+  if(e.target.matches("input,select,[contenteditable]"))return;
+  const map={1:"season",2:"plan",3:"analyse",4:"jerseys",5:"sync"};
+  if(map[e.key])showScene(map[e.key]);
+  if(e.key==="Escape"){closeDrawer();if(document.getElementById("recon").classList.contains("on"))closeRecon();}
+  if(e.key==="r"||e.key==="R")openRecon(nextA().id);
+});
+
+/* ═══ EVENTS MODEL ═══ */
+const EVENTS=[
+ {id:"marmotte",name:"La Marmotte Granfondo",short:"LA MARMOTTE",loc:"BOURG D'OISANS",date:"2026-07-05",km:174,m:5000,pr:"A",
+  cols:[{n:"Col du Glandon",len:21.3,g:6.9,top:1924},{n:"Col du Télégraphe",len:11.9,g:7.1,top:1566},
+        {n:"Col du Galibier",len:18.1,g:6.9,top:2642},{n:"Alpe d'Huez",len:13.8,g:8.1,top:1850}]},
+ {id:"ventoux",name:"Ventoux Sportive",short:"VENTOUX",loc:"BÉDOIN",date:"2026-06-14",km:118,m:2900,pr:"B",
+  cols:[{n:"Mont Ventoux — Bédoin",len:21.4,g:7.5,top:1909}]}
+];
+const J=ev=>Math.max(0,Math.ceil((new Date(ev.date)-DNOW)/864e5));
+const fut=()=>EVENTS.filter(e=>new Date(e.date)>=DNOW).sort((a,b)=>new Date(a.date)-new Date(b.date));
+const nextA=()=>fut().find(e=>e.pr==="A")||fut()[0]||EVENTS[0];
+const evDate=ev=>new Date(ev.date).toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"long"});
+function genCols(km,m,ch){
+  if(ch==="giant"){const len=Math.min(24,km*.2);return[{n:"The Col",len:+len.toFixed(1),g:+((m*.85)/(len*10)).toFixed(1),top:1400+m*.2}];}
+  if(ch==="rolling"){return[1,2,3,4,5].map(i=>({n:"Côte "+i,len:+(km*.03).toFixed(1),g:+((m*.16)/(km*.03*10)).toFixed(1),top:300+i*40}));}
+  const sh=[.34,.28,.38],ls=[.11,.09,.13];
+  return sh.map((s,i)=>({n:["First col","Second col","Final col"][i],len:+(km*ls[i]).toFixed(1),g:+((m*.92*s)/(km*ls[i]*10)).toFixed(1),top:900+i*450}));}
+function racePanelHTML(ev,dark){
+  const cl=ev.cols.map(c=>c.n.replace("Col du ","").replace("Col de la ","").replace(" — Bédoin","")).slice(0,4).join(" · ");
+  return `<div class="band"${dark?' style="background:var(--ink)"':''}>
+      <div><div class="rn">${ev.short}</div><div class="ra">${ev.loc} · ${Math.round(Math.max(...ev.cols.map(c=>c.top)))} m · ${ev.pr}-RACE</div></div>
+      <button class="btn btn-ink reconbtn" data-ev="${ev.id}" style="background:var(--jaune);color:var(--ink);padding:12px 16px;font-size:9.5px">RECON →</button>
+    </div>
+    <div class="rb">
+      <div class="jrow"><span class="j">J-${J(ev)}<small> DAYS</small></span>
+      <span class="ev">${evDate(ev)}<br/>${ev.km} km · ${ev.m.toLocaleString()} m<br/>${cl}</span></div>
+    </div>`;
+}
+function renderSeasonHead(){
+  const a=nextA();
+  document.getElementById("kicker").textContent="THE ROAD TO "+a.short;
+  document.getElementById("herolede").innerHTML=`<b>3,240 TSS</b> stands between you and the start line in ${a.loc.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())}. Every ride from here is altitude banked, every number in this room is live.`;
+  document.getElementById("t-race").textContent=a.short;
+  document.getElementById("t-j").dataset.final=J(a);document.getElementById("t-j").textContent=J(a);
+  document.getElementById("t-jd").innerHTML=`<b>${evDate(a)}</b> · ${a.km} km · ${fmtInt(a.m)} m`;
+  document.getElementById("nextrace").innerHTML=racePanelHTML(a,false);
+  const others=fut().filter(e=>e.id!==a.id);
+  document.getElementById("horizon").innerHTML=others.length?
+    `<div class="seasonlow" style="margin-top:0">${others.map(e=>`<div class="panel hov racepanel">${racePanelHTML(e,true)}</div>`).join("")}</div>`:
+    `<div class="panel" style="padding:22px 26px;color:var(--mist);font-size:13px">Nothing else planned. Add an event from your rider profile.</div>`;
+  document.querySelectorAll(".reconbtn").forEach(b=>{b.onclick=ev=>{ev.stopPropagation();openRecon(b.dataset.ev);};});
+  drawMassif();
+}
+function renderObjectives(){
+  const prc={A:"background:var(--jaune);color:var(--ink)",B:"background:var(--ink);color:#fff",C:"background:var(--bg);color:var(--ink2);border:1px solid var(--line)"};
+  document.getElementById("objlist").innerHTML=fut().map(e=>`
+    <div class="objrow"><div class="pr" style="${prc[e.pr]}">${e.pr}</div>
+    <div class="om"><div class="on2">${e.name}</div><div class="od">${evDate(e).toUpperCase()} · ${e.km} KM · ${fmtInt(e.m)} M</div></div>
+    <button class="orecon" data-ev="${e.id}">RECON</button><div class="ox">J-${J(e)}</div></div>`).join("");
+  document.querySelectorAll(".orecon").forEach(b=>b.onclick=()=>{closeDrawer();openRecon(b.dataset.ev);});
+}
+document.getElementById("ev-add").addEventListener("click",()=>{
+  const name=document.getElementById("ev-name").value.trim()||"New Event";
+  const km=+document.getElementById("ev-km").value||120,m=+document.getElementById("ev-m").value||2500;
+  EVENTS.push({id:"ev"+Date.now(),name,short:name.toUpperCase().split(" ").slice(0,2).join(" "),loc:"YOUR ROADS",
+    date:document.getElementById("ev-date").value||"2026-08-16",km,m,pr:document.getElementById("ev-pr").value,
+    cols:genCols(km,m,document.getElementById("ev-char").value)});
+  updateAll();pop(document.getElementById("objlist"));
+});
+
+/* ═══ MASSIF ═══ */
+let TSSWK=[320,410,380,460,300,520,480,560,420,540,580,610,340,650,700,380],CURWK=11;
+let mgroups=null;
+function drawMassif(){
+  const W=1600,H=560,pb=64,pt=330;
+  const mx=Math.max(...TSSWK)*1.15;
+  const x=i=>60+i/(TSSWK.length-1)*(W-120);
+  const y=v=>H-pb-(v/mx)*(H-pt-pb);
+  const back=TSSWK.map((v,i)=>`${x(i)},${(y(v*0.8)-46)}`).join(" ");
+  const line="M"+TSSWK.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("L");
+  const past="M"+TSSWK.slice(0,CURWK+1).map((v,i)=>`${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join("L");
+  const area=past+`L${x(CURWK)},${H-pb}L${x(0)},${H-pb}Z`;
+  let flags="";
+  (window.SEASON_FLAGS||[]).filter(e=>e.i>=0&&e.i<16).forEach(e=>{
+    const fx=x(e.i),fy=y(TSSWK[e.i]),c=e.A?"#FFD100":"#141E28";
+    flags+=`<line x1="${fx}" y1="${fy}" x2="${fx}" y2="${fy-30}" stroke="#141E28" stroke-width="2"/>
+      <path d="M${fx} ${fy-30} h20 l-5 5.5 5 5.5 h-20 Z" fill="${c}" stroke="#141E28" stroke-width="1.4"/>
+      <text x="${fx}" y="${fy-39}" text-anchor="middle" font-family="Space Grotesk" font-size="11" font-weight="700" letter-spacing="2" fill="#44515D">${e.n}</text>`;
+  });
+  const months=["MAR","APR","MAY","JUN","JUL"].map((m,i)=>`<text x="${60+i*(W-120)/4}" y="${H-16}" font-family="Space Grotesk" font-size="11" font-weight="700" letter-spacing="2" fill="#93A0AB">${m}</text>`).join("");
+  document.getElementById("massif").innerHTML=`
+    <defs><linearGradient id="mg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#26496E" stop-opacity=".22"/><stop offset="1" stop-color="#26496E" stop-opacity=".02"/></linearGradient></defs>
+    <g id="m-back"><polyline points="${back}" fill="none" stroke="#26496E" stroke-opacity=".14" stroke-width="2"/></g>
+    <g id="m-main">
+      <path d="${area}" fill="url(#mg)"/>
+      <path d="${line}" fill="none" stroke="#C7D2D9" stroke-width="2.5" stroke-dasharray="6 8" stroke-linecap="round"/>
+      <path id="mpast" d="${past}" fill="none" stroke="#141E28" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+      ${flags}
+      <circle cx="${x(CURWK)}" cy="${y(TSSWK[CURWK])}" r="22" fill="none" stroke="#FFD100" stroke-width="2" opacity=".5"><animate attributeName="r" values="10;26" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values=".6;0" dur="2s" repeatCount="indefinite"/></circle>
+      <circle cx="${x(CURWK)}" cy="${y(TSSWK[CURWK])}" r="8" fill="#FFD100" stroke="#141E28" stroke-width="3"/>
+      <text x="${x(CURWK)}" y="${y(TSSWK[CURWK])+34}" text-anchor="middle" font-family="Space Grotesk" font-size="12" font-weight="700" letter-spacing="2.5" fill="#141E28">YOU</text>
+    </g>${months}`;
+  const p=document.getElementById("mpast"),len=p.getTotalLength();
+  p.style.strokeDasharray=len;p.style.strokeDashoffset=len;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{p.style.transition="stroke-dashoffset 1.4s cubic-bezier(.22,.7,.2,1)";p.style.strokeDashoffset="0";}));
+  mgroups={back:document.getElementById("m-back"),main:document.getElementById("m-main")};
+}
+document.querySelector(".sky").addEventListener("mousemove",e=>{
+  if(!mgroups)return;
+  const r=e.currentTarget.getBoundingClientRect(),dx=(e.clientX-r.left)/r.width-.5;
+  mgroups.back.style.transform=`translateX(${dx*-18}px)`;
+  mgroups.main.style.transform=`translateX(${dx*-7}px)`;
+});
+document.getElementById("hero-plan").addEventListener("click",()=>showScene("plan"));
+document.getElementById("hero-recon").addEventListener("click",()=>openRecon(nextA().id));
+
+/* ═══ PLAN ═══ */
+const WEEKS=Array.from({length:16},(_,i)=>({n:i+1}));
+const PLAN=[
+ {d:"MON",nm:"Transfer day",ds:"Full rest · legs up",type:"REST",tss:0,prof:"rest",wk:"Complete rest. Aim eight hours of sleep, protein at every meal."},
+ {d:"TUE",nm:"Threshold ×4",ds:"4 × 8 min @ 95%",type:"MTN",tss:98,prof:"thr",cats:["2","2"],wk:"<b>20 min Z2 warm-up</b>, then 4 × 8 min at 266 W, 4 min float between. Cadence 85+. Spin home."},
+ {d:"WED",nm:"Endurance rollers",ds:"Z2 steady · café spin",type:"FLAT",tss:75,prof:"end",wk:"Two hours steady at 180–200 W. No surges, coffee at halfway."},
+ {d:"THU",nm:"VO₂ sharpener",ds:"5 × 3 min @ 118%",type:"HILL",tss:86,prof:"vo2",cats:["3"],wk:"5 × 3 min at 330 W, 3 min easy between. Full gas on the last one if HRV is green."},
+ {d:"FRI",nm:"Transfer day",ds:"Rest or 30 min spin",type:"REST",tss:0,prof:"rest",wk:"Optional 30-minute leg-spinner under 150 W. Nothing more."},
+ {d:"SAT",nm:"Race simulation",ds:"3 long climbs at pace",type:"HC",tss:165,prof:"hc",cats:["HC"],wk:"<b>The big one.</b> 3 × 25 min climbs at 250–260 W, descend easy between. Fuel 90 g carbs an hour."},
+ {d:"SUN",nm:"Sigma group ride",ds:"Rolling · sign sprint",type:"FLAT",tss:96,prof:"grp",wk:"Sit in until the last 10 km. One sprint, full commitment."}];
+const PROFILES={rest:"M2 26 h70",end:"M2 28 Q14 22 24 26 T46 25 T70 27",
+ thr:"M2 30 L14 30 L22 12 L28 30 L40 30 L48 12 L54 30 L70 30",
+ vo2:"M2 30 L10 30 L14 16 L18 30 L24 30 L28 14 L32 30 L38 30 L42 15 L46 30 L70 30",
+ hc:"M2 30 L20 30 C34 30 40 6 52 6 L56 6 L62 22 L70 26",
+ grp:"M2 28 Q12 20 22 26 T42 24 T60 27 L70 22"};
+const TYPEC={REST:["#EEF1F3","#93A0AB"],FLAT:["#E2F1EA","#189B69"],HILL:["#FBEEDD","#C4761B"],MTN:["#FBE5E3","#E23A2E"],HC:["#FBE5E3","#E23A2E"]};
+let curWk=11;
+function renderWeeks(){
+  const flags=(window.SEASON_FLAGS||[]);
+  document.getElementById("wksel").innerHTML=WEEKS.map((w,i)=>{
+    const f=flags.find(e=>e.i===i);
+    const t=i===CURWK?"NOW":f?f.n:i<CURWK?"DONE":"BUILD";
+    return `<div class="wkt ${i===curWk?"on":""} ${f?"ev":""}" data-i="${i}"><div class="n">S${w.n}</div><div class="t">${t}</div></div>`;}).join("");
+  document.querySelectorAll(".wkt").forEach(el=>el.onclick=()=>{curWk=+el.dataset.i;renderWeeks();renderDays();});
+}
+function renderDays(){
+  const past=curWk<CURWK,now=curWk===CURWK;
+  document.getElementById("days").innerHTML=PLAN.map((s,i)=>{
+    const done=past||(now&&i<3);
+    const [bg,fg]=TYPEC[s.type];
+    const cats=(s.cats||[]).map(c=>`<span class="chip" style="background:var(--ink);color:#fff">CAT ${c}</span>`).join("");
+    return `<div class="stg" data-i="${i}">
+      <div class="day">${s.d}</div>
+      <svg class="prof" viewBox="0 0 72 34" preserveAspectRatio="none"><path d="${PROFILES[s.prof]} L70 34 L2 34 Z" fill="rgba(20,30,40,.06)"/><path d="${PROFILES[s.prof]}" fill="none" stroke="#141E28" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <div class="nm">${s.nm}</div><div class="ds">${s.ds}</div>
+      <div class="chips"><span class="chip" style="background:${bg};color:${fg}">${s.type}</span>${cats}</div>
+      <div class="foot"><span class="tss">${s.tss||"—"}<small> TSS</small></span>${s.tss===0?"<span></span>":done?'<div class="tick">✓</div>':'<div class="miss"></div>'}</div>
+      <div class="stx"><b>${s.d} —</b> ${s.wk}</div>
+    </div>`;}).join("");
+  document.querySelectorAll(".stg").forEach(el=>el.onclick=()=>el.classList.toggle("pin"));
+}
+
+/* ═══ ZONES + SPARKS + PMC ═══ */
+const ZMETA=[["Z1","Recovery","#74879B",0,.55],["Z2","Endurance","#26496E",.55,.75],["Z3","Tempo","#189B69",.75,.90],["Z4","Threshold","#D99000",.90,1.05],["Z5","VO₂ Max","#E8611F",1.05,1.20],["Z6","Anaerobic","#D0342C",1.20,1.50],["Z7","Neuro","#7A3FB0",1.50,99]];
+function zonesFromFtp(f){return ZMETA.map(([abbr,name,h,lo,hi])=>({abbr,name,h,min:Math.round(f*lo),max:hi>10?9999:Math.round(f*hi)}));}
+let ZONES=zonesFromFtp(S.ftp);
+const zoneOf=p=>ZONES.find(z=>p>=z.min&&p<z.max)||ZONES[0];
+document.querySelectorAll("[data-spark]").forEach(svg=>{
+  const vals=svg.dataset.spark.split(",").map(Number),c=svg.dataset.c,W=100,H=26;
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);svg.setAttribute("preserveAspectRatio","none");
+  const mn=Math.min(...vals),mx=Math.max(...vals),r=mx-mn||1;
+  const P=vals.map((v,i)=>[(i/(vals.length-1)*W),(H-3-((v-mn)/r)*(H-6))]);
+  const line="M"+P.map(p=>p.map(n=>n.toFixed(1)).join(",")).join("L");
+  svg.innerHTML=`<path d="${line} L${W},${H} L0,${H} Z" fill="${c}" opacity=".07"/><path d="${line}" fill="none" stroke="${c}" stroke-width="1.6" stroke-linecap="round"/><circle cx="${P[P.length-1][0]}" cy="${P[P.length-1][1]}" r="2.6" fill="${c}"/>`;
+});
+(function(){
+  const F=[];for(let i=0;i<90;i++){const t=i/89;
+    const ctl=26+Math.sin(t*Math.PI*1.3)*22+t*26;
+    const atl=Math.max(ctl-30,ctl+Math.sin(t*Math.PI*4.2)*24);
+    F.push({ctl,atl,tsb:ctl-atl});}
+  window.PMCF=F;
+  const W=1100,H=340,pr=130,pv=22;
+  const all=[...F.map(d=>d.ctl),...F.map(d=>d.atl),...F.map(d=>d.tsb)];
+  const mn=Math.min(...all),mx=Math.max(...all),r=mx-mn;
+  const px=i=>i/(F.length-1)*(W-pr),py=v=>H-pv-((v-mn)/r)*(H-pv*2);
+  const L=k=>"M"+F.map((d,i)=>`${px(i).toFixed(1)},${py(d[k]).toFixed(1)}`).join("L");
+  const lab=(k,txt,c)=>`<text x="${W-pr+14}" y="${py(F[89][k])+4}" font-family="Space Grotesk" font-size="12" font-weight="700" letter-spacing="1" fill="${c}">${txt}</text>`;
+  document.getElementById("pmc").innerHTML=`
+    <line x1="0" y1="${py(0)}" x2="${W-pr}" y2="${py(0)}" stroke="#E3E8EB" stroke-width="1.4"/>
+    <path d="${L("ctl")} L${(W-pr).toFixed(1)},${H} L0,${H} Z" fill="rgba(38,73,110,.05)"/>
+    <path d="${L("ctl")}" fill="none" stroke="#26496E" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="${L("atl")}" fill="none" stroke="#B0433B" stroke-width="1.6" stroke-dasharray="6 5" stroke-linecap="round" opacity=".85"/>
+    <path d="${L("tsb")}" fill="none" stroke="#B08900" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="${px(89)}" cy="${py(F[89].ctl)}" r="4" fill="#26496E"/>
+    ${lab("ctl","FITNESS 58","#26496E")}${lab("atl","FATIGUE 76","#B0433B")}${lab("tsb","FORM −18","#B08900")}`;
+})();
+(function(){
+  const pct=[14,38,21,15,8,3,1];
+  document.getElementById("zstack").innerHTML=ZMETA.map((z,i)=>`<i style="width:${pct[i]}%;background:${z[2]}"></i>`).join("");
+  document.getElementById("zrows28").innerHTML=ZMETA.map((z,i)=>`
+    <div class="zrow"><div class="zd" style="background:${z[2]}"></div><span class="zn">${z[0]}</span><span class="znm">${z[1]}</span>
+    <span class="zp">${pct[i]}%</span><span class="zt">${(pct[i]*0.31).toFixed(1)} h</span></div>`).join("");
+})();
+document.querySelectorAll(".modetabs button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".modetabs button").forEach(x=>x.classList.remove("on"));b.classList.add("on");
+  const cond=b.dataset.v==="cond";
+  document.getElementById("v-cond").style.display=cond?"block":"none";
+  document.getElementById("v-rides").style.display=cond?"none":"block";
+  if(!cond){requestAnimationFrame(drawRMap);if(window.GL)setTimeout(()=>GL.resize(),60);}
+}));
+
+/* ═══ RIDES ═══ */
+let RIDES=[
+ {nm:"Nice — Côte d'Azur Loop",dt:"SUN 2 MAR",meta:"87.4 KM · 1,240 M · 3H 12M",np:241,iff:.86,tss:142,hr:152,vi:1.11,
+  p:{cs:.30,ce:.54,cp:270,base:198,spr:true},
+  segs:[["COASTAL — KM 0–28","~200 W","Headwind restraint. Correct pacing.","#189B69"],
+        ["ÈZE CLIMB — 22 MIN","268 W","95.7% FTP. 2026 best. New FTP?","#D99000"],
+        ["DESCENT — KM 58–68","65 W","Full recovery. Smart.","#74879B"],
+        ["SPRINT — KM 78","412 W","147% FTP · 45 s. Fatigued but solid.","#D0342C"]],
+  ai:`**Pacing.** Variability Index 1.11: controlled for 1,240 m of climbing. The coastal restraint (195–212 W, km 0–28) was the decisive tactical call.\n\n**Èze Climb.** 22 minutes at 268 W — 95.7% of FTP, your strongest 20-minute effort of 2026. Segment decoupling 1.8%: elite aerobic coupling.\n\n**Sprint, km 78.** 412 W for 45 seconds, down 8% on February. Expected after a threshold climb; not a fitness signal.\n\n**Recommendation.** Three days Z1/Z2 only, then Thursday's fresh test decides whether 268 W is the new FTP.`},
+ {nm:"Col de la Madone",dt:"SAT 1 MAR",meta:"42.1 KM · 1,620 M · 2H 05M",np:268,iff:.96,tss:118,hr:163,vi:1.07,
+  p:{cs:.22,ce:.68,cp:262,base:180,spr:false},
+  segs:[["APPROACH — KM 0–9","~185 W","Easy spin to the base.","#189B69"],
+        ["MADONE — 47 MIN","258 W","92% FTP full climb. PB by 1:12.","#D99000"],
+        ["UPPER SLOPES","271 W","Held form above 700 m.","#E8611F"],
+        ["DESCENT HOME","58 W","Cold hands, clean lines.","#74879B"]],
+  ai:`**The headline.** The Madone in 47 flat — a personal best by 72 seconds, at 258 W average.\n\n**Pacing.** Even 20-minute splits (259 / 257 W): textbook. Heart rate plateaued at 165 by minute 12 and held to the summit.\n\n**Recommendation.** The climbing form is confirmed. Bank it, recover properly, and bring exactly this pacing discipline to the next A-day.`},
+ {nm:"Sigma Sports Chaingang",dt:"THU 27 FEB",meta:"65.3 KM · 480 M · 2H 28M",np:271,iff:.97,tss:124,hr:158,vi:1.14,
+  p:{cs:.15,ce:.25,cp:240,base:230,spr:true},
+  segs:[["ROLL OUT","~170 W","Neutralised to the lanes.","#74879B"],
+        ["THROUGH-AND-OFF","265 W","40 min of Z4 turns.","#D99000"],
+        ["THE BERGS","310 W","Three 2-min surges over threshold.","#E8611F"],
+        ["TOWN SIGN SPRINT","648 W","Second wheel. Next week.","#D0342C"]],
+  ai:`**Race craft night.** VI 1.14 tells the story: surging, covering, sprinting. NP 271 W for two and a half hours is a strong stimulus.\n\n**The sprint.** 648 W after 2,300 kJ of work — your fatigued-sprint number is rising.\n\n**Recommendation.** One chaingang a week is ideal sharpening for a race's nervous opening hour. Keep it.`},
+ {nm:"Threshold Intervals × 5",dt:"TUE 25 FEB",meta:"48.7 KM · 310 M · 1H 45M",np:279,iff:1.00,tss:98,hr:166,vi:1.14,
+  p:{cs:.2,ce:.85,cp:284,base:150,spr:false},
+  segs:[["WARM UP","~140 W","20 min progressive.","#74879B"],
+        ["EFFORTS 1–3","276 W","8 min each, 4 min float.","#D99000"],
+        ["EFFORTS 4–5","281 W","Finishing stronger than starting.","#E8611F"],
+        ["SPIN HOME","~120 W","Job done.","#74879B"]],
+  ai:`**Execution.** Five 8-minute efforts, negative-split from 274 to 283 W. IF 1.00 for the session: right on the line.\n\n**The signal.** Finishing efforts above target with stable heart rate is the classic sign FTP has moved.\n\n**Recommendation.** This session earns the Thursday test. Fresh legs, 20 minutes, everything on the table.`}];
+let curRide=0,cursor=null,activeZone=null,ROUTE=[],STREAM=[],aiTimer=null;
+const WAYPOINTS=[[43.6958,7.2719],[43.6995,7.2820],[43.7040,7.2960],[43.7100,7.3100],[43.7160,7.3220],[43.7225,7.3355],[43.7285,7.3490],[43.7320,7.3640],[43.7295,7.3790],[43.7240,7.3920],[43.7175,7.4010],[43.7195,7.3900],[43.7260,7.3770],[43.7330,7.3620],[43.7365,7.3470],[43.7340,7.3315],[43.7278,7.3160],[43.7200,7.3005],[43.7120,7.2860],[43.7040,7.2740],[43.6958,7.2719]];
+function buildRide(){
+  const P=RIDES[curRide].p;ROUTE=[];STREAM=[];
+  for(let wi=0;wi<WAYPOINTS.length-1;wi++){
+    const [la,lo]=WAYPOINTS[wi],[la2,lo2]=WAYPOINTS[wi+1];
+    for(let s=0;s<26;s++){
+      const f=s/26,t=(wi+f)/(WAYPOINTS.length-1);
+      const inCl=t>P.cs&&t<P.ce;
+      const elev=inCl?40+Math.sin((t-P.cs)/(P.ce-P.cs)*Math.PI)*300+Math.sin(t*40)*14:35+Math.sin(t*Math.PI*5)*18;
+      ROUTE.push({lat:la+(la2-la)*f,lng:lo+(lo2-lo)*f,elev:Math.max(5,elev)});}}
+  let pw=P.base,hr=134,spd=27;
+  for(let i=0;i<ROUTE.length;i++){
+    const t=i/ROUTE.length;
+    const climbing=t>P.cs&&t<P.ce,desc=t>P.ce&&t<P.ce+.1,spr=P.spr&&t>.87&&t<.93;
+    const tgt=climbing?P.cp:desc?60:spr?400:P.base;
+    pw=Math.max(0,Math.min(500,pw*.90+tgt*.10+(Math.random()-.5)*24));
+    hr=Math.max(100,Math.min(182,hr*.97+(95+pw*.235)*.03+(Math.random()-.5)*1.3));
+    spd=climbing?Math.max(8,spd*.92+9*.08):desc?Math.min(68,spd*.87+58*.13):Math.max(18,Math.min(49,spd+(Math.random()-.49)*1.2));
+    STREAM.push({pw:Math.round(pw),hr:Math.round(hr),cad:Math.round(88+(Math.random()-.5)*14),spd:+spd.toFixed(1),elev:Math.round(ROUTE[i].elev)});}
+}
+function renderRideSel(){
+  document.getElementById("ridesel").innerHTML=RIDES.map((r,i)=>`<div class="rsel ${i===curRide?"on":""}" data-i="${i}"><div class="rn">${r.nm.split(" — ")[0].split(" ×")[0]}</div><div class="rd">${r.dt} · ${r.meta.split(" · ")[0]}</div></div>`).join("");
+  document.querySelectorAll(".rsel").forEach(el=>el.onclick=()=>{
+    curRide=+el.dataset.i;cursor=null;activeZone=null;clearInterval(aiTimer);
+    document.getElementById("raitext").style.display="none";
+    const b=document.getElementById("raibtn");b.textContent="ANALYSE THIS RIDE";b.disabled=false;
+    loadRide();renderRideSel();});
+}
+function renderHUD(){
+  const r=RIDES[curRide],el=document.getElementById("rhud");
+  if(cursor===null){
+    el.innerHTML=[["NORM PWR",r.np+"<span class='u'>W</span>","#E8611F"],["INTENSITY",r.iff.toFixed(2),"#141E28"],
+      ["TSS",r.tss,"#26496E"],["AVG HR",r.hr+"<span class='u'>bpm</span>","#D0342C"]]
+      .map(([l,v,c])=>`<div class="hudchip"><div class="l">${l}</div><div class="v" style="color:${c}">${v}</div></div>`).join("");
+  }else{
+    const d=STREAM[Math.floor(cursor*(STREAM.length-1))],z=zoneOf(d.pw);
+    el.innerHTML=`<div class="hudchip" style="border-color:${z.h}"><div class="l" style="color:${z.h}">${z.abbr} · ${z.name.toUpperCase()}</div><div class="v" style="color:${z.h}">${d.pw}<span class="u">W</span></div></div>
+    <div class="hudchip"><div class="l">HEART RATE</div><div class="v" style="color:#D0342C">${d.hr}<span class="u">bpm</span></div></div>
+    <div class="hudchip"><div class="l">CADENCE · SPEED</div><div class="v">${d.cad}<span class="u">rpm</span> · ${d.spd}<span class="u">km/h</span></div></div>
+    <div class="hudchip"><div class="l">ELEVATION</div><div class="v">${d.elev}<span class="u">m</span></div></div>`;
+  }
+}
+const rmap=document.getElementById("rmap");
+function drawRMap(){
+  if(!STREAM.length)return;
+  const dpr=window.devicePixelRatio||1,W=rmap.offsetWidth,H=rmap.offsetHeight;
+  if(!W||!H)return;
+  if(rmap.width!==Math.round(W*dpr)){rmap.width=Math.round(W*dpr);rmap.height=Math.round(H*dpr);}
+  const ctx=rmap.getContext("2d");ctx.setTransform(dpr,0,0,dpr,0,0);
+  const lats=ROUTE.map(p=>p.lat),lngs=ROUTE.map(p=>p.lng);
+  const minLa=Math.min(...lats),maxLa=Math.max(...lats),minLo=Math.min(...lngs),maxLo=Math.max(...lngs);
+  const cosLat=Math.cos((minLa+maxLa)/2*Math.PI/180);
+  const pad={t:30,r:30,b:30,l:30},dW=W-pad.l-pad.r,dH=H-pad.t-pad.b;
+  const sc=Math.min(dH/(maxLa-minLa),dW/((maxLo-minLo)*cosLat));
+  const rW=(maxLo-minLo)*cosLat*sc,rH=(maxLa-minLa)*sc;
+  const ox=pad.l+(dW-rW)/2,oy=pad.t+(dH-rH)/2;
+  const proj=(la,lo)=>({x:ox+(lo-minLo)*cosLat*sc,y:oy+(maxLa-la)*sc});
+  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,"#EFF3F2");g.addColorStop(1,"#E8EEEC");
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle="rgba(20,30,40,.035)";
+  for(let gx=0;gx<W;gx+=30)for(let gy=0;gy<H;gy+=30){ctx.beginPath();ctx.arc(gx,gy,.7,0,Math.PI*2);ctx.fill();}
+  const pts=ROUTE.map(p=>proj(p.lat,p.lng));
+  ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));
+  ctx.strokeStyle="rgba(20,30,40,.09)";ctx.lineWidth=9;ctx.lineJoin="round";ctx.lineCap="round";ctx.stroke();
+  for(let i=0;i<pts.length-1;i++){
+    const d=STREAM[Math.min(i,STREAM.length-1)];
+    const iso=activeZone!==null;
+    const inZ=!iso||(d.pw>=ZONES[activeZone].min&&d.pw<ZONES[activeZone].max);
+    ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[i+1].x,pts[i+1].y);
+    ctx.strokeStyle=inZ?zoneOf(d.pw).h:"rgba(20,30,40,.06)";
+    ctx.lineWidth=4.5;ctx.lineJoin="round";ctx.lineCap="round";ctx.stroke();}
+  const sp=pts[0],ep=pts[pts.length-1];
+  [[sp,"#189B69"],[ep,"#E8611F"]].forEach(([p,c])=>{
+    ctx.beginPath();ctx.arc(p.x,p.y,6.5,0,Math.PI*2);ctx.fillStyle=c;ctx.fill();
+    ctx.strokeStyle="#fff";ctx.lineWidth=2.5;ctx.stroke();});
+  if(cursor!==null){
+    const p=pts[Math.floor(cursor*(pts.length-1))];
+    const d=STREAM[Math.floor(cursor*(STREAM.length-1))];
+    ctx.beginPath();ctx.arc(p.x,p.y,14,0,Math.PI*2);
+    ctx.strokeStyle=zoneOf(d.pw).h+"55";ctx.lineWidth=2;ctx.stroke();
+    ctx.beginPath();ctx.arc(p.x,p.y,5.5,0,Math.PI*2);
+    ctx.fillStyle="#141E28";ctx.fill();ctx.strokeStyle="#fff";ctx.lineWidth=2;ctx.stroke();}
+}
+document.getElementById("rmaplg").innerHTML=ZMETA.map(z=>`<span><i style="background:${z[2]}"></i>${z[0]}</span>`).join("");
+const rwave=document.getElementById("rwave"),relev=document.getElementById("relev");
+function drawWave(){
+  const W=1200,H=170,pt=12,pb=16;
+  const data=STREAM.filter((_,i)=>i%2===0),vals=data.map(d=>d.pw);
+  const mx=Math.max(...vals)*1.05;
+  const px=i=>i/(vals.length-1)*W,py=v=>H-pb-(v/mx)*(H-pt-pb);
+  const ftpY=py(S.ftp);
+  let segs="";
+  for(let i=0;i<vals.length-1;i++){
+    const d=data[i],iso=activeZone!==null;
+    const inZ=!iso||(d.pw>=ZONES[activeZone].min&&d.pw<ZONES[activeZone].max);
+    segs+=`<line x1="${px(i).toFixed(1)}" y1="${py(vals[i]).toFixed(1)}" x2="${px(i+1).toFixed(1)}" y2="${py(vals[i+1]).toFixed(1)}" stroke="${inZ?zoneOf(d.pw).h:"rgba(20,30,40,.07)"}" stroke-width="2" stroke-linecap="round"/>`;}
+  let fill="M0,"+(H-pb);vals.forEach((v,i)=>{fill+=`L${px(i).toFixed(1)},${py(v).toFixed(1)}`;});fill+=`L${W},${H-pb}Z`;
+  let cur="";
+  if(cursor!==null){const cx=cursor*W,ci=Math.floor(cursor*(vals.length-1));
+    cur=`<line x1="${cx}" y1="${pt}" x2="${cx}" y2="${H-pb}" stroke="rgba(20,30,40,.5)" stroke-width="1.3"/><circle cx="${cx}" cy="${py(vals[ci])}" r="4.5" fill="#141E28" stroke="#fff" stroke-width="1.8"/>`;}
+  rwave.innerHTML=`<path d="${fill}" fill="rgba(232,97,31,.05)"/>
+    ${ftpY>pt?`<line x1="0" y1="${ftpY}" x2="${W}" y2="${ftpY}" stroke="rgba(217,144,0,.5)" stroke-width="1.1" stroke-dasharray="5 5"/><text x="${W-6}" y="${ftpY-5}" text-anchor="end" font-size="10" fill="#B07800" font-family="Space Grotesk" font-weight="700">FTP ${S.ftp}</text>`:""}
+    ${segs}${cur}`;
+}
+function drawElev(){
+  const W=1200,H=52;
+  const data=STREAM.filter((_,i)=>i%3===0),vals=data.map(d=>d.elev);
+  const mx=Math.max(...vals)*1.1;
+  const px=i=>i/(vals.length-1)*W,py=v=>H-3-(v/mx)*(H-6);
+  let path="M0,"+H;vals.forEach((v,i)=>{path+=`L${px(i).toFixed(1)},${py(v).toFixed(1)}`;});path+=`L${W},${H}Z`;
+  let line="M";vals.forEach((v,i)=>{line+=(i?"L":"")+`${px(i).toFixed(1)},${py(v).toFixed(1)}`;});
+  const cur=cursor!==null?`<line x1="${cursor*W}" y1="0" x2="${cursor*W}" y2="${H}" stroke="rgba(20,30,40,.35)" stroke-width="1.2"/>`:"";
+  relev.innerHTML=`<path d="${path}" fill="rgba(38,73,110,.08)"/><path d="${line}" fill="none" stroke="rgba(38,73,110,.5)" stroke-width="1.4"/>${cur}`;
+}
+function renderZones(){
+  const counts=new Array(7).fill(0);
+  STREAM.forEach(d=>{const i=ZONES.findIndex(z=>d.pw>=z.min&&d.pw<z.max);if(i>=0)counts[i]++;});
+  const tot=counts.reduce((a,b)=>a+b,0)||1;
+  document.getElementById("rzones").innerHTML=`<h3 style="font-family:'Space Grotesk';font-size:9.5px;font-weight:700;letter-spacing:.22em;color:var(--mist);margin-bottom:12px">TIME IN ZONE — CLICK TO ISOLATE</h3>`+
+   ZONES.map((z,i)=>{
+    const pct=Math.round(counts[i]/tot*100),sec=counts[i]*2;
+    return `<div class="zrow ${activeZone===i?"act":""}" data-z="${i}">
+      <div class="zd" style="background:${z.h};opacity:${activeZone===null||activeZone===i?1:.25}"></div>
+      <span class="zn" style="color:${activeZone===i?z.h:"var(--ink2)"}">${z.abbr}</span>
+      <span class="znm">${z.name} · ${z.min}–${z.max>5000?"∞":z.max} W</span>
+      <span class="zp">${pct}%</span><span class="zt">${Math.floor(sec/60)}m${String(sec%60).padStart(2,"0")}</span></div>`;}).join("");
+  document.querySelectorAll("#rzones .zrow").forEach(r=>r.onclick=()=>{
+    const zi=+r.dataset.z;activeZone=activeZone===zi?null:zi;
+    renderZones();drawWave();drawRMap();});
+}
+function renderSegs(){
+  document.getElementById("rsegs").innerHTML=RIDES[curRide].segs.map(([l,v,d,c])=>`
+    <div class="segrow"><div class="rule" style="background:${c}"></div>
+    <div class="sm"><div class="sl">${l}</div><div class="sd">${d}</div></div>
+    <div class="sv" style="color:${c}">${v}</div></div>`).join("");
+}
+function attachScrub(el){
+  const mv=x=>{const r=el.getBoundingClientRect();cursor=Math.max(0,Math.min(1,(x-r.left)/r.width));
+    renderHUD();drawWave();drawElev();drawRMap();};
+  el.addEventListener("mousemove",e=>mv(e.clientX));
+  el.addEventListener("mouseleave",()=>{cursor=null;renderHUD();drawWave();drawElev();drawRMap();});
+  el.addEventListener("touchstart",e=>{e.preventDefault();mv(e.touches[0].clientX);},{passive:false});
+  el.addEventListener("touchmove",e=>{e.preventDefault();mv(e.touches[0].clientX);},{passive:false});
+  el.addEventListener("touchend",()=>{cursor=null;renderHUD();drawWave();drawElev();drawRMap();});
+}
+attachScrub(rwave);attachScrub(relev);attachScrub(rmap);
+document.getElementById("raibtn").addEventListener("click",()=>{
+  const btn=document.getElementById("raibtn"),txt=document.getElementById("raitext");
+  clearInterval(aiTimer);txt.style.display="block";txt.innerHTML="";
+  btn.disabled=true;btn.textContent="ANALYSING…";
+  const T=RIDES[curRide].ai;let i=0;
+  aiTimer=setInterval(()=>{
+    if(i>=T.length){clearInterval(aiTimer);btn.disabled=false;btn.textContent="RE-ANALYSE";return;}
+    i+=4;txt.innerHTML=T.slice(0,i).split("**").map((p,j)=>j%2?`<strong>${p}</strong>`:p).join("");},12);
+});
+function loadRide(){
+  buildRide();
+  document.getElementById("rh-name").textContent=RIDES[curRide].nm;
+  document.getElementById("rh-meta").textContent=RIDES[curRide].dt+" · "+RIDES[curRide].meta;
+  renderHUD();renderZones();renderSegs();drawWave();drawElev();requestAnimationFrame(drawRMap);
+}
+window.addEventListener("resize",()=>drawRMap());
+
+/* ═══ JERSEYS ═══ */
+function renderJerseys(){
+  document.getElementById("jwrap").innerHTML=`
+  <div class="panel hov jersey cascade" style="--i:1">
+    <div class="jh hy"><span class="jt">MAILLOT JAUNE</span><span class="js">THE BIG ONE · FTP</span></div>
+    <div class="jb"><div class="big"><span id="jy-cur">280</span><small> of <span id="jy-tgt">300</span> W</small></div>
+      <div class="note">The GC battle: <b id="jy-gap">20 W</b> of climbing between you and the summit.</div>
+      <div class="bar"><i id="jy-bar" data-w="47" style="background:var(--jaune)"></i></div></div>
+    <div class="jdeep"><div class="jl">FTP THIS SEASON</div><svg id="js-y" viewBox="0 0 520 60" preserveAspectRatio="none" style="height:60px"></svg>
+      <div class="jl">BEST 20-MINUTE EFFORTS</div>
+      <div class="arow"><span>2 Mar · Èze climb</span><b>268 W</b></div>
+      <div class="arow"><span>25 Feb · Threshold ×5</span><b>265 W</b></div>
+      <div class="aproj" id="jy-proj"></div></div>
+  </div>
+  <div class="panel hov jersey cascade" style="--i:2">
+    <div class="jh hp"><svg class="dots" preserveAspectRatio="none"><defs><pattern id="pk" width="18" height="18" patternUnits="userSpaceOnUse"><circle cx="9" cy="9" r="3.6" fill="#E23A2E"/></pattern></defs><rect width="100%" height="100%" fill="url(#pk)" opacity=".16"/></svg>
+      <span class="jt" style="position:relative;color:var(--polka)">GRIMPEUR</span><span class="js" style="position:relative;color:var(--polka)">KING OF THE MOUNTAINS</span></div>
+    <div class="jb"><div class="big">38,420<small> of <span id="jp-tgt">60,000</span> m</small></div>
+      <div class="note"><b>4.3 Everests</b> banked. The Alps will do the rest.</div>
+      <div class="bar"><i id="jp-bar" data-w="64" style="background:var(--polka)"></i></div></div>
+    <div class="jdeep"><div class="jl">METRES BY MONTH</div><svg id="js-p" viewBox="0 0 520 66" style="height:66px"></svg>
+      <div class="arow"><span>Needed per week to hit target</span><b id="jp-need"></b></div>
+      <div class="arow"><span>Your average</span><b>3,842 m</b></div>
+      <div class="aproj">Ahead of schedule. The A-race alone adds <b>thousands of metres</b>: the jersey is yours to lose.</div></div>
+  </div>
+  <div class="panel hov jersey cascade" style="--i:3">
+    <div class="jh hg"><span class="jt">MAILLOT VERT</span><span class="js">POINTS · SPRINT</span></div>
+    <div class="jb"><div class="big">892<small> of <span id="jg-tgt">900</span> W</small></div>
+      <div class="note"><b id="jg-gap">8 watts</b> from the line. S13 opens with a rested sprint day.</div>
+      <div class="bar"><i id="jg-bar" data-w="99" style="background:var(--vert)"></i></div></div>
+    <div class="jdeep"><div class="jl">RECENT PEAK EFFORTS</div>
+      <div class="arow"><span>12 Apr · crit simulation, fresh</span><b>892 W</b></div>
+      <div class="arow"><span>27 Feb · chaingang, 2,300 kJ in</span><b>648 W</b></div>
+      <div class="arow"><span>15 Feb · town-sign sprint</span><b>611 W</b></div>
+      <div class="aproj">Your fresh number is knocking; your fatigued number is climbing faster. <b>Take it on the rested day.</b></div></div>
+  </div>
+  <div class="panel hov jersey cascade" style="--i:4">
+    <div class="jh hw"><span class="jt">CONSISTANCE</span><span class="js">THE UNBROKEN CHAIN</span></div>
+    <div class="jb"><div class="big">9<small> week chain · target <span id="jw-tgt">12</span></small></div>
+      <div class="note">Every week you train, the chain grows. Longest ever: <b>14</b>.</div>
+      <div class="bar"><i data-w="75" style="background:#C9A400"></i></div></div>
+    <div class="jdeep"><div class="jl">THE CHAIN</div><svg id="chain" viewBox="0 0 520 44" style="height:44px"></svg>
+      <div class="arow"><span>What counts</span><b>3+ rides or 250+ TSS</b></div>
+      <div class="aproj">S13 is a recovery week and <b>still counts</b> — three easy spins keep it alive. The only threat is the post-race lull. Plan S16 now.</div></div>
+  </div>`;
+}
+function drawJerseyY(){
+  const y=[266,268,270,271,273,274,276,S.ftp];
+  const W=520,H=60,mn=260,mx=Math.max(S.tgt.ftp+4,306);
+  const px=i=>i/(y.length-1)*(W-70),py=v=>H-6-((v-mn)/(mx-mn))*(H-12);
+  const l="M"+y.map((v,i)=>`${px(i).toFixed(1)},${py(v).toFixed(1)}`).join("L");
+  document.getElementById("js-y").innerHTML=`
+    <line x1="0" y1="${py(S.tgt.ftp)}" x2="${W-70}" y2="${py(S.tgt.ftp)}" stroke="#E8B800" stroke-width="1.3" stroke-dasharray="4 4"/>
+    <text x="${W-64}" y="${py(S.tgt.ftp)+4}" font-size="11" font-family="Space Grotesk" font-weight="700" fill="#8A6D00">${S.tgt.ftp} W</text>
+    <path d="${l}" fill="none" stroke="#141E28" stroke-width="2.2" stroke-linecap="round"/>
+    <circle cx="${px(7)}" cy="${py(S.ftp)}" r="4" fill="#FFD100" stroke="#141E28" stroke-width="1.8"/>`;
+}
+function drawJerseyP(){
+  const m=[6.4,9.8,11.2,8.9,2.1],labs=["MAR","APR","MAY","JUN","JUL"],bw=72;
+  document.getElementById("js-p").innerHTML=m.map((v,i)=>{
+    const h=v/12*44,x=i*(bw+28)+10;
+    return `<rect x="${x}" y="${54-h}" width="${bw}" height="${h}" rx="4" fill="${i===4?"#F5C6C2":"#E23A2E"}" opacity="${i===4?1:.88}"/>
+      <text x="${x+bw/2}" y="${50-h}" text-anchor="middle" font-size="11" font-family="Space Grotesk" font-weight="700" fill="#141E28">${v}k</text>
+      <text x="${x+bw/2}" y="64" text-anchor="middle" font-size="9" font-family="Space Grotesk" font-weight="700" fill="#93A0AB">${labs[i]}</text>`;}).join("");
+}
+function drawChain(total,done){
+  let out="";const gap=Math.min(40,486/total);
+  for(let i=0;i<total;i++){
+    const cx=26+i*gap,f=i<done;
+    out+=`<ellipse cx="${cx}" cy="22" rx="14" ry="10" fill="none" stroke="${f?"#C9A400":"#DDE3E7"}" stroke-width="${f?4:2.4}" transform="rotate(${i%2?58:-58} ${cx} 22)"/>`;}
+  document.getElementById("chain").innerHTML=out;
+}
+function renderLadder(){
+  const steps=[["1","Everest",8849],["2","Two",17698],["3","Three",26547],["4","Four",35396],["5","Five",44245],["6","Six",53094]];
+  document.getElementById("ladder").innerHTML=steps.map(([n,l,m])=>{
+    const hit=climbed>=m;
+    return `<div class="lstep ${hit?"hit":""}"><div class="st">${hit?"✓":n}</div><div class="ln">${l} Everest${n>1?"s":""}</div><div class="lm">${m.toLocaleString()} m</div></div>`;}).join("");
+}
+
+/* ═══ SYNC ═══ */
+(function(){
+  const ints=[["Strava","#FC5200","S","Connected · webhook live",true],
+    ["Hammerhead Karoo","#111827","K","Karoo 3 · rides + climbs",true],
+    ["Garmin","#0A6CA8","G","Band · HR, sleep, stress",true],
+    ["Ultrahuman","#3B2F63","U","Ring Air · HRV, temp",true],
+    ["Zwift","#F26722","Z","Indoor rides land automatically",true],
+    ["Apple Health","#141E28","","Body mass · wellness",true],
+    ["Claude AI Coach","#C77B3F","C","Readiness 06:30 · notes Mon 07:00",true],
+    ["TrainingPeaks","#8A94A0","TP","Export workouts — off",false],
+    ["Wahoo SYSTM","#5A6B7A","W","Alternative turbo — off",false]];
+  document.getElementById("ints").innerHTML=ints.map(([n,c,ini,s,on])=>`
+    <div class="panel hov int"><div class="logo2" style="background:${on?c:"#E3E8EB"};color:${on?"#fff":"#93A0AB"}">${ini||"⌘"}</div>
+    <div><div class="in">${n}</div><div class="is"><span class="dot" style="background:${on?"var(--vert)":"var(--mist)"}"></span>${s}</div></div>
+    <div class="tog ${on?"on":""}"><i></i></div></div>`).join("");
+  document.querySelectorAll(".tog").forEach(t=>t.onclick=e=>{e.stopPropagation();t.classList.toggle("on");});
+})();
+
+/* ═══ PROFILE DRAWER ═══ */
+const drawer=document.getElementById("drawer"),scrim=document.getElementById("scrim");
+function openDrawer(){drawer.classList.add("on");scrim.classList.add("on");}
+function closeDrawer(){drawer.classList.remove("on");scrim.classList.remove("on");}
+document.getElementById("openprof").addEventListener("click",openDrawer);
+document.getElementById("dclose").addEventListener("click",closeDrawer);
+scrim.addEventListener("click",closeDrawer);
+const CFG={
+ ftp:{step:1,min:180,max:400,get:()=>S.ftp,set:v=>S.ftp=v,fmt:v=>v+"<i>W</i>"},
+ weight:{step:.5,min:55,max:100,get:()=>S.weight,set:v=>S.weight=v,fmt:v=>v.toFixed(1)+"<i>kg</i>"},
+ maxhr:{step:1,min:150,max:210,get:()=>S.maxhr,set:v=>S.maxhr=v,fmt:v=>v+"<i>bpm</i>"},
+ rhr:{step:1,min:35,max:70,get:()=>S.rhr,set:v=>S.rhr=v,fmt:v=>v+"<i>bpm</i>"},
+ lthr:{step:1,min:130,max:195,get:()=>S.lthr,set:v=>S.lthr=v,fmt:v=>v+"<i>bpm</i>"},
+ tftp:{step:5,min:250,max:400,get:()=>S.tgt.ftp,set:v=>S.tgt.ftp=v,fmt:v=>v+"<i>W</i>"},
+ tclimb:{step:1000,min:20000,max:120000,get:()=>S.tgt.climb,set:v=>S.tgt.climb=v,fmt:v=>(v/1000)+"<i>k m</i>"},
+ tsprint:{step:10,min:600,max:1500,get:()=>S.tgt.sprint,set:v=>S.tgt.sprint=v,fmt:v=>v+"<i>W</i>"},
+ tchain:{step:1,min:4,max:20,get:()=>S.tgt.chain,set:v=>S.tgt.chain=v,fmt:v=>v+"<i>wk</i>"}};
+document.querySelectorAll(".step").forEach(st=>{
+  const k=st.dataset.k,c=CFG[k],val=st.querySelector(".sval");
+  st.querySelectorAll(".sbtn").forEach(b=>b.addEventListener("click",e=>{
+    e.stopPropagation();
+    const nv=Math.min(c.max,Math.max(c.min,+(c.get()+c.step*+b.dataset.d).toFixed(1)));
+    c.set(nv);val.innerHTML=c.fmt(nv);pop(val);updateAll();}));
+});
+const FTPLOG=[{v:280,d:"2 MAR 26",s:"ÈZE-CONFIRMED"},{v:274,d:"12 JAN 26",s:"RAMP TEST"},{v:268,d:"2 NOV 25",s:"20-MIN TEST"}];
+function renderLog(){document.getElementById("ftplog").innerHTML=FTPLOG.map(e=>`<div class="arow"><span>${e.d} · ${e.s}</span><b>${e.v} W</b></div>`).join("");}
+document.getElementById("logftp").addEventListener("click",()=>{
+  FTPLOG.unshift({v:S.ftp,d:todayStr(),s:"MANUAL"});
+  document.getElementById("pf-when").textContent=`SET ${todayStr()} · MANUAL`;
+  renderLog();pop(document.getElementById("pf-ftp"));});
+function renderPfZones(){
+  document.getElementById("pf-zones").innerHTML=ZONES.map(z=>{
+    const w=Math.min(100,(z.max>5000?160:z.max-z.min)/1.6);
+    return `<div class="zline"><span class="za" style="color:${z.h}">${z.abbr}</span>
+    <span class="zr">${z.min}–${z.max>5000?"∞":z.max} W</span><span class="zn2">${z.name}</span>
+    <div class="zbar"><i style="width:${w}%;background:${z.h}"></i></div></div>`;}).join("");
+}
+function updateAll(){
+  ZONES=zonesFromFtp(S.ftp);
+  const wkg=(S.ftp/S.weight).toFixed(2);
+  const set=(id,html)=>{const el=document.getElementById(id);if(el&&el.innerHTML!==String(html)){el.innerHTML=html;pop(el);}};
+  set("pf-ftp",S.ftp);set("pf-wkg",wkg);set("hd-wkg",wkg);
+  set("cd-ftp",S.ftp+"<small> W</small>");set("cd-wkg",wkg+"<small> W/kg</small>");
+  set("cd-wkgn",(S.tgt.ftp/S.weight).toFixed(2)+" at "+S.tgt.ftp+" W · "+S.weight.toFixed(1)+" kg");
+  renderPfZones();
+  const pctY=Math.max(0,Math.min(100,Math.round((S.ftp-startFtp)/(S.tgt.ftp-startFtp)*100)));
+  set("jy-cur",S.ftp);set("jy-tgt",S.tgt.ftp);set("jy-gap",Math.max(0,S.tgt.ftp-S.ftp)+" W");
+  const setbar=(id,w)=>{const b=document.getElementById(id);if(b){b.dataset.w=w;b.style.width=w+"%";}};
+  setbar("jy-bar",pctY);setbar("t-ftpbar",pctY);
+  const wks=Math.max(0,(S.tgt.ftp-S.ftp)/0.75);
+  const dt=new Date(+DNOW+wks*7*864e5).toLocaleDateString("en-GB",{day:"numeric",month:"long"});
+  set("jy-proj",`At the current ramp of <b>+0.75 W a week</b> you summit ${S.tgt.ftp} W on <b>${dt}</b>. A confirmed 285 on Thursday pulls that forward by a month.`);
+  drawJerseyY();
+  const pctP=Math.max(0,Math.min(100,Math.round(climbed/S.tgt.climb*100)));
+  set("jp-tgt",fmtInt(S.tgt.climb));setbar("jp-bar",pctP);
+  const wksLeft=Math.max(1,(new Date(nextA().date)-DNOW)/(7*864e5));
+  set("jp-need",fmtInt(Math.max(0,Math.round((S.tgt.climb-climbed)/wksLeft)))+" m");
+  const pctG=Math.max(0,Math.min(100,Math.round(sprintBest/S.tgt.sprint*100)));
+  set("jg-tgt",S.tgt.sprint);setbar("jg-bar",pctG);
+  set("jg-gap",Math.max(0,S.tgt.sprint-sprintBest)+" watts");
+  set("jw-tgt",S.tgt.chain);drawChain(S.tgt.chain,chainNow);
+  set("t-ftp",S.ftp);
+  set("t-ftps","target <b>"+S.tgt.ftp+" W</b> · "+wkg+" W/kg today");
+  renderSeasonHead();renderObjectives();renderWeeks();drawTraj();
+  if(STREAM.length){renderZones();drawWave();drawRMap();}
+  if(document.getElementById("recon").classList.contains("on"))buildRecon();
+}
+
+/* ═══ RECON ═══ */
+let rcEv=null,WF={weight:S.weight,ramp:.75,tss:520},ghostRAF=null,RCPTS=[],RCLAST=null;
+const hm=h=>{const t=Math.round(h*60);return Math.floor(t/60)+"h"+String(t%60).padStart(2,"0");};
+function ftpOnDay(ev){return Math.round(S.ftp+WF.ramp*Math.max(0,(new Date(ev.date)-DNOW)/(7*864e5)));}
+function fresh(){return .975+((WF.tss-300)/400)*.05;}
+function pace(c){return c.len>16?.82:c.len>10?.86:c.len>5?.9:.95;}
+function raceModel(ev,ftp,wt){
+  const f=fresh(),segs=[];let alt=250,km=0;
+  const climbKm=ev.cols.reduce((a,c)=>a+c.len,0);
+  const flatKm=Math.max(6,ev.km-climbKm-climbKm*.8);
+  const lead=flatKm*.3,link=(flatKm*.7)/Math.max(1,ev.cols.length);
+  const push=(type,len,rise,v,lab)=>{segs.push({type,len,rise,v,lab,km0:km,alt0:alt});km+=len;alt+=rise;};
+  push("flat",lead,10,33*f);
+  ev.cols.forEach((c,i)=>{
+    const w=Math.round(ftp*pace(c)*f),wkg=w/wt,vam=Math.round(wkg*(200+10*c.g));
+    push("climb",c.len,c.len*c.g*10,vam/(c.g*10),{...c,w,wkg,vam});
+    if(i<ev.cols.length-1){push("desc",c.len*.8,-c.len*c.g*10*.75,46);push("flat",link,0,33*f);}
+    else push("desc",c.len*.55,-c.len*c.g*10*.5,46);});
+  push("flat",Math.max(2,ev.km-km),0,32*f);
+  let t=0;const rows=[];
+  segs.forEach(s=>{s.t0=t;s.hrs=s.len/s.v;t+=s.hrs;if(s.type==="climb")rows.push({...s.lab,km0:s.km0,alt0:s.alt0,hrs:s.hrs,cum:t});});
+  return{segs,rows,total:t};
+}
+function buildRecon(){
+  if(!rcEv)return;
+  const ev=EVENTS.find(e=>e.id===rcEv);if(!ev)return;
+  const ftp=ftpOnDay(ev),wt=WF.weight,M=raceModel(ev,ftp,wt);
+  document.getElementById("rc-name").textContent=ev.name;
+  document.getElementById("rc-meta").innerHTML=`${evDate(ev).toUpperCase()} · J-${J(ev)} · ${ev.km} KM · ${fmtInt(ev.m)} M — RIDDEN AT <b>${ftp} W</b> · <b>${(ftp/wt).toFixed(2)} W/KG</b>`;
+  document.getElementById("wf-ftpday").textContent=ftp+" W";
+  document.getElementById("wf-wkgday").textContent=(ftp/wt).toFixed(2);
+  const Wd=1200,H=340,pb=40,pt=56;
+  const maxA=Math.max(...M.segs.map(s=>s.alt0+Math.max(0,s.rise)))*1.06;
+  const px=k=>k/ev.km*Wd,py=a=>H-pb-(a/maxA)*(H-pt-pb);
+  RCPTS=[];let d="M0,"+py(M.segs[0].alt0);
+  M.segs.forEach(s=>{
+    const n=Math.max(2,Math.round(s.len*2));
+    for(let i=1;i<=n;i++){const k=s.km0+s.len*i/n,a=s.alt0+s.rise*i/n;
+      RCPTS.push({x:px(k),y:py(a)});d+=`L${px(k).toFixed(1)},${py(a).toFixed(1)}`;}});
+  const area=d+`L${Wd},${H-pb}L0,${H-pb}Z`;
+  let marks="";
+  M.rows.forEach(r=>{
+    const sx=px(r.km0+r.len),sy=py(r.alt0+r.len*r.g*10);
+    marks+=`<line x1="${sx}" y1="${sy}" x2="${sx}" y2="${sy-22}" stroke="#FFD100" stroke-width="1.4"/>
+      <text x="${sx}" y="${sy-30}" text-anchor="middle" font-family="Space Grotesk" font-size="12" font-weight="700" fill="#E8EEF2">${r.n.toUpperCase()}</text>
+      <text x="${sx}" y="${sy-46}" text-anchor="middle" font-family="Space Grotesk" font-size="9.5" font-weight="700" fill="#7C8B96">${Math.round(r.top)} m · ${r.len} KM @ ${r.g}%</text>`;});
+  document.getElementById("rc-prof").innerHTML=`
+    <defs><linearGradient id="rcg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD100" stop-opacity=".16"/><stop offset="1" stop-color="#FFD100" stop-opacity="0"/></linearGradient></defs>
+    <path d="${area}" fill="url(#rcg)"/><path d="${d}" fill="none" stroke="#FFD100" stroke-width="2.4" stroke-linejoin="round"/>
+    ${marks}<circle id="gd-now" class="gdot" r="6" fill="#FFD100" stroke="#0E151C" stroke-width="2.5" opacity="0"/>
+    <circle id="gd-then" class="gdot" r="6" fill="#5E6E7A" stroke="#0E151C" stroke-width="2.5" opacity="0"/>`;
+  document.getElementById("rc-proflab").innerHTML=`<span>KM 0</span><span>KM ${Math.round(ev.km/2)}</span><span>KM ${ev.km}</span>`;
+  document.getElementById("rc-splits").innerHTML=M.rows.map(r=>`
+    <div class="rc-split"><span class="cn">${r.n}</span><span class="dim">${r.len}</span><span class="dim">${r.g}%</span>
+    <span class="cw">${r.w} W</span><span>${r.wkg.toFixed(2)}</span><span class="dim">${r.vam}</span><span>${hm(r.hrs)}</span></div>`).join("");
+  document.getElementById("rc-fin").textContent=hm(M.total);
+  document.getElementById("rc-finband").textContent=`PROJECTED FINISH · BAND ${hm(M.total*.97)} – ${hm(M.total*1.045)}`;
+  const hard=M.rows.reduce((a,b)=>a.len*a.g>b.len*b.g?a:b);
+  document.getElementById("rc-notetext").innerHTML=`This course is decided on <b>${hard.n}</b>: ${hard.len} km at ${hard.g}%, ridden at <b>${hard.w} W</b> on your day-of number. Hold ${Math.round(hard.w*.97)}–${hard.w} W there and the projection of <b>${hm(M.total)}</b> stands. Drag the what-if sliders: every half-kilo and every tenth of ramp moves the finish line in front of you.`;
+  RCLAST=M;
+}
+["weight","ramp","tss"].forEach(k=>{
+  document.getElementById("wf-"+k).addEventListener("input",e=>{
+    WF[k]=+e.target.value;
+    document.getElementById("wfv-weight").textContent=WF.weight.toFixed(1)+" kg";
+    document.getElementById("wfv-ramp").textContent="+"+WF.ramp.toFixed(2)+" W";
+    document.getElementById("wfv-tss").textContent=WF.tss;
+    requestAnimationFrame(buildRecon);});
+});
+document.getElementById("rc-ghost").addEventListener("click",()=>{
+  if(!rcEv||!RCLAST)return;cancelAnimationFrame(ghostRAF);
+  const ev=EVENTS.find(e=>e.id===rcEv);
+  const now=RCLAST,then=raceModel(ev,startFtp,S.weight+1.5);
+  const dn=document.getElementById("gd-now"),dt=document.getElementById("gd-then");
+  dn.setAttribute("opacity",1);dt.setAttribute("opacity",1);
+  const slow=Math.max(now.total,then.total),t0=performance.now(),DUR=9000;
+  const at=(M,t)=>{const fr=Math.min(1,t/M.total);return RCPTS[Math.min(RCPTS.length-1,Math.floor(fr*RCPTS.length))];};
+  function frame(ts){
+    const p=Math.min(1,(ts-t0)/DUR),sim=p*slow;
+    const a=at(now,sim),b=at(then,sim);
+    dn.setAttribute("cx",a.x);dn.setAttribute("cy",a.y-7);
+    dt.setAttribute("cx",b.x);dt.setAttribute("cy",b.y-7);
+    document.getElementById("g-now").textContent=sim>=now.total?hm(now.total)+" ✓":hm(sim);
+    document.getElementById("g-then").textContent=sim>=then.total?hm(then.total)+" ✓":hm(sim);
+    if(p<1)ghostRAF=requestAnimationFrame(frame);
+    else document.getElementById("g-gap").textContent=hm(Math.abs(then.total-now.total))+" AHEAD";
+  }
+  ghostRAF=requestAnimationFrame(frame);
+});
+function renderRcTabs(){
+  document.getElementById("rc-tabs").innerHTML=fut().map(e=>`<button class="rc-tab ${e.id===rcEv?"on":""}" data-ev="${e.id}">${e.short}</button>`).join("");
+  document.querySelectorAll(".rc-tab").forEach(b=>b.onclick=()=>{rcEv=b.dataset.ev;renderRcTabs();buildRecon();});
+}
+function openRecon(id){
+  rcEv=id;WF.weight=S.weight;
+  document.getElementById("wf-weight").value=S.weight;
+  document.getElementById("wfv-weight").textContent=S.weight.toFixed(1)+" kg";
+  const w=document.getElementById("wipe");w.classList.add("go");
+  setTimeout(()=>{document.getElementById("recon").classList.add("on");document.body.style.overflow="hidden";renderRcTabs();buildRecon();},420);
+  setTimeout(()=>w.classList.remove("go"),950);
+}
+function closeRecon(){
+  cancelAnimationFrame(ghostRAF);
+  const w=document.getElementById("wipe");w.classList.add("go");
+  setTimeout(()=>{document.getElementById("recon").classList.remove("on");document.body.style.overflow="";},420);
+  setTimeout(()=>w.classList.remove("go"),950);
+}
+document.getElementById("rc-close").addEventListener("click",closeRecon);
+
+/* ═══ SEASON EXTRAS ═══ */
+function renderWkFront(){
+  const mx=Math.max(...PLAN.map(s=>s.tss));
+  document.getElementById("wkfront").innerHTML=PLAN.map((s,i)=>{
+    const [bg,fg]=TYPEC[s.type],key=s.tss===mx,done=i<3;
+    return `<div class="wf7 ${key?"key":""}"><span class="rule" style="background:${key?"var(--jaune)":fg}"></span>
+      <div class="d">${s.d}</div><div class="n">${s.nm}</div>
+      <div class="t">${s.tss||"—"}<small> TSS</small></div>
+      ${done?'<span class="done">✓</span>':""}</div>`;}).join("");
+  document.querySelectorAll(".wf7").forEach(el=>el.onclick=()=>showScene("plan"));
+}
+let BESTS=[["5 SEC","892","12 APR · crit simulation"],["1 MIN","486","27 FEB · the bergs"],["5 MIN","335","1 MAR · Madone lower slopes"],["20 MIN","268","2 MAR · Èze climb"]];
+function renderBests(){
+  document.getElementById("bests").innerHTML=BESTS.map(([l,v,d])=>`
+    <div class="bestrow"><span class="bl">${l}</span><span class="bv">${v}<small> W</small></span><span class="bd">${d}</span></div>`).join("");
+}
+function drawTraj(){
+  const F=window.PMCF||[];if(!F.length)return;
+  const past=F.slice(-30).map(d=>d.tsb);
+  let ctl=F[F.length-1].ctl,atl=F[F.length-1].atl;
+  const a=nextA(),days=Math.max(7,J(a)),futr=[];
+  for(let d=1;d<=days;d++){
+    const wk=Math.min(15,CURWK+Math.floor(d/7));
+    let load=TSSWK[wk]/7;
+    if(days-d<7)load*=.45;
+    ctl+=(load-ctl)/42;atl+=(load-atl)/7;futr.push(ctl-atl);}
+  const race=futr[futr.length-1];
+  const all=[...past,...futr],mn=Math.min(...all)-6,mxv=Math.max(...all)+8;
+  const W=560,H=150,n=all.length;
+  const px=i=>i/(n-1)*(W-86),py=v=>H-14-((v-mn)/(mxv-mn))*(H-30);
+  const mk=(arr,o)=>"M"+arr.map((v,i)=>`${px(i+o).toFixed(1)},${py(v).toFixed(1)}`).join("L");
+  document.getElementById("traj").innerHTML=`
+    <line x1="0" y1="${py(0)}" x2="${W-86}" y2="${py(0)}" stroke="#E3E8EB" stroke-width="1.3"/>
+    <text x="${W-82}" y="${py(0)+4}" font-size="9" font-family="Space Grotesk" font-weight="700" fill="#93A0AB">0</text>
+    <path d="${mk(past,0)}" fill="none" stroke="#141E28" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="${mk(futr,past.length-1)}" fill="none" stroke="#26496E" stroke-width="2" stroke-dasharray="5 6" stroke-linecap="round"/>
+    <line x1="${px(past.length-1)}" y1="10" x2="${px(past.length-1)}" y2="${H-14}" stroke="rgba(20,30,40,.18)" stroke-width="1.2"/>
+    <circle cx="${px(n-1)}" cy="${py(race)}" r="5.5" fill="#FFD100" stroke="#141E28" stroke-width="2"/>
+    <text x="${px(n-1)-10}" y="${py(race)-12}" text-anchor="end" font-size="12" font-family="Space Grotesk" font-weight="700" fill="#141E28">FORM ${race>=0?"+":""}${Math.round(race)}</text>`;
+  document.getElementById("traj-h").textContent=`FORM TRAJECTORY — PROJECTED TO ${a.short}`;
+  document.getElementById("traj-race").textContent=`${a.short} · J-${J(a)}`;
+}
+/* ═══ INIT ═══ */
+window.SEASON_FLAGS=[];
+function refreshFlags(){window.SEASON_FLAGS=EVENTS.map(e=>({i:Math.floor((new Date(e.date)-SEASON0)/(7*864e5)),n:e.short.split(" ").pop(),A:e.pr==="A"}));}
+const _renderSeasonHead=renderSeasonHead;
+renderSeasonHead=function(){refreshFlags();_renderSeasonHead();};
+renderJerseys();drawJerseyP();renderLadder();renderLog();renderWkFront();renderBests();
+renderWeeks();renderDays();renderRideSel();loadRide();
+updateAll();
+enterFX(document.getElementById("s-season"));
+
+/* ═══════════ LIVE LAYER — Strava · Mapbox · Claude ═══════════ */
+let LIVE=false,MAPTOKEN=null,COACH=false,GL=null,GLACTIVE=false,GLMARK=null,SAVET=null;
+const api=(p,opt)=>fetch(p,opt).then(r=>{if(!r.ok)throw new Error(p+" → "+r.status);return r.json();});
+const md=t=>(t||"").split("**").map((x,i)=>i%2?`<strong>${x}</strong>`:x).join("");
+
+/* ── boot ── */
+(async function boot(){
+  wireSys();
+  try{
+    const cfg=await api("/api/config");
+    MAPTOKEN=cfg.mapboxToken;COACH=cfg.coach;
+    const prof=await api("/api/profile");
+    applyProfile(prof,cfg.connected);
+    if(cfg.connected){
+      LIVE=true;
+      document.getElementById("livebadge").textContent="LIVE · "+(cfg.athlete||"CONNECTED");
+      document.getElementById("btn-connect").textContent="RECONNECT STRAVA";
+      if(MAPTOKEN)loadMapbox();
+      const d=await api("/api/data");
+      if(d.metrics){applyLive(d.metrics);}
+      else sysMsg("CONNECTED — RUN SYNC NOW TO PULL YOUR RIDES");
+      if(COACH)refreshCoachNote();
+    }else{
+      sysMsg("DEMO DATA — CONNECT STRAVA TO GO LIVE");
+    }
+  }catch(e){console.warn("Backend unreachable — demo mode.",e);sysMsg("DEMO DATA — NO BACKEND (LOCAL FILE?)");}
+})();
+
+function applyProfile(p,connected){
+  S.ftp=p.ftp;S.weight=p.weight;S.maxhr=p.maxhr;S.rhr=p.rhr;S.lthr=p.lthr;
+  S.tgt={...S.tgt,...(p.tgt||{})};startFtp=p.startFtp||startFtp;
+  if(p.events&&p.events.length){EVENTS.length=0;p.events.forEach(e=>EVENTS.push(e));}
+  if(p.ftpLog&&p.ftpLog.length){FTPLOG.length=0;p.ftpLog.forEach(e=>FTPLOG.push(e));}
+  if(connected){DNOW=new Date();SEASON0=new Date((p.seasonStart||"2026-03-16")+"T00:00:00");}
+  document.getElementById("v-ftp").innerHTML=S.ftp+"<i>W</i>";
+  document.getElementById("v-weight").innerHTML=S.weight.toFixed(1)+"<i>kg</i>";
+  document.getElementById("v-maxhr").innerHTML=S.maxhr+"<i>bpm</i>";
+  document.getElementById("v-rhr").innerHTML=S.rhr+"<i>bpm</i>";
+  document.getElementById("v-lthr").innerHTML=S.lthr+"<i>bpm</i>";
+  document.getElementById("v-tftp").innerHTML=S.tgt.ftp+"<i>W</i>";
+  document.getElementById("v-tclimb").innerHTML=(S.tgt.climb/1000)+"<i>k m</i>";
+  document.getElementById("v-tsprint").innerHTML=S.tgt.sprint+"<i>W</i>";
+  document.getElementById("v-tchain").innerHTML=S.tgt.chain+"<i>wk</i>";
+  renderLog();updateAll();
+}
+
+function applyLive(m){
+  if(m.weeks&&m.weeks.length)TSSWK=m.weeks.slice(0,16).concat(new Array(Math.max(0,16-m.weeks.length)).fill(0));
+  if(typeof m.curWeek==="number")CURWK=m.curWeek;
+  if(m.pmc&&m.pmc.length){window.PMCF=m.pmc;drawPMCLive(m.pmc);}
+  if(m.zones28&&m.zones28.some(z=>z.pct>0))renderZ28Live(m.zones28);
+  if(m.bests){
+    const map=[["s5","5 SEC"],["m1","1 MIN"],["m5","5 MIN"],["m20","20 MIN"]];
+    BESTS=map.map(([k,l])=>m.bests[k]?[l,String(m.bests[k].v),`${m.bests[k].d} · ${m.bests[k].nm}`.slice(0,40)]:null).filter(Boolean);
+    if(BESTS.length)renderBests();
+    if(m.bests.s5)sprintBest=m.bests.s5.v;
+  }
+  if(typeof m.climb==="number")climbed=m.climb;
+  if(typeof m.chain==="number")chainNow=m.chain;
+  const t2v=document.getElementById("t2v");
+  document.getElementById("t2l").textContent="TSS BANKED · SEASON";
+  t2v.dataset.final=m.tssSeason;t2v.textContent=fmtInt(m.tssSeason||0);
+  document.getElementById("t2s").innerHTML=`across <b>${(m.weeks||[]).filter(w=>w>0).length} weeks</b> since the season began`;
+  document.getElementById("t2b").dataset.w=Math.min(100,Math.round((m.tssSeason||0)/8460*100));
+  const t3v=document.getElementById("t3v");
+  t3v.dataset.final=m.climb;t3v.textContent=fmtInt(m.climb||0);
+  document.getElementById("t3s").innerHTML=`<b>${m.everests} Everests</b> banked so far`;
+  document.getElementById("t3b").dataset.w=Math.min(100,Math.round((m.climb||0)/S.tgt.climb*100));
+  const ec=document.getElementById("evercount");ec.dataset.final=m.everests;ec.textContent=m.everests;
+  document.getElementById("ctx-meta").innerHTML=`S${CURWK+1}/16 · <b>${fmtInt(m.tssSeason||0)} TSS</b> BANKED`;
+  if(m.rideIndex&&m.rideIndex.length){
+    RIDES=m.rideIndex.slice(0,8).map(r=>({id:r.id,nm:r.nm,dt:r.dt,
+      meta:`${r.km} KM · ${fmtInt(r.m)} M · ${Math.floor(r.secs/3600)}H ${String(Math.floor(r.secs%3600/60)).padStart(2,"0")}M`,
+      np:r.np||0,iff:r.iff||0,tss:r.tss||0,hr:r.hr||0,vi:r.vi||0,dec:r.dec,gps:r.gps,ai:null}));
+    curRide=0;renderRideSel();loadRide();
+  }
+  renderLadder();updateAll();animateBars(document.getElementById("s-season"));
+  document.querySelectorAll("#s-season [data-count]").forEach(countUp);
+  const led=document.getElementById("herolede");
+  if(led)led.innerHTML=`<b>${fmtInt(m.tssSeason||0)} TSS</b> banked and <b>${fmtInt(m.climb||0)} m</b> climbed since the season began. Every number in this room is your own, live from the road.`;
+}
+
+/* ── live PMC / zones renderers ── */
+function drawPMCLive(F){
+  const W=1100,H=340,pr=130,pv=22;
+  const all=[...F.map(d=>d.ctl),...F.map(d=>d.atl),...F.map(d=>d.tsb)];
+  const mn=Math.min(...all),mx=Math.max(...all),r=(mx-mn)||1;
+  const px=i=>i/(F.length-1)*(W-pr),py=v=>H-pv-((v-mn)/r)*(H-pv*2);
+  const L=k=>"M"+F.map((d,i)=>`${px(i).toFixed(1)},${py(d[k]).toFixed(1)}`).join("L");
+  const last=F[F.length-1];
+  const lab=(k,txt,c)=>`<text x="${W-pr+14}" y="${py(last[k])+4}" font-family="Space Grotesk" font-size="12" font-weight="700" letter-spacing="1" fill="${c}">${txt}</text>`;
+  document.getElementById("pmc").innerHTML=`
+    <line x1="0" y1="${py(0)}" x2="${W-pr}" y2="${py(0)}" stroke="#E3E8EB" stroke-width="1.4"/>
+    <path d="${L("ctl")} L${(W-pr).toFixed(1)},${H} L0,${H} Z" fill="rgba(38,73,110,.05)"/>
+    <path d="${L("ctl")}" fill="none" stroke="#26496E" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="${L("atl")}" fill="none" stroke="#B0433B" stroke-width="1.6" stroke-dasharray="6 5" stroke-linecap="round" opacity=".85"/>
+    <path d="${L("tsb")}" fill="none" stroke="#B08900" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="${px(F.length-1)}" cy="${py(last.ctl)}" r="4" fill="#26496E"/>
+    ${lab("ctl","FITNESS "+Math.round(last.ctl),"#26496E")}${lab("atl","FATIGUE "+Math.round(last.atl),"#B0433B")}${lab("tsb","FORM "+(last.tsb>=0?"+":"")+Math.round(last.tsb),"#B08900")}`;
+  const t=document.querySelector("#v-cond .g12 .chartpanel h3");
+  if(t)t.textContent="THE RACE SO FAR — "+F.length+" DAYS · LIVE";
+}
+function renderZ28Live(z){
+  document.getElementById("zstack").innerHTML=ZMETA.map((zm,i)=>`<i style="width:${z[i].pct}%;background:${zm[2]}"></i>`).join("");
+  document.getElementById("zrows28").innerHTML=ZMETA.map((zm,i)=>`
+    <div class="zrow"><div class="zd" style="background:${zm[2]}"></div><span class="zn">${zm[0]}</span><span class="znm">${zm[1]}</span>
+    <span class="zp">${z[i].pct}%</span><span class="zt">${z[i].hrs} h</span></div>`).join("");
+}
+
+/* ── live ride loading (streams + Mapbox) ── */
+const _loadRideDemo=loadRide;
+loadRide=async function(){
+  const R=RIDES[curRide];
+  if(!(LIVE&&R&&R.id)){glOff();_loadRideDemo();return;}
+  try{
+    const d=await api("/api/ride?id="+R.id);
+    const st=d.streams,n=(st.watts||st.alt||st.time||[]).length||0;
+    if(!n)throw new Error("empty streams");
+    STREAM=[];ROUTE=[];
+    for(let i=0;i<n;i++){
+      STREAM.push({pw:Math.round(st.watts?.[i]||0),hr:Math.round(st.hr?.[i]||0),
+        cad:Math.round(st.cad?.[i]||0),spd:+(((st.vel?.[i]||0)*3.6).toFixed(1)),
+        elev:Math.round(st.alt?.[i]||0)});
+      if(st.latlng?.[i])ROUTE.push({lat:st.latlng[i][0],lng:st.latlng[i][1],elev:st.alt?.[i]||0});
+    }
+    document.getElementById("rh-name").textContent=R.nm;
+    document.getElementById("rh-meta").textContent=R.dt+" · "+R.meta+(R.dec!=null?` · DECOUPLING ${R.dec}%`:"");
+    genSegsLive(R);
+    renderHUD();renderZones();drawWave();drawElev();
+    if(ROUTE.length>10&&MAPTOKEN&&window.mapboxgl){glOn();}else{glOff();requestAnimationFrame(drawRMap);}
+  }catch(e){console.warn("ride load failed, demo fallback",e);glOff();_loadRideDemo();}
+};
+function genSegsLive(R){
+  const n=STREAM.length,dt=Math.max(1,(R.meta.match(/(\d+)H (\d+)M/)? (+RegExp.$1*3600+ +RegExp.$2*60):n)/n);
+  const win=k=>Math.max(1,Math.round(k/dt));
+  const best=k=>{const w=win(k);let s=0,b=0,bi=0;
+    for(let i=0;i<n;i++){s+=STREAM[i].pw;if(i>=w)s-=STREAM[i-w].pw;
+      if(i>=w-1&&s>b){b=s;bi=i-w+1;}}return{v:Math.round(b/w),at:Math.round(bi/n*100)};};
+  const b20=best(1200),b1=best(60);
+  let gain=0,run=0,bestRun=0;
+  for(let i=1;i<n;i++){const d=STREAM[i].elev-STREAM[i-1].elev;
+    if(d>0){run+=d;bestRun=Math.max(bestRun,run);gain+=d;}else if(d<-4)run=0;}
+  const segs=[
+    ["WHOLE RIDE","NP "+R.np+" W",`IF ${R.iff} · VI ${R.vi||"—"} · ${fmtInt(Math.round(gain))} m logged`,"#26496E"],
+    ["BEST 20 MIN",b20.v+" W",`${Math.round(b20.v/S.ftp*100)}% of FTP · around km ${Math.round(b20.at/100*parseFloat(R.meta))}`,"#D99000"],
+    ["BEST 1 MIN",b1.v+" W","Peak sustained surge of the ride","#E8611F"],
+    ["MAIN CLIMB",fmtInt(Math.round(bestRun))+" m","Longest unbroken ascent","#189B69"]];
+  RIDES[curRide].segs=segs;
+  document.getElementById("rsegs").innerHTML=segs.map(([l,v,d2,c])=>`
+    <div class="segrow"><div class="rule" style="background:${c}"></div>
+    <div class="sm"><div class="sl">${l}</div><div class="sd">${d2}</div></div>
+    <div class="sv" style="color:${c}">${v}</div></div>`).join("");
+}
+
+/* ── Mapbox ── */
+function loadMapbox(){
+  if(window.mapboxgl)return;
+  const l=document.createElement("link");l.rel="stylesheet";
+  l.href="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css";document.head.appendChild(l);
+  const sc=document.createElement("script");
+  sc.src="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js";
+  sc.onload=()=>{mapboxgl.accessToken=MAPTOKEN;if(RIDES[curRide]&&RIDES[curRide].gps)loadRide();};
+  document.head.appendChild(sc);
+}
+function glOn(){
+  const el=document.getElementById("rmapgl");el.classList.add("on");
+  document.getElementById("rmap").style.visibility="hidden";GLACTIVE=true;
+  const coords=ROUTE.map(p=>[p.lng,p.lat]);
+  const gj={type:"Feature",geometry:{type:"LineString",coordinates:coords}};
+  const stops=[];const NS=48;
+  for(let i=0;i<NS;i++){const f=i/(NS-1);
+    const d=STREAM[Math.floor(f*(STREAM.length-1))];
+    stops.push(f,zoneOf(d.pw).h);}
+  const bounds=coords.reduce((b,c)=>b.extend(c),new mapboxgl.LngLatBounds(coords[0],coords[0]));
+  if(!GL){
+    GL=new mapboxgl.Map({container:el,style:"mapbox://styles/mapbox/light-v11",
+      bounds,fitBoundsOptions:{padding:70},attributionControl:true});
+    GL.on("load",()=>glRoute(gj,stops,bounds));
+  }else glRoute(gj,stops,bounds);
+}
+function glRoute(gj,stops,bounds){
+  const add=()=>{
+    if(GL.getLayer("routeline"))GL.removeLayer("routeline");
+    if(GL.getLayer("routecase"))GL.removeLayer("routecase");
+    if(GL.getSource("route"))GL.removeSource("route");
+    GL.addSource("route",{type:"geojson",data:gj,lineMetrics:true});
+    GL.addLayer({id:"routecase",type:"line",source:"route",
+      layout:{"line-cap":"round","line-join":"round"},
+      paint:{"line-color":"#141E28","line-width":7,"line-opacity":.14}});
+    GL.addLayer({id:"routeline",type:"line",source:"route",
+      layout:{"line-cap":"round","line-join":"round"},
+      paint:{"line-width":4,"line-gradient":["interpolate",["linear"],["line-progress"],...stops]}});
+    if(GLMARK)GLMARK.remove();
+    const dot=document.createElement("div");
+    dot.style.cssText="width:16px;height:16px;border-radius:50%;background:#141E28;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35)";
+    GLMARK=new mapboxgl.Marker({element:dot}).setLngLat(gj.geometry.coordinates[0]).addTo(GL);
+    GLMARK.getElement().style.display="none";
+    GL.fitBounds(bounds,{padding:70,duration:800});
+  };
+  if(GL.isStyleLoaded())add();else GL.once("idle",add);
+}
+function glOff(){
+  document.getElementById("rmapgl").classList.remove("on");
+  document.getElementById("rmap").style.visibility="";GLACTIVE=false;
+}
+const _drawRMap=drawRMap;
+drawRMap=function(){if(GLACTIVE){if(GLMARK){
+  if(cursor===null){GLMARK.getElement().style.display="none";}
+  else{const p=ROUTE[Math.floor(cursor*(ROUTE.length-1))];
+    if(p){GLMARK.setLngLat([p.lng,p.lat]);GLMARK.getElement().style.display="block";}}
+}return;}_drawRMap();};
+
+/* ── Claude coach ── */
+async function refreshCoachNote(){
+  try{
+    const last=+localStorage.getItem("vx_coach_t")||0;
+    if(Date.now()-last<12*3600*1000&&localStorage.getItem("vx_coach")){
+      document.getElementById("coachnote").innerHTML=md(localStorage.getItem("vx_coach"));return;}
+const d=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"weekly"})});
+    if(d.text){localStorage.setItem("vx_coach",d.text);localStorage.setItem("vx_coach_t",String(Date.now()));
+      document.getElementById("coachnote").innerHTML=md(d.text);
+      const first=d.text.split(/[.!]/)[0];
+      if(first&&first.length<90)document.getElementById("coachpq").textContent='"'+first.trim()+'."';}
+  }catch(e){console.warn("coach note unavailable",e);}
+}
+(function(){
+  const old=document.getElementById("raibtn"),btn=old.cloneNode(true);
+  old.parentNode.replaceChild(btn,old);
+  btn.addEventListener("click",async()=>{
+    const txt=document.getElementById("raitext");
+    clearInterval(aiTimer);txt.style.display="block";
+    const type=T=>{let i=0;txt.innerHTML="";
+      aiTimer=setInterval(()=>{if(i>=T.length){clearInterval(aiTimer);btn.disabled=false;btn.textContent="RE-ANALYSE";return;}
+        i+=4;txt.innerHTML=md(T.slice(0,i));},12);};
+    btn.disabled=true;btn.textContent="ANALYSING…";
+    const R=RIDES[curRide];
+    if(LIVE&&COACH&&R&&R.id){
+      try{const d=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"debrief",id:R.id})});
+        type(d.text||"No analysis returned.");}
+      catch(e){type("**Coach offline.** "+String(e.message||e));}
+    }else type(R.ai||"**Demo ride.** Connect Strava and sync to analyse your real rides.");
+  });
+})();
+const _openRecon=openRecon;
+openRecon=function(id){_openRecon(id);
+  if(LIVE&&COACH){const ev=EVENTS.find(e=>e.id===id);
+    api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"recon",event:ev})})
+      .then(d=>{if(d.text&&rcEv===id)document.getElementById("rc-notetext").innerHTML=md(d.text);})
+      .catch(()=>{});}
+};
+
+/* ── persistence: drawer changes save to the server ── */
+function saveProfile(){
+  if(!LIVE)return;clearTimeout(SAVET);
+  SAVET=setTimeout(()=>{
+    fetch("/api/profile",{method:"PUT",headers:{"content-type":"application/json"},
+      body:JSON.stringify({ftp:S.ftp,weight:S.weight,maxhr:S.maxhr,rhr:S.rhr,lthr:S.lthr,
+        tgt:S.tgt,startFtp,events:EVENTS,ftpLog:FTPLOG})}).catch(()=>{});
+  },800);
+}
+const _updateAllL=updateAll;
+updateAll=function(){_updateAllL();saveProfile();};
+document.getElementById("logftp").addEventListener("click",saveProfile);
+
+/* ── system panel ── */
+function sysMsg(t){document.getElementById("sysmsg").textContent=t;}
+function wireSys(){
+  document.getElementById("btn-connect").onclick=()=>location.href="/api/auth";
+  document.getElementById("btn-sync").onclick=async e=>{
+    const b=e.currentTarget;b.disabled=true;b.textContent="SYNCING…";sysMsg("PULLING ACTIVITIES + STREAMS FROM STRAVA");
+    try{const d=await api("/api/sync");sysMsg(`SYNCED ${d.rides} DETAILED RIDES · ${d.activities} ACTIVITIES`);
+      const dd=await api("/api/data");if(dd.metrics)applyLive(dd.metrics);LIVE=true;
+      document.getElementById("livebadge").textContent="LIVE";
+    }catch(err){sysMsg("SYNC FAILED — "+String(err.message||err));}
+    b.disabled=false;b.textContent="SYNC NOW";};
+  document.getElementById("btn-check").onclick=async e=>{
+    const b=e.currentTarget;b.disabled=true;b.textContent="CHECKING…";
+    const out=document.getElementById("sysout");out.innerHTML="";
+    try{const d=await api("/api/health?deep=1");
+      out.innerHTML=d.checks.map(c=>`<div class="sysrow"><span class="${c.ok?"ok":"bad"}">${c.ok?"PASS":"FAIL"}</span><span>${c.name}</span><span class="si">${c.info||""}</span></div>`).join("");
+      sysMsg(d.ok?"ALL SYSTEMS GO":"ATTENTION NEEDED ABOVE");
+    }catch(err){out.innerHTML=`<div class="sysrow"><span class="bad">FAIL</span><span>Backend reachable</span><span class="si">${String(err.message||err)}</span></div>`;}
+    b.disabled=false;b.textContent="RUN SYSTEM CHECK";};
+}
+
+</script>
+</body>
+</html>
