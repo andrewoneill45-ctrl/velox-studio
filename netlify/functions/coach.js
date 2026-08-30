@@ -1,7 +1,8 @@
 import { json, readJSON, getProfile } from "./_lib.js";
 export default async (req) => {
   if (!process.env.ANTHROPIC_API_KEY) return json({ error: "no_key" }, 501);
-  const { mode = "weekly", id = null, event = null, q = null } = req.method === "POST" ? await req.json() : {};
+  const body = req.method === "POST" ? await req.json() : {};
+  const { mode = "weekly", id = null, event = null, q = null } = body;
   const prof = await getProfile();
   const metrics = await readJSON("metrics.json", {});
   let context = { profile: { ftp: prof.ftp, weight: prof.weight, wkg: +(prof.ftp / prof.weight).toFixed(2), targets: prof.tgt } };
@@ -28,6 +29,9 @@ export default async (req) => {
       bests: metrics.bests, tssSeason: metrics.tssSeason, chain: metrics.chain, zones28: metrics.zones28 };
     ask = q ? `The rider asks about their condition: "${q}". Answer directly from the data, under 120 words.`
             : "Give a full condition read from this data: the trend, one risk, and exactly what to do over the next 10 days. 120–150 words, titled short sections.";
+  } else if (mode === "planweek") {
+    context = body.context || {};
+    ask = (body.instruction ? `Adjustment from the rider: "${body.instruction}". ` : "") + "Plan this training week from the data.";
   } else if (mode === "recon" && event) {
     context.event = event;
     ask = "Write a 90-word recon briefing for this event: where it will be decided, target watts on the decisive climb, one tactical instruction.";
@@ -40,9 +44,21 @@ export default async (req) => {
     method: "POST",
     headers: { "content-type": "application/json", "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
     body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "weekly" ? 380 : 700,
-      system: "You are the directeur sportif for a single amateur rider. UK English. Confident, warm, specific. Use **bold** for key numbers. No preamble, no sign-off.",
+      system: "You are the directeur sportif for a single amateur rider. UK English. Confident, warm, specific. Use **bold** for key numbers. No preamble, no sign-off." + (mode === "planweek" ? `
+You are now planning ONE training week. Respond with ONLY a JSON object — no prose before or after, no code fences:
+{"summary": string (2–3 warm, specific sentences on why this week looks like this, referencing last week and current form),
+ "question": string|null (ONLY if one crucial thing is missing; otherwise null),
+ "sessions": [{"date":"YYYY-MM-DD","name":string,"type":"Recovery"|"Endurance"|"Tempo"|"Threshold"|"VO2 Max"|"Race","mins":number,"tss":number,"detail":string}]}
+Rules: use only the available days; respect the time limits per day; base load on last week's TSS, current form (TSB) and the rider's stated feeling — tired means lower load; place hard days before rest; taper if an A-event is within 10 days; "detail" says exactly how to ride it with watt targets from the rider's FTP and zones. Rest days are simply omitted. Sessions should sum to a sensible weekly TSS (target if given).` : ""),
       messages: [{ role: "user", content: ask + "\n\nDATA:\n" + JSON.stringify(context) }] })});
   if (!r.ok) return json({ error: "anthropic_" + r.status, detail: await r.text() }, 502);
   const d = await r.json();
-  return json({ text: d.content?.filter(c => c.type === "text").map(c => c.text).join("\n") || "" });
+  const text = d.content?.filter(c => c.type === "text").map(c => c.text).join("\n") || "";
+  if (mode === "planweek") {
+    try { const clean = text.replace(/```json|```/g, "").trim();
+      const plan = JSON.parse(clean.slice(clean.indexOf("{"), clean.lastIndexOf("}") + 1));
+      return json({ plan, text }); }
+    catch { return json({ plan: null, text }); }
+  }
+  return json({ text });
 };

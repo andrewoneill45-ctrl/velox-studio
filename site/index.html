@@ -268,6 +268,19 @@ svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshai
 .planner label{display:flex;flex-direction:column;gap:5px;font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.14em;color:var(--mist)}
 .planner .inp{max-width:none}
 @media(max-width:980px){.planner{grid-template-columns:1fr 1fr}}
+.chips2{display:flex;gap:6px;flex-wrap:wrap}
+.chp{padding:8px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;cursor:pointer;font-family:'Space Grotesk';font-size:9.5px;font-weight:700;letter-spacing:.1em;color:var(--ink2);transition:all .2s}
+.chp.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.aiq{display:grid;grid-template-columns:150px 1fr;gap:14px 18px;align-items:center;margin-top:6px}
+.aiq .ql{font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.16em;color:var(--mist)}
+.sess{display:grid;grid-template-columns:110px 1fr auto auto;gap:14px;align-items:start;padding:14px 0;border-top:1px dashed var(--hair)}
+.sess .sd{font-family:'Space Grotesk';font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--ink)}
+.sess .sn{font-weight:600;font-size:14px}
+.sess .sx{font-size:12px;color:var(--ink2);line-height:1.6;margin-top:4px}
+.sess .sv{font-family:'Archivo';font-weight:900;font-size:20px;letter-spacing:-.02em;white-space:nowrap}
+.sess .sv small{font-size:9px;color:var(--mist);letter-spacing:.1em}
+.sess .rm{border:none;background:none;color:var(--polka);cursor:pointer;font-size:14px}
+.aisum{font-family:'Fraunces',serif;font-style:italic;font-size:17px;line-height:1.5;color:var(--ink);margin:6px 0 10px}
 /* ── TIMELINE ── */
 .tlwrap{border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:var(--sh);overflow:hidden}
 .tltop{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--hair)}
@@ -2242,9 +2255,10 @@ function renderWeekDetail(k){
     <span>RIDDEN<b>${act||"—"} TSS</b></span><span>PLANNED<b>${pl||"—"}</b></span>
     <span>TARGET <input class="inp" id="wktgt" type="number" value="${tgt||""}" placeholder="TSS" style="width:90px;margin-left:6px"/> <button class="aibtn" id="wktgtsave" style="padding:8px 12px">SET</button></span>
     ${w?`<span>DISTANCE<b>${Math.round(w.km)} km</b></span><span>CLIMBING<b>${fmtInt(Math.round(w.m))} m</b></span>`:""}
-    <span class="grow"></span><button class="aibtn" id="wkplan" style="padding:9px 14px">+ PLAN A RIDE</button>${evs.map(e=>`<span class="chip" style="background:var(--jaune);color:var(--ink)">${e.short} · ${new Date(e.date).toLocaleDateString("en-GB",{weekday:"short",day:"numeric"}).toUpperCase()}</span>`).join("")}`;
+    <span class="grow"></span><button class="aibtn" id="wkai" style="padding:9px 14px;background:var(--ember)">PLAN MY WEEK · CLAUDE</button><button class="aibtn" id="wkplan" style="padding:9px 14px">+ PLAN A RIDE</button>${evs.map(e=>`<span class="chip" style="background:var(--jaune);color:var(--ink)">${e.short} · ${new Date(e.date).toLocaleDateString("en-GB",{weekday:"short",day:"numeric"}).toUpperCase()}</span>`).join("")}`;
   renderPlanner(k);
-  document.getElementById("wkplan").onclick=()=>{const pl=document.getElementById("planner");pl.style.display=pl.style.display==="none"?"block":"none";};
+  document.getElementById("wkplan").onclick=()=>{const pl=document.getElementById("planner");if(pl.dataset.mode==="ai"){renderPlanner(k);pl.style.display="block";return;}pl.style.display=pl.style.display==="none"?"block":"none";};
+  document.getElementById("wkai").onclick=()=>{renderAIPlanner(k);document.getElementById("planner").style.display="block";};
   document.getElementById("wktgtsave").onclick=()=>{S.weekTargets=S.weekTargets||{};const v=+document.getElementById("wktgt").value;
     if(v>0)S.weekTargets[k]=v;else delete S.weekTargets[k];tlRender(true);drawMassif();drawTraj();saveProfile();};
   let out="";
@@ -2253,7 +2267,8 @@ function renderWeekDetail(k){
     const past=di<todayIso,today=di===todayIso;
     const tot=rides.reduce((s,r)=>s+(r.tss||0),0);
     const main=rides[0];
-    const stx=rides.length?rides.map(r=>`<b>${r.nm}</b><br/>${r.km} km · ${fmtInt(r.m)} m · ${hh(r.secs)} · ${r.tss} TSS`).join("<br/><br/>")+`<br/><br/><span style="opacity:.7">CLICK — OPEN IN THE LABORATORY →</span>`:"";
+    const stx=rides.length?rides.map(r=>`<b>${r.nm}</b><br/>${r.km} km · ${fmtInt(r.m)} m · ${hh(r.secs)} · ${r.tss} TSS`).join("<br/><br/>")+`<br/><br/><span style="opacity:.7">CLICK — OPEN IN THE LABORATORY →</span>`
+      :(plans.length?plans.map(p=>`<b>${p.nm}</b> · ${p.type||"Planned"}${p.mins?` · ${p.mins} min`:""} · ${p.tss} TSS${p.detail?`<br/><span style="opacity:.8">${p.detail}</span>`:""}`).join("<br/><br/>"):"");
     out+=`<div class="stg ${today?"pin-today":""}" ${main?`data-ride="${main.id}"`:'style="cursor:default"'}>
       <div class="day" ${today?'style="color:var(--polka)"':""}>${d.toLocaleDateString("en-GB",{weekday:"short"}).toUpperCase()} ${d.getDate()}</div>
       ${dev.map(e=>`<span class="chip" style="background:var(--jaune);color:var(--ink);margin-top:8px;align-self:flex-start">${e.pr} · ${e.short}</span>`).join("")}
@@ -2407,6 +2422,86 @@ tlBuild=function(acts){_tlBuild(acts);
   drawMassif();drawTraj();drawPMCX();loadRadar();};
 const _gl2=gotoLab;gotoLab=async function(id){await _gl2(id);RB=null;};
 document.querySelector('.modetabs button[data-v="cond"]').addEventListener("click",()=>{if(!RB)loadRadar();});
+
+
+/* ═══ v2.2 — Claude plans the week ═══ */
+let AIW={intake:{},proposal:null,k:null,answers:[]};
+function renderAIPlanner(k){
+  const el=document.getElementById("planner");el.dataset.mode="ai";AIW.k=k;AIW.proposal=null;AIW.answers=[];
+  if(!(LIVE&&COACH)){el.innerHTML='<div class="ds">Connect Strava and add the Claude key to plan weeks with the coach.</div>';return;}
+  const mon=new Date(k+"T12:00:00"),todayIso=isoDay(new Date());
+  const days=[];for(let i=0;i<7;i++){const d=addD(mon,i),di=isoDay(d);days.push({di,lab:d.toLocaleDateString("en-GB",{weekday:"short"}).toUpperCase(),past:di<todayIso});}
+  const it=AIW.intake;
+  el.innerHTML=`<div class="aiq">
+    <span class="ql">HOW ARE YOU FEELING?</span><div class="chips2" id="ai-feel">${["Fresh","Good","Bit tired","Wrecked"].map(f=>`<span class="chp ${it.feeling===f?"on":""}" data-v="${f}">${f.toUpperCase()}</span>`).join("")}</div>
+    <span class="ql">DAYS I CAN TRAIN</span><div class="chips2" id="ai-days">${days.map(d=>`<span class="chp ${d.past?"":"on"}" data-v="${d.di}" ${d.past?'style="opacity:.35;pointer-events:none"':""}>${d.lab}</span>`).join("")}</div>
+    <span class="ql">TIME AVAILABLE</span><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="ql">WEEKDAYS</span><input class="inp" id="ai-wd" type="number" value="${it.wd||60}" style="width:80px"/><span class="ql">MIN · WEEKEND</span><input class="inp" id="ai-we" type="number" value="${it.we||180}" style="width:80px"/><span class="ql">MIN</span></div>
+    <span class="ql">THIS WEEK'S FOCUS</span><div class="chips2" id="ai-focus">${["Build fitness","Sharpen for the event","Recover","Maintain","Big miles"].map(f=>`<span class="chp ${it.focus===f?"on":""}" data-v="${f}">${f.toUpperCase()}</span>`).join("")}</div>
+    <span class="ql">ANYTHING ELSE?</span><input class="inp" id="ai-note" placeholder="Club ride Saturday, sore knee, travelling Thursday…" value="${it.note||""}" style="max-width:none"/>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;margin-top:16px"><button class="aibtn" id="ai-build" style="background:var(--ember);padding:12px 18px">BUILD MY WEEK</button><span class="ds" id="ai-status" style="margin:0"></span></div>
+    <div id="ai-out"></div>`;
+  ["ai-feel","ai-focus"].forEach(id=>document.querySelectorAll("#"+id+" .chp").forEach(c=>c.onclick=()=>{document.querySelectorAll("#"+id+" .chp").forEach(x=>x.classList.remove("on"));c.classList.add("on");}));
+  document.querySelectorAll("#ai-days .chp").forEach(c=>c.onclick=()=>c.classList.toggle("on"));
+  document.getElementById("ai-build").onclick=()=>aiBuild(k);
+}
+function aiContext(k){
+  const mon=new Date(k+"T12:00:00"),prevK=isoDay(addD(mon,-7)),prev2=isoDay(addD(mon,-14));
+  const wk=w=>{const x=TL.weeks.get(w);return x?{tss:Math.round(x.tss),km:Math.round(x.km),m:Math.round(x.m),rides:x.rides.map(r=>({d:r.d,nm:r.nm,km:r.km,m:r.m,mins:Math.round(r.secs/60),tss:r.tss}))}:{tss:0,rides:[]};};
+  const pm=pmcFromActs(),last=pm[pm.length-1]||{};
+  const days=[];for(let i=0;i<7;i++)days.push(isoDay(addD(mon,i)));
+  const it=AIW.intake;
+  return {week:{start:k,days,available:it.days,today:isoDay(new Date())},
+    lastWeek:wk(prevK),twoWeeksAgo:{tss:wk(prev2).tss},
+    form:{fitness:Math.round(last.ctl||0),fatigue:Math.round(last.atl||0),tsb:Math.round(last.tsb||0)},
+    rider:{ftp:S.ftp,weight:S.weight,wkg:+(S.ftp/S.weight).toFixed(2),zones:ZONES.map(z=>`${z.abbr} ${z.min}-${z.max>5000?"max":z.max} W`),targets:S.tgt},
+    events:fut().map(e=>({name:e.name,date:e.date,daysAway:J(e),priority:e.pr,km:e.km,m:e.m})),
+    weekTargetTSS:(S.weekTargets&&S.weekTargets[k])||null,
+    existingPlans:days.flatMap(d=>(S.plan&&S.plan[d]||[]).map(p=>({date:d,...p}))),
+    intake:{feeling:it.feeling,weekdayMins:it.wd,weekendMins:it.we,focus:it.focus,note:it.note},
+    answers:AIW.answers};
+}
+async function aiBuild(k,instruction){
+  const it=AIW.intake;
+  it.feeling=document.querySelector("#ai-feel .chp.on")?.dataset.v||it.feeling||"Good";
+  it.days=[...document.querySelectorAll("#ai-days .chp.on")].map(c=>c.dataset.v);
+  it.wd=+document.getElementById("ai-wd")?.value||it.wd||60;it.we=+document.getElementById("ai-we")?.value||it.we||180;
+  it.focus=document.querySelector("#ai-focus .chp.on")?.dataset.v||it.focus||"Build fitness";
+  it.note=document.getElementById("ai-note")?.value??it.note??"";
+  const st=document.getElementById("ai-status"),out=document.getElementById("ai-out");
+  st.textContent="Claude is reading last week and your form…";
+  try{
+    const d=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"planweek",context:aiContext(k),instruction:instruction||null})});
+    st.textContent="";
+    if(!d.plan){out.innerHTML=`<div class="aitext" style="display:block">${md(d.text)}</div>`;return;}
+    AIW.proposal=d.plan;renderProposal(k);
+  }catch(e){st.textContent="Coach offline — "+String(e.message||e);}
+}
+function renderProposal(k){
+  const P=AIW.proposal,out=document.getElementById("ai-out");
+  if(P.question&&!(P.sessions&&P.sessions.length)){
+    out.innerHTML=`<div class="aisum">"${P.question}"</div><div style="display:flex;gap:10px"><input class="inp" id="ai-ans" placeholder="Your answer…" style="max-width:none;flex:1"/><button class="aibtn" id="ai-ansb">ANSWER &amp; BUILD</button></div>`;
+    document.getElementById("ai-ansb").onclick=()=>{AIW.answers.push({q:P.question,a:document.getElementById("ai-ans").value});aiBuild(k);};return;}
+  const tot=P.sessions.reduce((s,x)=>s+(+x.tss||0),0);
+  out.innerHTML=`<div class="aisum">${P.summary||""}</div>
+    ${P.sessions.map((x,i)=>`<div class="sess"><div class="sd">${new Date(x.date+"T12:00:00").toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}).toUpperCase()}<br/><span class="chip" style="background:var(--hair);color:var(--ink2);margin-top:6px;display:inline-block">${x.type}</span></div>
+      <div><div class="sn">${x.name}</div><div class="sx">${x.detail||""}</div></div>
+      <div class="sv">${x.mins}<small> MIN</small></div><div class="sv" style="color:var(--bleu)">${x.tss}<small> TSS</small> <button class="rm" data-i="${i}" title="Remove">✕</button></div></div>`).join("")}
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid var(--hair)">
+      <button class="aibtn" id="ai-accept" style="background:var(--vert);padding:12px 18px">ADD ALL TO THE TIMELINE · ${tot} TSS</button>
+      <label class="ds" style="margin:0;display:flex;gap:6px;align-items:center"><input type="checkbox" id="ai-replace" checked/> replace existing plans this week</label>
+      <span class="grow"></span>
+      <input class="inp" id="ai-adj" placeholder="Adjust: make Thursday easier, move the long ride to Sunday…" style="max-width:none;flex:1;min-width:260px"/><button class="aibtn" id="ai-adjb">ADJUST</button></div>`;
+  out.querySelectorAll(".rm").forEach(b=>b.onclick=()=>{P.sessions.splice(+b.dataset.i,1);renderProposal(k);});
+  document.getElementById("ai-adjb").onclick=()=>{const v=document.getElementById("ai-adj").value.trim();if(v)aiBuild(k,v);};
+  document.getElementById("ai-adj").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("ai-adjb").click();});
+  document.getElementById("ai-accept").onclick=()=>{
+    S.plan=S.plan||{};
+    if(document.getElementById("ai-replace").checked){const mon=new Date(k+"T12:00:00");for(let i=0;i<7;i++)delete S.plan[isoDay(addD(mon,i))];}
+    P.sessions.forEach(x=>{(S.plan[x.date]=S.plan[x.date]||[]).push({nm:x.name,tss:+x.tss||0,type:x.type,mins:+x.mins||0,detail:x.detail||"",ai:true});});
+    saveProfile();tlRender(true);drawMassif();drawTraj();
+    document.getElementById("planner").style.display="none";};
+}
 
 </script>
 </body>
