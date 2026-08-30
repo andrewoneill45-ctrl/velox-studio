@@ -1821,7 +1821,7 @@ document.getElementById("logftp").addEventListener("click",saveProfile);
 /* ── system panel ── */
 function sysMsg(t){document.getElementById("sysmsg").textContent=t;}
 function wireSys(){
-  document.getElementById("btn-connect").onclick=()=>location.href="/api/auth";
+  document.getElementById("btn-connect").onclick=()=>location.href="/api/auth?force=1";
   document.getElementById("btn-sync").onclick=async e=>{
     const b=e.currentTarget;b.disabled=true;b.textContent="SYNCING…";sysMsg("PULLING ACTIVITIES + STREAMS FROM STRAVA");
     try{const d=await api("/api/sync");sysMsg(`SYNCED ${d.rides} DETAILED RIDES · ${d.activities} ACTIVITIES`);
