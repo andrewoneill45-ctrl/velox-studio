@@ -206,7 +206,7 @@ svg#pmc{display:block;width:100%;height:340px}
 .rsel.on{background:var(--ink);border-color:var(--ink)}
 .rsel.on .rn{color:#fff}.rsel.on .rd{color:rgba(255,255,255,.5)}
 .cockpit{position:relative;overflow:hidden}
-canvas#rmap{display:block;width:100%;height:47vh;min-height:420px;touch-action:none;cursor:crosshair}
+canvas#rmap{display:block;width:100%;height:56vh;min-height:480px;touch-action:none;cursor:crosshair}
 .hud{position:absolute;top:20px;left:20px;display:flex;flex-direction:column;gap:8px;z-index:3;pointer-events:none;max-width:190px}
 .hudchip{background:rgba(255,255,255,.82);backdrop-filter:blur(10px);border:1px solid rgba(20,30,40,.08);border-radius:12px;
   padding:10px 14px;min-width:150px;box-shadow:0 6px 20px rgba(20,30,40,.08)}
@@ -582,6 +582,10 @@ svg#rc-prof{display:block;width:100%;height:340px}
             <div><div class="cl" style="color:var(--bleu)">READING THE NUMBERS · CLAUDE</div>
             <p id="condnote">Decoupling has halved since March. The FTP line is still climbing while fatigue peaks, which means <b>Thursday's fresh test should beat 280 W</b>. Everything says the block worked: hold your nerve through three quiet days and let the form arrive.</p></div>
           </div>
+          <div class="panel aipanel cascade" style="grid-column:span 12;--i:8">
+            <div class="aihead"><span class="al">CONDITION · CLAUDE</span><span style="display:flex;gap:8px;flex:1;justify-content:flex-end;align-items:center;flex-wrap:wrap"><input class="inp" id="cask" placeholder="Ask about your form, fatigue, the next block…" style="max-width:360px;flex:1"/><button class="aibtn" id="caskbtn">ASK</button><button class="aibtn" id="canalyse">ANALYSE MY CONDITION</button></span></div>
+            <div class="aitext" id="catext"></div>
+          </div>
         </div>
       </div>
       <div id="v-rides" style="display:none">
@@ -604,7 +608,7 @@ svg#rc-prof{display:block;width:100%;height:340px}
             <svg id="relev" viewBox="0 0 1200 52" preserveAspectRatio="none"></svg>
           </div>
           <div class="panel aipanel cascade" style="grid-column:span 12;--i:6">
-            <div class="aihead"><span class="al">DEBRIEF · CLAUDE</span><button class="aibtn" id="raibtn">ANALYSE THIS RIDE</button></div>
+            <div class="aihead"><span class="al">DEBRIEF · CLAUDE</span><span style="display:flex;gap:8px;flex:1;justify-content:flex-end;align-items:center;flex-wrap:wrap"><input class="inp" id="rask" placeholder="Ask the coach about this ride…" style="max-width:340px;flex:1"/><button class="aibtn" id="raskbtn">ASK</button><button class="aibtn" id="raibtn">ANALYSE THIS RIDE</button></span></div>
             <div class="aitext" id="raitext"></div>
           </div>
         </div>
@@ -1077,9 +1081,10 @@ function renderRideSel(){
 function renderHUD(){
   const r=RIDES[curRide],el=document.getElementById("rhud");
   if(cursor===null){
-    el.innerHTML=[["NORM PWR",r.np+"<span class='u'>W</span>","#E8611F"],["INTENSITY",r.iff.toFixed(2),"#141E28"],
-      ["TSS",r.tss,"#26496E"],["AVG HR",r.hr+"<span class='u'>bpm</span>","#D0342C"]]
-      .map(([l,v,c])=>`<div class="hudchip"><div class="l">${l}</div><div class="v" style="color:${c}">${v}</div></div>`).join("");
+    el.innerHTML=[["NORM PWR",r.np,"W","#E8611F"],["INTENSITY",r.iff&&(+r.iff).toFixed(2),"","#141E28"],
+      ["TSS",r.tss,"","#26496E"],["AVG HR",r.hr,"bpm","#D0342C"]]
+      .filter(c=>c[1])
+      .map(([l,v,u,c])=>`<div class="hudchip"><div class="l">${l}</div><div class="v" style="color:${c}">${v}${u?`<span class='u'>${u}</span>`:""}</div></div>`).join("");
   }else{
     const d=STREAM[Math.floor(cursor*(STREAM.length-1))],z=zoneOf(d.pw);
     el.innerHTML=`<div class="hudchip" style="border-color:${z.h}"><div class="l" style="color:${z.h}">${z.abbr} · ${z.name.toUpperCase()}</div><div class="v" style="color:${z.h}">${d.pw}<span class="u">W</span></div></div>
@@ -1330,14 +1335,14 @@ document.getElementById("openprof").addEventListener("click",openDrawer);
 document.getElementById("dclose").addEventListener("click",closeDrawer);
 scrim.addEventListener("click",closeDrawer);
 const CFG={
- ftp:{step:1,min:180,max:400,get:()=>S.ftp,set:v=>S.ftp=v,fmt:v=>v+"<i>W</i>"},
+ ftp:{step:1,min:100,max:400,get:()=>S.ftp,set:v=>S.ftp=v,fmt:v=>v+"<i>W</i>"},
  weight:{step:.5,min:55,max:100,get:()=>S.weight,set:v=>S.weight=v,fmt:v=>v.toFixed(1)+"<i>kg</i>"},
  maxhr:{step:1,min:150,max:210,get:()=>S.maxhr,set:v=>S.maxhr=v,fmt:v=>v+"<i>bpm</i>"},
  rhr:{step:1,min:35,max:70,get:()=>S.rhr,set:v=>S.rhr=v,fmt:v=>v+"<i>bpm</i>"},
  lthr:{step:1,min:130,max:195,get:()=>S.lthr,set:v=>S.lthr=v,fmt:v=>v+"<i>bpm</i>"},
- tftp:{step:5,min:250,max:400,get:()=>S.tgt.ftp,set:v=>S.tgt.ftp=v,fmt:v=>v+"<i>W</i>"},
- tclimb:{step:1000,min:20000,max:120000,get:()=>S.tgt.climb,set:v=>S.tgt.climb=v,fmt:v=>(v/1000)+"<i>k m</i>"},
- tsprint:{step:10,min:600,max:1500,get:()=>S.tgt.sprint,set:v=>S.tgt.sprint=v,fmt:v=>v+"<i>W</i>"},
+ tftp:{step:5,min:150,max:400,get:()=>S.tgt.ftp,set:v=>S.tgt.ftp=v,fmt:v=>v+"<i>W</i>"},
+ tclimb:{step:1000,min:5000,max:120000,get:()=>S.tgt.climb,set:v=>S.tgt.climb=v,fmt:v=>(v/1000)+"<i>k m</i>"},
+ tsprint:{step:10,min:300,max:1500,get:()=>S.tgt.sprint,set:v=>S.tgt.sprint=v,fmt:v=>v+"<i>W</i>"},
  tchain:{step:1,min:4,max:20,get:()=>S.tgt.chain,set:v=>S.tgt.chain=v,fmt:v=>v+"<i>wk</i>"}};
 document.querySelectorAll(".step").forEach(st=>{
   const k=st.dataset.k,c=CFG[k],val=st.querySelector(".sval");
@@ -1670,6 +1675,9 @@ loadRide=async function(){
   if(!(LIVE&&R&&R.id)){glOff();_loadRideDemo();return;}
   try{
     const d=await api("/api/ride?id="+R.id);
+    if(d.meta){Object.assign(R,{nm:d.meta.nm||R.nm,np:d.meta.np??R.np,iff:d.meta.iff??R.iff,tss:d.meta.tss??R.tss,
+      hr:d.meta.hr??R.hr,vi:d.meta.vi??R.vi,dec:d.meta.dec??R.dec,gps:d.meta.gps??R.gps,
+      meta:d.meta.km?`${d.meta.km} KM · ${fmtInt(d.meta.m)} M · ${Math.floor(d.meta.secs/3600)}H ${String(Math.floor(d.meta.secs%3600/60)).padStart(2,"0")}M`:R.meta});renderRideSel();}
     const st=d.streams,n=(st.watts||st.alt||st.time||[]).length||0;
     if(!n)throw new Error("empty streams");
     STREAM=[];ROUTE=[];
@@ -1718,9 +1726,12 @@ function loadMapbox(){
   sc.onload=()=>{mapboxgl.accessToken=MAPTOKEN;if(RIDES[curRide]&&RIDES[curRide].gps)loadRide();};
   document.head.appendChild(sc);
 }
+let GLRO=null,GLENDS=[];
 function glOn(){
   const el=document.getElementById("rmapgl");el.classList.add("on");
   document.getElementById("rmap").style.visibility="hidden";GLACTIVE=true;
+  if(!el.clientWidth){let n=0;const t=setInterval(()=>{if(el.clientWidth||++n>20){clearInterval(t);if(el.clientWidth)glOn();}},150);return;}
+  if(!GLRO){GLRO=new ResizeObserver(()=>{if(GL)GL.resize();});GLRO.observe(el);}
   const coords=ROUTE.map(p=>[p.lng,p.lat]);
   const gj={type:"Feature",geometry:{type:"LineString",coordinates:coords}};
   const stops=[];const NS=48;
@@ -1751,7 +1762,13 @@ function glRoute(gj,stops,bounds){
     dot.style.cssText="width:16px;height:16px;border-radius:50%;background:#141E28;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35)";
     GLMARK=new mapboxgl.Marker({element:dot}).setLngLat(gj.geometry.coordinates[0]).addTo(GL);
     GLMARK.getElement().style.display="none";
-    GL.fitBounds(bounds,{padding:70,duration:800});
+    GLENDS.forEach(m=>m.remove());GLENDS=[];
+    [[gj.geometry.coordinates[0],"#189B69"],[gj.geometry.coordinates[gj.geometry.coordinates.length-1],"#E8611F"]].forEach(([c,col])=>{
+      const d2=document.createElement("div");
+      d2.style.cssText=`width:14px;height:14px;border-radius:50%;background:${col};border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)`;
+      GLENDS.push(new mapboxgl.Marker({element:d2}).setLngLat(c).addTo(GL));});
+    GL.fitBounds(bounds,{padding:80,duration:800});
+    setTimeout(()=>GL.resize(),120);setTimeout(()=>{GL.resize();GL.fitBounds(bounds,{padding:80,duration:0});},450);
   };
   if(GL.isStyleLoaded())add();else GL.once("idle",add);
 }
@@ -1821,7 +1838,7 @@ document.getElementById("logftp").addEventListener("click",saveProfile);
 /* ── system panel ── */
 function sysMsg(t){document.getElementById("sysmsg").textContent=t;}
 function wireSys(){
-  document.getElementById("btn-connect").onclick=()=>location.href="/api/auth?force=1";
+  document.getElementById("btn-connect").onclick=()=>location.href="/api/auth";
   document.getElementById("btn-sync").onclick=async e=>{
     const b=e.currentTarget;b.disabled=true;b.textContent="SYNCING…";sysMsg("PULLING ACTIVITIES + STREAMS FROM STRAVA");
     try{const d=await api("/api/sync");sysMsg(`SYNCED ${d.rides} DETAILED RIDES · ${d.activities} ACTIVITIES`);
@@ -1890,7 +1907,7 @@ function renderDaysLive(){
 }
 function patchLiveChrome(m){
   const F=m.pmc||[],last=F[F.length-1]||{},prev=F[F.length-29]||last;
-  const na2=nextA();document.getElementById("heroline").innerHTML=`Week ${Math.min(16,CURWK+1)}. ${na2&&J(na2)<=14?"The sharpening begins.":"The mountains are coming."}`;
+  document.getElementById("heroline").innerHTML=`Week ${Math.min(16,CURWK+1)}. ${J(nextA())<=14?"The sharpening begins.":"The mountains are coming."}`;
   document.getElementById("cd-ftpn").textContent=`+${Math.max(0,S.ftp-startFtp)} W since the March baseline`;
   const ctlEl=document.getElementById("cd-ctl");if(ctlEl)ctlEl.textContent=Math.round(last.ctl||0);
   const ctlN=document.getElementById("cd-ctln");if(ctlN)ctlN.textContent=`${last.ctl>=prev.ctl?"+":""}${Math.round((last.ctl||0)-(prev.ctl||0))} in four weeks`;
@@ -1971,6 +1988,77 @@ applyLive=function(m){
   _al2(m);
   if(COACH&&m.syncedAt&&+new Date(m.syncedAt)>(+localStorage.getItem("vx_coach_t")||0))refreshCoachNote(true);
 };
+
+
+/* ═══ v1.3 — season browser → Laboratory, coach Q&A ═══ */
+function weekRidesOf(w){const L=window.LIVEM;return (L&&L.weekRides&&L.weekRides[w])||null;}
+renderDaysLive=function(){
+  const W=weekRidesOf(curWk);
+  if(!W){document.getElementById("days").innerHTML='<div class="stg" style="grid-column:1/-1;cursor:default;min-height:100px"><div class="nm">Run a sync to load the season browser.</div><div class="ds">Week-by-week rides appear after the next SYNC NOW.</div></div>';return;}
+  const mon=new Date(SEASON0);mon.setDate(mon.getDate()+curWk*7);
+  const today=new Date();let out="";
+  for(let i=0;i<7;i++){
+    const d=new Date(mon);d.setDate(mon.getDate()+i);
+    const iso=d.toISOString().slice(0,10);
+    const rides=W.filter(r=>r.d===iso);
+    const tot=rides.reduce((s,r)=>s+r.tss,0);
+    const fut=d>today;
+    const hh=r=>`${Math.floor(r.secs/3600)}h${String(Math.floor(r.secs%3600/60)).padStart(2,"0")}`;
+    const stx=rides.length?rides.map(r=>`<b>${r.nm}</b><br/>${r.km} km · ${fmtInt(r.m)} m · ${hh(r)} · ${r.tss} TSS`).join("<br/><br/>")+`<br/><br/><span style="opacity:.7">CLICK — OPEN IN THE LABORATORY →</span>`:"";
+    out+=`<div class="stg" ${rides.length?`data-ride="${rides[0].id}"`:'style="cursor:default"'}>
+      <div class="day">${d.toLocaleDateString("en-GB",{weekday:"short"}).toUpperCase()} ${d.getDate()}</div>
+      <div class="nm" style="margin-top:14px">${rides.length?rides[0].nm:(fut?"—":"Rest day")}</div>
+      <div class="ds">${rides.length?`${rides[0].km} km · ${fmtInt(rides[0].m)} m${rides.length>1?` · +${rides.length-1} more`:""}`:(fut?"Not yet ridden":"No ride logged")}</div>
+      <div class="foot"><span class="tss">${tot||"—"}<small> TSS</small></span>${tot>0?'<div class="tick">✓</div>':fut?"<span></span>":'<div class="miss"></div>'}</div>
+      ${stx?`<div class="stx">${stx}</div>`:""}
+    </div>`;}
+  document.getElementById("days").innerHTML=out;
+  document.querySelectorAll("#days .stg[data-ride]").forEach(el=>el.onclick=()=>gotoLab(el.dataset.ride));
+};
+async function gotoLab(id){
+  let idx=RIDES.findIndex(r=>String(r.id)===String(id));
+  if(idx<0){
+    const wr=((window.LIVEM&&window.LIVEM.weekRides)||[]).flat().find(r=>String(r.id)===String(id));
+    RIDES.unshift({id,nm:wr?wr.nm:"Ride",
+      dt:wr?new Date(wr.d).toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}).toUpperCase():"",
+      meta:wr?`${wr.km} KM · ${fmtInt(wr.m)} M`:"",np:null,iff:null,tss:wr?wr.tss:0,hr:null,vi:null,dec:null,gps:true,ai:null});
+    if(RIDES.length>10)RIDES.pop();
+    idx=0;}
+  curRide=idx;
+  showScene("analyse");
+  document.querySelectorAll(".modetabs button").forEach(x=>x.classList.toggle("on",x.dataset.v==="rides"));
+  document.getElementById("v-cond").style.display="none";
+  document.getElementById("v-rides").style.display="block";
+  renderRideSel();
+  await loadRide();
+  if(window.GL)setTimeout(()=>GL.resize(),150);
+}
+function coachType(txtEl,btns,T){
+  clearInterval(aiTimer);txtEl.style.display="block";let i=0;txtEl.innerHTML="";
+  aiTimer=setInterval(()=>{if(i>=T.length){clearInterval(aiTimer);btns.forEach(b=>{b.disabled=false;});return;}
+    i+=4;txtEl.innerHTML=md(T.slice(0,i));},10);}
+async function coachAsk(payload,txtEl,btns){
+  btns.forEach(b=>b.disabled=true);
+  txtEl.style.display="block";txtEl.innerHTML="<em>Thinking…</em>";
+  try{const d=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload)});
+    coachType(txtEl,btns,d.text||"No answer returned.");}
+  catch(e){coachType(txtEl,btns,"**Coach offline.** "+String(e.message||e));}
+}
+(function(){
+  const rb=document.getElementById("raskbtn"),ri=document.getElementById("rask");
+  if(rb)rb.onclick=()=>{const q=ri.value.trim();if(!q)return;
+    const R=RIDES[curRide];if(!(LIVE&&COACH&&R&&R.id)){coachType(document.getElementById("raitext"),[rb],"**Demo mode.** Connect and sync to ask about real rides.");return;}
+    coachAsk({mode:"ask",id:R.id,q},document.getElementById("raitext"),[rb,document.getElementById("raibtn")]);};
+  if(ri)ri.addEventListener("keydown",e=>{if(e.key==="Enter")rb.click();});
+  const cb=document.getElementById("canalyse"),ci=document.getElementById("cask"),cq=document.getElementById("caskbtn");
+  const cbtns=[cb,cq].filter(Boolean);
+  if(cb)cb.onclick=()=>{if(!(LIVE&&COACH)){coachType(document.getElementById("catext"),cbtns,"**Demo mode.** Connect and sync first.");return;}
+    coachAsk({mode:"condition"},document.getElementById("catext"),cbtns);};
+  if(cq)cq.onclick=()=>{const q=ci.value.trim();if(!q)return;
+    if(!(LIVE&&COACH)){coachType(document.getElementById("catext"),cbtns,"**Demo mode.** Connect and sync first.");return;}
+    coachAsk({mode:"condition",q},document.getElementById("catext"),cbtns);};
+  if(ci)ci.addEventListener("keydown",e=>{if(e.key==="Enter")cq.click();});
+})();
 
 </script>
 </body>

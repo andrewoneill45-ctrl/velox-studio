@@ -110,6 +110,13 @@ export default async () => {
     const e = monthly.find(x => x.label === lb); if (e) e.m += a.total_elevation_gain || 0;
     else monthly.push({ label: lb, m: a.total_elevation_gain || 0 }); }
   monthly.reverse(); monthly.forEach(x => x.m = Math.round(x.m));
+  const weekRides = Array.from({ length: 16 }, () => []);
+  for (const a of seasonActs) { const wi = Math.floor((new Date(a.start_date) - s0) / (7 * 864e5));
+    if (wi >= 0 && wi < 16) { const det = rides.find(r => r.id === a.id);
+      weekRides[wi].push({ id: a.id, nm: a.name, d: a.start_date.slice(0, 10),
+        tss: det ? det.tss : estTss(a), km: +(a.distance / 1000).toFixed(1),
+        m: Math.round(a.total_elevation_gain || 0), secs: a.moving_time }); } }
+  weekRides.forEach(w => w.sort((x, y) => x.d < y.d ? -1 : 1));
   const days14 = [];
   for (let i = 13; i >= 0; i--) { const dt = new Date(Date.now() - i * 864e5), d = dt.toISOString().slice(0, 10);
     const list = seasonActs.filter(a => a.start_date.slice(0, 10) === d);
@@ -142,7 +149,7 @@ export default async () => {
 
   const metrics = { syncedAt: new Date().toISOString(), pmc, weeks: weeks.map(Math.round), curWeek,
     zones28, bests, climb, everests: +(climb / 8849).toFixed(2), chain, chainMax,
-    monthly, days14, weeksElapsed, avgClimbWk: Math.round(climb / weeksElapsed),
+    monthly, days14, weekRides, weeksElapsed, avgClimbWk: Math.round(climb / weeksElapsed),
     totalActivities: acts.length,
     tssSeason: Math.round(Object.entries(daily).filter(([d]) => new Date(d) >= s0).reduce((s, [, v]) => s + v, 0)),
     rideIndex: rides.map(({ b5, b60, b300, b1200, ...r }) => r) };
