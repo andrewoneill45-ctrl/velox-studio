@@ -884,23 +884,29 @@ document.getElementById("ev-add").addEventListener("click",()=>{
 /* ═══ MASSIF ═══ */
 let TSSWK=[320,410,380,460,300,520,480,560,420,540,580,610,340,650,700,380],CURWK=11;
 let mgroups=null;
+function futAvg(){const r=TSSWK.slice(Math.max(0,CURWK-3),CURWK+1).filter(v=>v>0);
+  return r.length?r.reduce((a,b)=>a+b,0)/r.length:420;}
 function drawMassif(){
   const W=1600,H=560,pb=64,pt=330;
-  const mx=Math.max(...TSSWK)*1.15;
-  const x=i=>60+i/(TSSWK.length-1)*(W-120);
+  const T=TSSWK.map((v,i)=>i<=CURWK?v:((S.weekTargets&&+S.weekTargets[i])?+S.weekTargets[i]:futAvg()));
+  const mx=Math.max(...T,100)*1.15;
+  const x=i=>60+i/(T.length-1)*(W-120);
   const y=v=>H-pb-(v/mx)*(H-pt-pb);
-  const back=TSSWK.map((v,i)=>`${x(i)},${(y(v*0.8)-46)}`).join(" ");
-  const line="M"+TSSWK.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("L");
-  const past="M"+TSSWK.slice(0,CURWK+1).map((v,i)=>`${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join("L");
+  const back=T.map((v,i)=>`${x(i)},${(y(v*0.8)-46)}`).join(" ");
+  const line="M"+T.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("L");
+  const past="M"+T.slice(0,CURWK+1).map((v,i)=>`${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join("L");
   const area=past+`L${x(CURWK)},${H-pb}L${x(0)},${H-pb}Z`;
   let flags="";
-  (window.SEASON_FLAGS||[]).filter(e=>e.i>=0&&e.i<16).forEach(e=>{
-    const fx=x(e.i),fy=y(TSSWK[e.i]),c=e.A?"#FFD100":"#141E28";
+  (window.SEASON_FLAGS||[]).filter(e=>e.i>=0&&e.i<T.length).forEach(e=>{
+    const fx=x(e.i),fy=y(T[e.i]||0),c=e.A?"#FFD100":"#141E28";
     flags+=`<line x1="${fx}" y1="${fy}" x2="${fx}" y2="${fy-30}" stroke="#141E28" stroke-width="2"/>
       <path d="M${fx} ${fy-30} h20 l-5 5.5 5 5.5 h-20 Z" fill="${c}" stroke="#141E28" stroke-width="1.4"/>
       <text x="${fx}" y="${fy-39}" text-anchor="middle" font-family="Space Grotesk" font-size="11" font-weight="700" letter-spacing="2" fill="#44515D">${e.n}</text>`;
   });
-  const months=["MAR","APR","MAY","JUN","JUL"].map((m,i)=>`<text x="${60+i*(W-120)/4}" y="${H-16}" font-family="Space Grotesk" font-size="11" font-weight="700" letter-spacing="2" fill="#93A0AB">${m}</text>`).join("");
+  let months="",lastM=-1;
+  for(let i=0;i<T.length;i++){const d=new Date(SEASON0);d.setDate(d.getDate()+i*7);
+    if(d.getMonth()!==lastM){lastM=d.getMonth();
+      months+=`<text x="${x(i)}" y="${H-16}" font-family="Space Grotesk" font-size="11" font-weight="700" letter-spacing="2" fill="#93A0AB">${d.toLocaleDateString("en-GB",{month:"short"}).toUpperCase()}</text>`;}}
   document.getElementById("massif").innerHTML=`
     <defs><linearGradient id="mg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#26496E" stop-opacity=".22"/><stop offset="1" stop-color="#26496E" stop-opacity=".02"/></linearGradient></defs>
     <g id="m-back"><polyline points="${back}" fill="none" stroke="#26496E" stroke-opacity=".14" stroke-width="2"/></g>
@@ -909,9 +915,9 @@ function drawMassif(){
       <path d="${line}" fill="none" stroke="#C7D2D9" stroke-width="2.5" stroke-dasharray="6 8" stroke-linecap="round"/>
       <path id="mpast" d="${past}" fill="none" stroke="#141E28" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
       ${flags}
-      <circle cx="${x(CURWK)}" cy="${y(TSSWK[CURWK])}" r="22" fill="none" stroke="#FFD100" stroke-width="2" opacity=".5"><animate attributeName="r" values="10;26" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values=".6;0" dur="2s" repeatCount="indefinite"/></circle>
-      <circle cx="${x(CURWK)}" cy="${y(TSSWK[CURWK])}" r="8" fill="#FFD100" stroke="#141E28" stroke-width="3"/>
-      <text x="${x(CURWK)}" y="${y(TSSWK[CURWK])+34}" text-anchor="middle" font-family="Space Grotesk" font-size="12" font-weight="700" letter-spacing="2.5" fill="#141E28">YOU</text>
+      <circle cx="${x(CURWK)}" cy="${y(T[CURWK]||0)}" r="22" fill="none" stroke="#FFD100" stroke-width="2" opacity=".5"><animate attributeName="r" values="10;26" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values=".6;0" dur="2s" repeatCount="indefinite"/></circle>
+      <circle cx="${x(CURWK)}" cy="${y(T[CURWK]||0)}" r="8" fill="#FFD100" stroke="#141E28" stroke-width="3"/>
+      <text x="${x(CURWK)}" y="${y(T[CURWK]||0)+34}" text-anchor="middle" font-family="Space Grotesk" font-size="12" font-weight="700" letter-spacing="2.5" fill="#141E28">YOU</text>
     </g>${months}`;
   const p=document.getElementById("mpast"),len=p.getTotalLength();
   p.style.strokeDasharray=len;p.style.strokeDashoffset=len;
@@ -946,10 +952,10 @@ const TYPEC={REST:["#EEF1F3","#93A0AB"],FLAT:["#E2F1EA","#189B69"],HILL:["#FBEED
 let curWk=11;
 function renderWeeks(){
   const flags=(window.SEASON_FLAGS||[]);
-  document.getElementById("wksel").innerHTML=WEEKS.map((w,i)=>{
+  document.getElementById("wksel").innerHTML=TSSWK.map((_,i)=>{
     const f=flags.find(e=>e.i===i);
-    const t=i===CURWK?"NOW":f?f.n:(window.LIVEM?String(Math.round(TSSWK[i]||0)):(i<CURWK?"DONE":"BUILD"));
-    return `<div class="wkt ${i===curWk?"on":""} ${f?"ev":""}" data-i="${i}"><div class="n">S${w.n}</div><div class="t">${t}</div></div>`;}).join("");
+    const t=i===CURWK?"NOW":f?f.n:(window.LIVEM?(i>CURWK?((S.weekTargets&&S.weekTargets[i])?("T "+S.weekTargets[i]):"PLAN"):String(Math.round(TSSWK[i]||0))):(i<CURWK?"DONE":"BUILD"));
+    return `<div class="wkt ${i===curWk?"on":""} ${f?"ev":""}" data-i="${i}"><div class="n">S${i+1}</div><div class="t">${t}</div></div>`;}).join("");
   document.querySelectorAll(".wkt").forEach(el=>el.onclick=()=>{curWk=+el.dataset.i;renderWeeks();renderDays();});
 }
 function renderDays(){
@@ -1529,7 +1535,9 @@ function drawTraj(){
   const a=nextA(),days=Math.max(7,a?J(a):28),futr=[];
   const liveLoad=window.LIVEM?Math.max(20,(F[F.length-1]||{}).atl||40):null;
   for(let d=1;d<=days;d++){
-    let load=liveLoad!=null?liveLoad:TSSWK[Math.min(15,CURWK+Math.floor(d/7))]/7;
+    const wi=CURWK+Math.floor(d/7);
+    const tgt=S.weekTargets&&+S.weekTargets[wi];
+    let load=tgt?tgt/7:(liveLoad!=null?liveLoad:TSSWK[Math.min(TSSWK.length-1,wi)]/7);
     if(days-d<7)load*=.45;
     ctl+=(load-ctl)/42;atl+=(load-atl)/7;futr.push(ctl-atl);}
   const race=futr[futr.length-1];
@@ -1588,7 +1596,7 @@ const md=t=>(t||"").split("**").map((x,i)=>i%2?`<strong>${x}</strong>`:x).join("
 
 function applyProfile(p,connected){
   S.ftp=p.ftp;S.weight=p.weight;S.maxhr=p.maxhr;S.rhr=p.rhr;S.lthr=p.lthr;
-  S.tgt={...S.tgt,...(p.tgt||{})};startFtp=p.startFtp||startFtp;
+  S.tgt={...S.tgt,...(p.tgt||{})};S.weekTargets=p.weekTargets||{};startFtp=p.startFtp||startFtp;startWeight=p.startWeight||startWeight;
   if(Array.isArray(p.events)){EVENTS.length=0;p.events.forEach(e=>EVENTS.push(e));}
   if(p.ftpLog&&p.ftpLog.length){FTPLOG.length=0;p.ftpLog.forEach(e=>FTPLOG.push(e));}
   if(connected){DNOW=new Date();SEASON0=new Date((p.seasonStart||"2026-03-16")+"T00:00:00");}
@@ -1628,7 +1636,7 @@ function applyLive(m){
   document.getElementById("t3s").innerHTML=`<b>${m.everests} Everests</b> banked so far`;
   document.getElementById("t3b").dataset.w=Math.min(100,Math.round((m.climb||0)/S.tgt.climb*100));
   const ec=document.getElementById("evercount");ec.dataset.final=m.everests;ec.textContent=m.everests;
-  document.getElementById("ctx-meta").innerHTML=`S${CURWK+1}/16 · <b>${fmtInt(m.tssSeason||0)} TSS</b> BANKED`;
+  document.getElementById("ctx-meta").innerHTML=`S${CURWK+1}/${TSSWK.length} · <b>${fmtInt(m.tssSeason||0)} TSS</b> BANKED`;
   if(m.rideIndex&&m.rideIndex.length){
     RIDES=m.rideIndex.slice(0,8).map(r=>({id:r.id,nm:r.nm,dt:r.dt,
       meta:`${r.km} KM · ${fmtInt(r.m)} M · ${Math.floor(r.secs/3600)}H ${String(Math.floor(r.secs%3600/60)).padStart(2,"0")}M`,
@@ -1828,7 +1836,7 @@ function saveProfile(){
   SAVET=setTimeout(()=>{
     fetch("/api/profile",{method:"PUT",headers:{"content-type":"application/json"},
       body:JSON.stringify({ftp:S.ftp,weight:S.weight,maxhr:S.maxhr,rhr:S.rhr,lthr:S.lthr,
-        tgt:S.tgt,startFtp,events:EVENTS,ftpLog:FTPLOG})}).catch(()=>{});
+        tgt:S.tgt,weekTargets:S.weekTargets||{},startFtp,startWeight,events:EVENTS,ftpLog:FTPLOG})}).catch(()=>{});
   },800);
 }
 const _updateAllL=updateAll;
@@ -1840,8 +1848,17 @@ function sysMsg(t){document.getElementById("sysmsg").textContent=t;}
 function wireSys(){
   document.getElementById("btn-connect").onclick=()=>location.href="/api/auth";
   document.getElementById("btn-sync").onclick=async e=>{
-    const b=e.currentTarget;b.disabled=true;b.textContent="SYNCING…";sysMsg("PULLING ACTIVITIES + STREAMS FROM STRAVA");
-    try{const d=await api("/api/sync");sysMsg(`SYNCED ${d.rides} DETAILED RIDES · ${d.activities} ACTIVITIES`);
+    const b=e.currentTarget;b.disabled=true;b.textContent="SYNCING…";
+    try{
+      sysMsg("FETCHING YOUR ACTIVITY LIST…");
+      const L=await api("/api/sync?phase=list");
+      sysMsg(`${L.total} ACTIVITIES ON FILE · ${L.new} NEW`);
+      for(let i=0;i<L.need.length;i++){
+        sysMsg(`FETCHING RIDE STREAMS ${i+1}/${L.need.length}…`);
+        await api("/api/sync?phase=streams&id="+L.need[i]).catch(()=>{});}
+      sysMsg("COMPUTING YOUR SEASON…");
+      const d=await api("/api/sync?phase=compute");
+      sysMsg(`DONE — ${d.activities} RIDES · ${d.weeks}-WEEK SEASON · DATA PERSISTS ACROSS DEPLOYS`);
       const dd=await api("/api/data");if(dd.metrics)applyLive(dd.metrics);LIVE=true;
       document.getElementById("livebadge").textContent="LIVE";
     }catch(err){sysMsg("SYNC FAILED — "+String(err.message||err));}
@@ -1997,6 +2014,20 @@ renderDaysLive=function(){
   if(!W){document.getElementById("days").innerHTML='<div class="stg" style="grid-column:1/-1;cursor:default;min-height:100px"><div class="nm">Run a sync to load the season browser.</div><div class="ds">Week-by-week rides appear after the next SYNC NOW.</div></div>';return;}
   const mon=new Date(SEASON0);mon.setDate(mon.getDate()+curWk*7);
   const today=new Date();let out="";
+  if(curWk>CURWK){
+    const wkEnd=new Date(mon);wkEnd.setDate(mon.getDate()+7);
+    const evs=EVENTS.filter(e=>{const d=new Date(e.date);return d>=mon&&d<wkEnd;});
+    const tv=(S.weekTargets&&S.weekTargets[curWk])||"";
+    out+=`<div class="stg" style="grid-column:1/-1;min-height:0;cursor:default">
+      <div class="day">PLAN WEEK ${curWk+1}</div>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px">
+        <span style="font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.14em;color:var(--mist)">TARGET TSS</span>
+        <input class="inp" id="wktgt" type="number" value="${tv}" placeholder="e.g. 450" style="width:110px"/>
+        <button class="aibtn" id="wktgtsave">SET</button>
+        ${evs.map(e=>`<span class="chip" style="background:var(--jaune);color:var(--ink)">${e.short} · ${new Date(e.date).toLocaleDateString("en-GB",{weekday:"short",day:"numeric"}).toUpperCase()}</span>`).join("")}
+        <span class="ds" style="margin:0">Targets shape the massif's future ridge and the form projection.</span>
+      </div></div>`;
+  }
   for(let i=0;i<7;i++){
     const d=new Date(mon);d.setDate(mon.getDate()+i);
     const iso=d.toISOString().slice(0,10);
@@ -2014,6 +2045,11 @@ renderDaysLive=function(){
     </div>`;}
   document.getElementById("days").innerHTML=out;
   document.querySelectorAll("#days .stg[data-ride]").forEach(el=>el.onclick=()=>gotoLab(el.dataset.ride));
+  const ws=document.getElementById("wktgtsave");
+  if(ws)ws.onclick=()=>{S.weekTargets=S.weekTargets||{};
+    const v=+document.getElementById("wktgt").value;
+    if(v>0)S.weekTargets[curWk]=v;else delete S.weekTargets[curWk];
+    renderWeeks();drawMassif();drawTraj();updateAll();};
 };
 async function gotoLab(id){
   let idx=RIDES.findIndex(r=>String(r.id)===String(id));
