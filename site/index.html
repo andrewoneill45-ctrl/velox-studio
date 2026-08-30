@@ -2134,9 +2134,9 @@ async function coachAsk(payload,txtEl,btns){
 
 
 /* ═══ v2 — THE TIMELINE ═══ */
-const mondayOf=d=>{const x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x;};
-const isoDay=d=>{const x=new Date(d);return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0");};
-const addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x;};
+function mondayOf(d){const x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x;}
+function isoDay(d){const x=new Date(d);return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0");}
+function addD(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x;}
 const TL={acts:[],weeks:new Map(),sel:null,start:null,end:null,max:100,built:false,extBack:52};
 window.TL=TL;
 function demoActs(){const out=[];TSSWK.forEach((t,i)=>{if(i>CURWK||!t)return;const mon=addD(SEASON0,i*7);
