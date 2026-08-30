@@ -26,7 +26,7 @@ export const strava = async (path, token) =>
 export const DEFAULT_PROFILE = {
   ftp: 180, weight: 68, maxhr: 185, rhr: 47, lthr: 168, startFtp: 180, startWeight: 68,
   tgt: { ftp: 300, climb: 60000, sprint: 900, chain: 12 },
-  seasonStart: "2026-03-16", weekTargets: {},
+  seasonStart: "2026-03-16", weekTargets: {}, plan: {},
   ftpLog: [{ v: 180, d: "1 MAR 26", s: "SEASON BASELINE" }],
   events: []
 };

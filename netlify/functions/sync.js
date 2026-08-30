@@ -30,7 +30,8 @@ export default async (req) => {
     if (!tok) return json({ error: "not_connected" }, 401);
     let stored = await readJSON("activities.json", []);
     const latest = stored.length ? Math.max(...stored.map(a => +new Date(a.start_date))) : 0;
-    const after = latest ? Math.floor(latest / 1000) - 86400 : 0;
+    const full = u.searchParams.get("full") === "1";
+    const after = (latest && !full) ? Math.floor(latest / 1000) - 86400 : 0;
     let fresh = [], page = 1;
     while (page <= 30) {
       const r = await strava(`/athlete/activities?after=${after}&per_page=200&page=${page}`, tok.access_token);
@@ -93,6 +94,9 @@ export default async (req) => {
   for (const a of acts) { const d = a.start_date.slice(0, 10);
     const det = rides.find(r => r.id === a.id);
     daily[d] = (daily[d] || 0) + (det ? det.tss : estTss(a)); }
+  await writeJSON("activities-lite.json", acts.map(a => ({ id: a.id, nm: a.name, d: a.start_date.slice(0, 10),
+    secs: a.moving_time, km: +(a.distance / 1000).toFixed(1), m: Math.round(a.total_elevation_gain || 0),
+    tss: rides.find(r => r.id === a.id)?.tss ?? estTss(a), trainer: !!a.trainer })));
   const first = acts.length ? Math.max(Date.now() - 730 * 864e5, +new Date(acts[acts.length - 1].start_date)) : Date.now() - 120 * 864e5;
   let ctl = 0, atl = 0; const pmcAll = [];
   for (let ts = first; ts <= Date.now(); ts += 864e5) {

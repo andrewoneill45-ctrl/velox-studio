@@ -254,6 +254,48 @@ svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshai
 .sysrow .bad{background:#FBE5E3;color:var(--polka)}
 .sysrow .si{color:var(--mist);font-size:11px;margin-left:auto;text-align:right}
 .mapboxgl-canvas{outline:none}
+/* ── TIMELINE ── */
+.tlwrap{border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:var(--sh);overflow:hidden}
+.tltop{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--hair)}
+.tlbtn{font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.14em;padding:9px 13px;border:1px solid var(--line);border-radius:9px;background:#fff;cursor:pointer;transition:all .2s var(--ease)}
+.tlbtn:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+#tlscroll{overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;position:relative}
+#tlrail{position:relative;display:flex;height:300px}
+.tlwk{flex:0 0 86px;border-right:1px solid var(--hair);position:relative;padding:30px 6px 8px;cursor:pointer;display:flex;flex-direction:column;transition:background .2s}
+.tlwk:hover{background:#FBFDFC}
+.tlwk.sel{background:rgba(255,209,0,.14)}
+.tlwk.cur{background:rgba(255,209,0,.06)}
+.tlh{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.1em;color:var(--mist);text-align:center}
+.tlwk.cur .tlh{color:var(--ink)}
+.tlmo{position:absolute;top:8px;left:8px;font-family:'Fraunces',serif;font-style:italic;font-size:13px;color:var(--ink2);white-space:nowrap;pointer-events:none;border-left:2px solid var(--line);padding-left:7px;line-height:1}
+.tlbar{height:118px;margin:20px 8px 8px;position:relative;border-bottom:1px solid var(--line)}
+.tlbar i{position:absolute;bottom:0;left:0;right:0;border-radius:4px 4px 0 0;background:var(--ink);transition:height .5s var(--ease)}
+.tlbar i.t{background:transparent;border:1.5px dashed var(--jaune-ink)}
+.tlwk.cur .tlbar i.a{background:var(--jaune)}
+.tlbar i.p{background:rgba(38,73,110,.18)}
+.tlv{position:absolute;top:-16px;left:0;right:0;text-align:center;font-family:'Space Grotesk';font-size:9.5px;font-weight:700}
+.tldays{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:8px}
+.tld{height:22px;border-radius:5px;background:var(--hair);font-family:'Space Grotesk';font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;color:transparent;position:relative}
+.tld.has{background:var(--ink);color:#fff}
+.tld.plan{background:transparent;border:1px dashed var(--bleu);color:var(--bleu)}
+.tld.ev::after{content:"";position:absolute;inset:-2px;border-radius:7px;border:2px solid var(--jaune)}
+.tld.today{outline:2px solid var(--polka);outline-offset:1px}
+.tlflag{position:absolute;top:44px;left:50%;transform:translateX(-50%);font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.06em;background:var(--jaune);color:var(--ink);padding:3px 7px;border-radius:5px;white-space:nowrap;max-width:80px;overflow:hidden;text-overflow:ellipsis;z-index:1}
+#tltoday{position:absolute;top:0;bottom:0;width:2px;background:var(--polka);pointer-events:none;z-index:2}
+#tltoday::after{content:"TODAY";position:absolute;top:6px;left:5px;font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.14em;color:var(--polka)}
+.tlmini{display:flex;align-items:flex-end;gap:1px;height:38px;padding:8px 18px;border-top:1px solid var(--hair);cursor:pointer;position:relative}
+.tlmini i{flex:1;background:var(--line);min-height:2px;border-radius:1px}
+.tlmini i.p{background:var(--ink)}.tlmini i.f{background:rgba(255,209,0,.75)}
+.tlmini .win{position:absolute;top:4px;bottom:4px;border:1.5px solid var(--polka);border-radius:4px;pointer-events:none}
+.wksum{display:flex;gap:22px;flex-wrap:wrap;align-items:center;padding:16px 22px;font-family:'Space Grotesk';font-size:9.5px;font-weight:700;letter-spacing:.12em;color:var(--mist)}
+.wksum b{color:var(--ink);font-size:14px;margin-left:6px}
+.wksum .grow{flex:1}
+.pchip{font-size:10px;padding:5px 9px;border:1px dashed var(--bleu);color:var(--bleu);border-radius:7px;font-family:'Space Grotesk';font-weight:700;display:inline-flex;gap:6px;align-items:center;margin:4px 4px 0 0}
+.pchip button{border:none;background:none;color:var(--polka);cursor:pointer;font-size:11px;padding:0}
+.stg .padd{margin-top:8px;font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.14em;color:var(--bleu);cursor:pointer}
+.stg .pform{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.stg .pform input{border:1px solid var(--line);border-radius:7px;padding:6px 8px;font-size:11px;font-family:'Space Grotesk';font-weight:700}
+@media(max-width:980px){.tlwk{flex-basis:66px}.stagegrid{grid-template-columns:1fr 1fr}}
 /* ── SEASON EXTRAS ── */
 .wkfront{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--sh)}
 .wf7{background:var(--panel);padding:16px 14px 14px;cursor:pointer;position:relative;transition:background .25s}
@@ -527,38 +569,24 @@ svg#rc-prof{display:block;width:100%;height:340px}
     </div>
   </section>
 
-  <!-- PLAN -->
+  <!-- TIMELINE -->
   <section class="scene" id="s-plan">
-    <div class="wrap" style="position:relative"><div class="wm">Roadbook</div>
-      <div class="slab cascade" id="readyslab" style="--i:0">THIS MORNING — <b>RING &amp; BAND · 06:12</b></div>
-      <div class="planhead" id="planhead">
-        <div class="panel hov dial cascade" style="--i:1">
-          <svg viewBox="0 0 120 120">
-            <circle cx="60" cy="60" r="52" fill="none" stroke="var(--hair)" stroke-width="9"/>
-            <circle cx="60" cy="60" r="52" fill="none" stroke="var(--vert)" stroke-width="9" stroke-linecap="round"
-              stroke-dasharray="326.7" stroke-dashoffset="29.4" transform="rotate(-90 60 60)"/>
-            <text x="60" y="57" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="26" fill="var(--ink)">91</text>
-            <text x="60" y="74" text-anchor="middle" font-family="Space Grotesk" font-weight="700" font-size="8" letter-spacing="2" fill="var(--mist)">READY</text>
-          </svg>
-          <div>
-            <div class="dv">Feu vert</div>
-            <div class="dm">CLEARED TO TRAIN</div>
-            <div class="rows">
-              <div><span>Sleep</span><b>7h42 · 91%</b></div>
-              <div><span>HRV</span><b>68 ms ▲</b></div>
-              <div><span>Resting HR</span><b>47 bpm</b></div>
-              <div><span>Skin temp</span><b>+0.1 °C</b></div>
-            </div>
-          </div>
+    <div class="wrap" style="position:relative"><div class="wm">Timeline</div>
+      <div class="slab cascade" style="--i:0">THE TIMELINE — <b id="tlrange">…</b> · EVERY RIDE, EVERY WEEK, THE ROAD AHEAD</div>
+      <div class="tlwrap cascade" style="--i:1">
+        <div class="tltop">
+          <button class="tlbtn" id="tl-earlier">◀ EARLIER</button>
+          <button class="tlbtn" id="tl-today">TODAY</button>
+          <button class="tlbtn" id="tl-next">NEXT EVENT ▶</button>
+          <span class="grow"></span>
+          <span class="sg" style="font-size:9px;font-weight:700;letter-spacing:.12em;color:var(--mist)">SOLID = RIDDEN · DASHED = TARGET · DOTS = DAYS · CLICK A WEEK</span>
         </div>
-        <div class="panel hov readnote cascade" style="--i:2">
-          <span class="al">READINESS · CLAUDE</span>
-          <p>HRV back above baseline and a full night banked: <b>cleared for today's threshold work</b>. Form is still −18, so hold the plan at four efforts, not five. If the legs argue in effort two, call it and spin home — Saturday's simulation matters more than a perfect Tuesday. Fuel before, not after.</p>
-        </div>
+        <div id="tlscroll"><div id="tlrail"></div></div>
+        <div class="tlmini" id="tlmini"></div>
       </div>
-      <div class="slab cascade" id="rbslab" style="--i:3">ROADBOOK — <b>16 STAGES</b> · HOVER A DAY FOR THE WORKOUT</div>
-      <div class="weekstrip cascade" id="wksel" style="--i:4"></div>
-      <div class="stagegrid cascade" id="days" style="--i:5"></div>
+      <div class="slab cascade" style="--i:2" id="wkslab2">WEEK DETAIL</div>
+      <div class="panel cascade" style="--i:3;margin-bottom:12px"><div class="wksum" id="wksum"></div></div>
+      <div class="stagegrid cascade" id="days" style="--i:4"></div>
     </div>
   </section>
 
@@ -637,6 +665,7 @@ svg#rc-prof{display:block;width:100%;height:340px}
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           <button class="btn btn-ink" id="btn-connect">CONNECT STRAVA</button>
           <button class="btn btn-ghost" id="btn-sync">SYNC NOW</button>
+          <button class="btn btn-ghost" id="btn-full">FULL RESYNC</button>
           <button class="btn btn-ghost" id="btn-check">RUN SYSTEM CHECK</button>
           <span class="sg" id="sysmsg" style="font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--mist)"></span>
         </div>
@@ -686,6 +715,7 @@ svg#rc-prof{display:block;width:100%;height:340px}
     <div class="frow"><span class="fl">FTP TARGET</span><div class="step" data-k="tftp"><button class="sbtn" data-d="-1">−</button><span class="sval" id="v-tftp">300<i>W</i></span><button class="sbtn" data-d="1">+</button></div></div>
     <div class="frow"><span class="fl">CLIMBING</span><div class="step" data-k="tclimb"><button class="sbtn" data-d="-1">−</button><span class="sval" id="v-tclimb">60<i>k m</i></span><button class="sbtn" data-d="1">+</button></div></div>
     <div class="frow"><span class="fl">SPRINT</span><div class="step" data-k="tsprint"><button class="sbtn" data-d="-1">−</button><span class="sval" id="v-tsprint">900<i>W</i></span><button class="sbtn" data-d="1">+</button></div></div>
+    <div class="frow"><span class="fl">SEASON START</span><input class="inp" id="pf-season" type="date" style="width:160px"/></div>
     <div class="frow"><span class="fl">CHAIN</span><div class="step" data-k="tchain"><button class="sbtn" data-d="-1">−</button><span class="sval" id="v-tchain">12<i>wk</i></span><button class="sbtn" data-d="1">+</button></div></div>
   </div>
   <div class="dsect">OBJECTIVES — EVERYTHING BUILDS FROM THESE</div>
@@ -884,11 +914,12 @@ document.getElementById("ev-add").addEventListener("click",()=>{
 /* ═══ MASSIF ═══ */
 let TSSWK=[320,410,380,460,300,520,480,560,420,540,580,610,340,650,700,380],CURWK=11;
 let mgroups=null;
+function wkTarget(i){const d=new Date(SEASON0);d.setDate(d.getDate()+i*7);const k=isoDay(mondayOf(d));return S.weekTargets&&+S.weekTargets[k]||0;}
 function futAvg(){const r=TSSWK.slice(Math.max(0,CURWK-3),CURWK+1).filter(v=>v>0);
   return r.length?r.reduce((a,b)=>a+b,0)/r.length:420;}
 function drawMassif(){
   const W=1600,H=560,pb=64,pt=330;
-  const T=TSSWK.map((v,i)=>i<=CURWK?v:((S.weekTargets&&+S.weekTargets[i])?+S.weekTargets[i]:futAvg()));
+  const T=TSSWK.map((v,i)=>i<=CURWK?v:(wkTarget(i)||futAvg()));
   const mx=Math.max(...T,100)*1.15;
   const x=i=>60+i/(T.length-1)*(W-120);
   const y=v=>H-pb-(v/mx)*(H-pt-pb);
@@ -951,6 +982,7 @@ const PROFILES={rest:"M2 26 h70",end:"M2 28 Q14 22 24 26 T46 25 T70 27",
 const TYPEC={REST:["#EEF1F3","#93A0AB"],FLAT:["#E2F1EA","#189B69"],HILL:["#FBEEDD","#C4761B"],MTN:["#FBE5E3","#E23A2E"],HC:["#FBE5E3","#E23A2E"]};
 let curWk=11;
 function renderWeeks(){
+  if(!document.getElementById("wksel"))return;
   const flags=(window.SEASON_FLAGS||[]);
   document.getElementById("wksel").innerHTML=TSSWK.map((_,i)=>{
     const f=flags.find(e=>e.i===i);
@@ -959,6 +991,7 @@ function renderWeeks(){
   document.querySelectorAll(".wkt").forEach(el=>el.onclick=()=>{curWk=+el.dataset.i;renderWeeks();renderDays();});
 }
 function renderDays(){
+  if(window.TLREADY)return;
   if(window.LIVEM&&window.LIVEM.days14)return renderDaysLive();
   const past=curWk<CURWK,now=curWk===CURWK;
   document.getElementById("days").innerHTML=PLAN.map((s,i)=>{
@@ -1536,7 +1569,7 @@ function drawTraj(){
   const liveLoad=window.LIVEM?Math.max(20,(F[F.length-1]||{}).atl||40):null;
   for(let d=1;d<=days;d++){
     const wi=CURWK+Math.floor(d/7);
-    const tgt=S.weekTargets&&+S.weekTargets[wi];
+    const tgt=wkTarget(wi);
     let load=tgt?tgt/7:(liveLoad!=null?liveLoad:TSSWK[Math.min(TSSWK.length-1,wi)]/7);
     if(days-d<7)load*=.45;
     ctl+=(load-ctl)/42;atl+=(load-atl)/7;futr.push(ctl-atl);}
@@ -1596,7 +1629,7 @@ const md=t=>(t||"").split("**").map((x,i)=>i%2?`<strong>${x}</strong>`:x).join("
 
 function applyProfile(p,connected){
   S.ftp=p.ftp;S.weight=p.weight;S.maxhr=p.maxhr;S.rhr=p.rhr;S.lthr=p.lthr;
-  S.tgt={...S.tgt,...(p.tgt||{})};S.weekTargets=p.weekTargets||{};startFtp=p.startFtp||startFtp;startWeight=p.startWeight||startWeight;
+  S.tgt={...S.tgt,...(p.tgt||{})};S.weekTargets=p.weekTargets||{};S.plan=p.plan||{};S.seasonStart=p.seasonStart||"2026-03-16";const ps=document.getElementById("pf-season");if(ps)ps.value=S.seasonStart;startFtp=p.startFtp||startFtp;startWeight=p.startWeight||startWeight;
   if(Array.isArray(p.events)){EVENTS.length=0;p.events.forEach(e=>EVENTS.push(e));}
   if(p.ftpLog&&p.ftpLog.length){FTPLOG.length=0;p.ftpLog.forEach(e=>FTPLOG.push(e));}
   if(connected){DNOW=new Date();SEASON0=new Date((p.seasonStart||"2026-03-16")+"T00:00:00");}
@@ -1638,7 +1671,7 @@ function applyLive(m){
   const ec=document.getElementById("evercount");ec.dataset.final=m.everests;ec.textContent=m.everests;
   document.getElementById("ctx-meta").innerHTML=`S${CURWK+1}/${TSSWK.length} · <b>${fmtInt(m.tssSeason||0)} TSS</b> BANKED`;
   if(m.rideIndex&&m.rideIndex.length){
-    RIDES=m.rideIndex.slice(0,8).map(r=>({id:r.id,nm:r.nm,dt:r.dt,
+    RIDES=m.rideIndex.slice(0,15).map(r=>({id:r.id,nm:r.nm,dt:r.dt,
       meta:`${r.km} KM · ${fmtInt(r.m)} M · ${Math.floor(r.secs/3600)}H ${String(Math.floor(r.secs%3600/60)).padStart(2,"0")}M`,
       np:r.np||0,iff:r.iff||0,tss:r.tss||0,hr:r.hr||0,vi:r.vi||0,dec:r.dec,gps:r.gps,ai:null}));
     curRide=0;renderRideSel();loadRide();
@@ -1836,7 +1869,7 @@ function saveProfile(){
   SAVET=setTimeout(()=>{
     fetch("/api/profile",{method:"PUT",headers:{"content-type":"application/json"},
       body:JSON.stringify({ftp:S.ftp,weight:S.weight,maxhr:S.maxhr,rhr:S.rhr,lthr:S.lthr,
-        tgt:S.tgt,weekTargets:S.weekTargets||{},startFtp,startWeight,events:EVENTS,ftpLog:FTPLOG})}).catch(()=>{});
+        tgt:S.tgt,weekTargets:S.weekTargets||{},plan:S.plan||{},seasonStart:S.seasonStart,startFtp,startWeight,events:EVENTS,ftpLog:FTPLOG})}).catch(()=>{});
   },800);
 }
 const _updateAllL=updateAll;
@@ -1847,11 +1880,11 @@ document.getElementById("logftp").addEventListener("click",saveProfile);
 function sysMsg(t){document.getElementById("sysmsg").textContent=t;}
 function wireSys(){
   document.getElementById("btn-connect").onclick=()=>location.href="/api/auth";
-  document.getElementById("btn-sync").onclick=async e=>{
-    const b=e.currentTarget;b.disabled=true;b.textContent="SYNCING…";
+  const runSync=async(b,full)=>{
+    b.disabled=true;b.textContent="SYNCING…";
     try{
-      sysMsg("FETCHING YOUR ACTIVITY LIST…");
-      const L=await api("/api/sync?phase=list");
+      sysMsg(full?"FULL RESYNC — RE-READING YOUR ENTIRE STRAVA HISTORY…":"FETCHING YOUR ACTIVITY LIST…");
+      const L=await api("/api/sync?phase=list"+(full?"&full=1":""));
       sysMsg(`${L.total} ACTIVITIES ON FILE · ${L.new} NEW`);
       for(let i=0;i<L.need.length;i++){
         sysMsg(`FETCHING RIDE STREAMS ${i+1}/${L.need.length}…`);
@@ -1861,8 +1894,11 @@ function wireSys(){
       sysMsg(`DONE — ${d.activities} RIDES · ${d.weeks}-WEEK SEASON · DATA PERSISTS ACROSS DEPLOYS`);
       const dd=await api("/api/data");if(dd.metrics)applyLive(dd.metrics);LIVE=true;
       document.getElementById("livebadge").textContent="LIVE";
+      tlLoad();
     }catch(err){sysMsg("SYNC FAILED — "+String(err.message||err));}
-    b.disabled=false;b.textContent="SYNC NOW";};
+    b.disabled=false;b.textContent=full?"FULL RESYNC":"SYNC NOW";};
+  document.getElementById("btn-sync").onclick=e=>runSync(e.currentTarget,false);
+  document.getElementById("btn-full").onclick=e=>runSync(e.currentTarget,true);
   document.getElementById("btn-check").onclick=async e=>{
     const b=e.currentTarget;b.disabled=true;b.textContent="CHECKING…";
     const out=document.getElementById("sysout");out.innerHTML="";
@@ -2054,7 +2090,7 @@ renderDaysLive=function(){
 async function gotoLab(id){
   let idx=RIDES.findIndex(r=>String(r.id)===String(id));
   if(idx<0){
-    const wr=((window.LIVEM&&window.LIVEM.weekRides)||[]).flat().find(r=>String(r.id)===String(id));
+    const wr=(window.TL?TL.acts:[]).find(r=>String(r.id)===String(id))||((window.LIVEM&&window.LIVEM.weekRides)||[]).flat().find(r=>String(r.id)===String(id));
     RIDES.unshift({id,nm:wr?wr.nm:"Ride",
       dt:wr?new Date(wr.d).toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}).toUpperCase():"",
       meta:wr?`${wr.km} KM · ${fmtInt(wr.m)} M`:"",np:null,iff:null,tss:wr?wr.tss:0,hr:null,vi:null,dec:null,gps:true,ai:null});
@@ -2095,6 +2131,134 @@ async function coachAsk(payload,txtEl,btns){
     coachAsk({mode:"condition",q},document.getElementById("catext"),cbtns);};
   if(ci)ci.addEventListener("keydown",e=>{if(e.key==="Enter")cq.click();});
 })();
+
+
+/* ═══ v2 — THE TIMELINE ═══ */
+const mondayOf=d=>{const x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x;};
+const isoDay=d=>{const x=new Date(d);return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0");};
+const addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x;};
+const TL={acts:[],weeks:new Map(),sel:null,start:null,end:null,max:100,built:false,extBack:52};
+window.TL=TL;
+function demoActs(){const out=[];TSSWK.forEach((t,i)=>{if(i>CURWK||!t)return;const mon=addD(SEASON0,i*7);
+  [[1,.35,"Threshold session"],[3,.25,"Endurance rollers"],[5,.4,"Long ride"]].forEach(([o,f,n])=>out.push({id:"demo"+i+o,nm:n,d:isoDay(addD(mon,o)),secs:5400,km:60,m:800,tss:Math.round(t*f)}));});return out.reverse();}
+async function tlLoad(){
+  if(!LIVE){tlBuild(demoActs());return;}
+  try{const a=await api("/api/activities");tlBuild(a.activities||[]);}catch(e){tlBuild([]);}
+}
+function tlBuild(acts){
+  TL.acts=acts||[];TL.weeks=new Map();
+  for(const a of TL.acts){const k=isoDay(mondayOf(a.d+"T12:00:00"));
+    const w=TL.weeks.get(k)||{tss:0,km:0,m:0,rides:[]};w.tss+=a.tss||0;w.km+=a.km||0;w.m+=a.m||0;w.rides.push(a);TL.weeks.set(k,w);}
+  const today=mondayOf(new Date());
+  const firstAct=TL.acts.length?mondayOf(TL.acts.reduce((m,a)=>a.d<m?a.d:m,TL.acts[0].d)+"T12:00:00"):today;
+  const back=addD(today,-TL.extBack*7);
+  TL.start=new Date(Math.max(+firstAct,+back));
+  if(+firstAct>+back)TL.start=firstAct;
+  TL.end=addD(today,52*7);
+  TL.sel=TL.sel||isoDay(today);TL.built=true;window.TLREADY=true;
+  tlRender();
+}
+function tlWeeks(){const out=[];for(let d=new Date(TL.start);d<=TL.end;d=addD(d,7))out.push(isoDay(d));return out;}
+function tlPlanned(k){const mon=new Date(k+"T12:00:00");let t=0;for(let i=0;i<7;i++){(S.plan&&S.plan[isoDay(addD(mon,i))]||[]).forEach(p=>t+=+p.tss||0);}return t;}
+function tlRender(keepScroll){
+  const sc=document.getElementById("tlscroll"),rail=document.getElementById("tlrail");
+  if(!rail)return;
+  const left=keepScroll?sc.scrollLeft:null;
+  const weeks=tlWeeks(),todayK=isoDay(mondayOf(new Date())),todayIso=isoDay(new Date());
+  const vals=weeks.map(k=>Math.max(TL.weeks.get(k)?.tss||0,+((S.weekTargets||{})[k])||0,tlPlanned(k)));
+  TL.max=Math.max(150,...vals);
+  let html="",lastMo="";
+  weeks.forEach((k,idx)=>{
+    const mon=new Date(k+"T12:00:00"),w=TL.weeks.get(k),act=w?Math.round(w.tss):0;
+    const tgt=+((S.weekTargets||{})[k])||0,pl=tlPlanned(k);
+    const fut=k>todayK,cur=k===todayK;
+    const mo=mon.toLocaleDateString("en-GB",{month:"short",year:"2-digit"}).toUpperCase();
+    const moLab=mo!==lastMo?`<div class="tlmo">${mon.toLocaleDateString("en-GB",{month:"long"})} ${mon.getFullYear()}</div>`:"";lastMo=mo;
+    const evs=EVENTS.filter(e=>{const d=new Date(e.date);return d>=mon&&d<addD(mon,7);});
+    let days="";
+    for(let i=0;i<7;i++){const di=isoDay(addD(mon,i));
+      const dr=(w?w.rides:[]).filter(r=>r.d===di),dp=(S.plan&&S.plan[di])||[];
+      const ev=EVENTS.some(e=>e.date===di);
+      const t=dr.reduce((s,r)=>s+(r.tss||0),0)||dp.reduce((s,p)=>s+(+p.tss||0),0);
+      days+=`<div class="tld ${dr.length?"has":dp.length?"plan":""} ${ev?"ev":""} ${di===todayIso?"today":""}" title="${dr.map(r=>r.nm).concat(dp.map(p=>"PLAN: "+p.nm)).join(" · ")}">${t||""}</div>`;}
+    const barA=act?`<i class="a" style="height:${Math.min(100,act/TL.max*100)}%"></i>`:"";
+    const barT=tgt?`<i class="t" style="height:${Math.min(100,tgt/TL.max*100)}%"></i>`:"";
+    const barP=(!act&&pl)?`<i class="p" style="height:${Math.min(100,pl/TL.max*100)}%"></i>`:"";
+    const lab=act?act:(tgt?"T "+tgt:(pl?"P "+pl:""));
+    html+=`<div class="tlwk ${fut?"fut":"past"} ${cur?"cur":""} ${k===TL.sel?"sel":""}" data-k="${k}">${moLab}
+      <div class="tlh">${mon.getDate()} ${mon.toLocaleDateString("en-GB",{month:"short"}).toUpperCase()}</div>
+      ${evs.length?`<div class="tlflag">${evs[0].short}</div>`:""}
+      <div class="tlbar"><span class="tlv">${lab}</span>${barP}${barT}${barA}</div>
+      <div class="tldays">${days}</div></div>`;
+  });
+  const ti=weeks.indexOf(todayK);
+  const frac=((new Date()-mondayOf(new Date()))/(7*864e5));
+  html+=`<div id="tltoday" style="left:${(ti+frac)*86}px"></div>`;
+  rail.innerHTML=html;
+  rail.querySelectorAll(".tlwk").forEach(el=>el.onclick=()=>tlSelect(el.dataset.k));
+  document.getElementById("tlrange").textContent=`${TL.start.toLocaleDateString("en-GB",{month:"short",year:"numeric"}).toUpperCase()} → ${TL.end.toLocaleDateString("en-GB",{month:"short",year:"numeric"}).toUpperCase()} · ${TL.acts.length} RIDES`;
+  const mini=document.getElementById("tlmini");
+  mini.innerHTML=weeks.map((k,i)=>`<i class="${k>todayK?"f":"p"}" style="height:${Math.max(2,vals[i]/TL.max*22)}px"></i>`).join("")+`<span class="win" id="tlwin"></span>`;
+  mini.onclick=e=>{const r=mini.getBoundingClientRect();const f=(e.clientX-r.left-18)/(r.width-36);sc.scrollLeft=f*rail.scrollWidth-sc.clientWidth/2;};
+  sc.onscroll=tlWin;
+  if(left!=null)sc.scrollLeft=left;else tlScrollTo(TL.sel);
+  tlWin();renderWeekDetail(TL.sel);
+}
+function tlWin(){const sc=document.getElementById("tlscroll"),rail=document.getElementById("tlrail"),win=document.getElementById("tlwin");if(!win)return;
+  const mini=document.getElementById("tlmini"),iw=mini.clientWidth-36;
+  win.style.left=(18+sc.scrollLeft/rail.scrollWidth*iw)+"px";win.style.width=Math.max(8,sc.clientWidth/rail.scrollWidth*iw)+"px";}
+function tlScrollTo(k){const sc=document.getElementById("tlscroll"),i=tlWeeks().indexOf(k);if(i<0)return;sc.scrollTo({left:Math.max(0,i*86-sc.clientWidth/2+43),behavior:"smooth"});}
+function tlSelect(k){TL.sel=k;document.querySelectorAll(".tlwk").forEach(el=>el.classList.toggle("sel",el.dataset.k===k));renderWeekDetail(k);}
+function hh(sec){return `${Math.floor(sec/3600)}h${String(Math.floor(sec%3600/60)).padStart(2,"0")}`;}
+function renderWeekDetail(k){
+  const mon=new Date(k+"T12:00:00"),w=TL.weeks.get(k),todayK=isoDay(mondayOf(new Date())),todayIso=isoDay(new Date());
+  const fut=k>todayK,act=w?Math.round(w.tss):0,tgt=+((S.weekTargets||{})[k])||0,pl=tlPlanned(k);
+  const evs=EVENTS.filter(e=>{const d=new Date(e.date);return d>=mon&&d<addD(mon,7);});
+  document.getElementById("wkslab2").innerHTML=`WEEK OF <b>${mon.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"}).toUpperCase()}</b>${k===todayK?" · THIS WEEK":fut?" · AHEAD":""}`;
+  document.getElementById("wksum").innerHTML=`
+    <span>RIDDEN<b>${act||"—"} TSS</b></span><span>PLANNED<b>${pl||"—"}</b></span>
+    <span>TARGET <input class="inp" id="wktgt" type="number" value="${tgt||""}" placeholder="TSS" style="width:90px;margin-left:6px"/> <button class="aibtn" id="wktgtsave" style="padding:8px 12px">SET</button></span>
+    ${w?`<span>DISTANCE<b>${Math.round(w.km)} km</b></span><span>CLIMBING<b>${fmtInt(Math.round(w.m))} m</b></span>`:""}
+    <span class="grow"></span>${evs.map(e=>`<span class="chip" style="background:var(--jaune);color:var(--ink)">${e.short} · ${new Date(e.date).toLocaleDateString("en-GB",{weekday:"short",day:"numeric"}).toUpperCase()}</span>`).join("")}`;
+  document.getElementById("wktgtsave").onclick=()=>{S.weekTargets=S.weekTargets||{};const v=+document.getElementById("wktgt").value;
+    if(v>0)S.weekTargets[k]=v;else delete S.weekTargets[k];tlRender(true);drawMassif();drawTraj();saveProfile();};
+  let out="";
+  for(let i=0;i<7;i++){const d=addD(mon,i),di=isoDay(d);
+    const rides=(w?w.rides:[]).filter(r=>r.d===di),plans=(S.plan&&S.plan[di])||[],dev=EVENTS.filter(e=>e.date===di);
+    const past=di<todayIso,today=di===todayIso;
+    const tot=rides.reduce((s,r)=>s+(r.tss||0),0);
+    const main=rides[0];
+    const stx=rides.length?rides.map(r=>`<b>${r.nm}</b><br/>${r.km} km · ${fmtInt(r.m)} m · ${hh(r.secs)} · ${r.tss} TSS`).join("<br/><br/>")+`<br/><br/><span style="opacity:.7">CLICK — OPEN IN THE LABORATORY →</span>`:"";
+    out+=`<div class="stg ${today?"pin-today":""}" ${main?`data-ride="${main.id}"`:'style="cursor:default"'}>
+      <div class="day" ${today?'style="color:var(--polka)"':""}>${d.toLocaleDateString("en-GB",{weekday:"short"}).toUpperCase()} ${d.getDate()}</div>
+      ${dev.map(e=>`<span class="chip" style="background:var(--jaune);color:var(--ink);margin-top:8px;align-self:flex-start">${e.pr} · ${e.short}</span>`).join("")}
+      <div class="nm" style="margin-top:12px">${main?main.nm:(past?"Rest day":plans.length?"Planned":"—")}</div>
+      <div class="ds">${main?`${main.km} km · ${fmtInt(main.m)} m · ${hh(main.secs)}${rides.length>1?` · +${rides.length-1} more`:""}`:(past?"No ride logged":"")}</div>
+      <div>${plans.map((p,j)=>`<span class="pchip">${p.nm} · ${p.tss} TSS <button data-del="${di}|${j}">✕</button></span>`).join("")}</div>
+      ${!past||today?`<div class="padd" data-add="${di}">+ PLAN A RIDE</div><div class="pform" id="pf-${di}" style="display:none"><input placeholder="Session name" id="pn-${di}"/><input type="number" placeholder="Target TSS" id="pt-${di}"/><button class="aibtn" data-save="${di}" style="padding:7px">ADD</button></div>`:""}
+      <div class="foot"><span class="tss">${tot||(plans.length?plans.reduce((s,p)=>s+(+p.tss||0),0):"")||"—"}<small> TSS</small></span>${tot>0?'<div class="tick">✓</div>':past?'<div class="miss"></div>':"<span></span>"}</div>
+      ${stx?`<div class="stx">${stx}</div>`:""}
+    </div>`;}
+  const days=document.getElementById("days");days.innerHTML=out;
+  days.querySelectorAll(".stg[data-ride]").forEach(el=>el.onclick=e=>{if(e.target.closest("[data-add],[data-save],[data-del],.pform"))return;gotoLab(el.dataset.ride);});
+  days.querySelectorAll("[data-add]").forEach(b=>b.onclick=e=>{e.stopPropagation();const f=document.getElementById("pf-"+b.dataset.add);f.style.display=f.style.display==="none"?"flex":"none";});
+  days.querySelectorAll("[data-save]").forEach(b=>b.onclick=e=>{e.stopPropagation();const di=b.dataset.save;
+    const nm=document.getElementById("pn-"+di).value.trim()||"Ride",t=+document.getElementById("pt-"+di).value||0;
+    S.plan=S.plan||{};(S.plan[di]=S.plan[di]||[]).push({nm,tss:t});saveProfile();tlRender(true);drawMassif();drawTraj();});
+  days.querySelectorAll("[data-del]").forEach(b=>b.onclick=e=>{e.stopPropagation();const [di,j]=b.dataset.del.split("|");
+    S.plan[di].splice(+j,1);if(!S.plan[di].length)delete S.plan[di];saveProfile();tlRender(true);drawMassif();drawTraj();});
+  days.querySelectorAll(".pform").forEach(f=>f.onclick=e=>e.stopPropagation());
+}
+document.getElementById("tl-today").onclick=()=>{tlSelect(isoDay(mondayOf(new Date())));tlScrollTo(TL.sel);};
+document.getElementById("tl-next").onclick=()=>{const a=fut()[0];if(!a)return;const k=isoDay(mondayOf(new Date(a.date+"T12:00:00")));tlSelect(k);tlScrollTo(k);};
+document.getElementById("tl-earlier").onclick=()=>{TL.extBack+=26;tlBuild(TL.acts);};
+document.getElementById("pf-season")&&(document.getElementById("pf-season").onchange=e=>{S.seasonStart=e.target.value;SEASON0=new Date(S.seasonStart+"T00:00:00");saveProfile();drawMassif();sysMsg("SEASON START SAVED — PRESS SYNC NOW TO RECOMPUTE SEASON TOTALS");});
+/* the timeline owns the plan scene from here on */
+renderWeeks=function(){if(TL.built)tlRender(true);};
+renderDays=function(){if(TL.built&&TL.sel)renderWeekDetail(TL.sel);};
+const _al3=applyLive;applyLive=function(m){_al3(m);tlLoad();};
+const _ss=showScene;showScene=function(id){_ss(id);if(id==="plan"){if(!TL.built)tlLoad();else setTimeout(()=>{tlWin();},220);}};
+setTimeout(()=>{if(!TL.built)tlLoad();},1800);
 
 </script>
 </body>
