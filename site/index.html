@@ -516,7 +516,7 @@ svg#rc-prof{display:block;width:100%;height:340px}
           <p id="coachnote"><b>268 W for 22 minutes</b> on the Èze climb is 95.7% of your FTP, held with heart-rate decoupling of just 1.8%. Absorb this block, then test on Thursday. If it confirms, the yellow jersey target moves within reach a month early, and every col in the Recon Room gets recalculated around the new number.</p></div>
         </div>
       </div>
-      <div class="slab cascade" style="--i:4">THE WEEK IN FRONT OF YOU — <b>S12</b> · CLICK ANY DAY TO OPEN THE ROADBOOK</div>
+      <div class="slab cascade" id="wkslab" style="--i:4">THE WEEK IN FRONT OF YOU — <b>S12</b> · CLICK ANY DAY TO OPEN THE ROADBOOK</div>
       <div class="wkfront cascade" id="wkfront" style="--i:5"></div>
       <div class="g2">
         <div class="panel hov chartpanel cascade" style="--i:6"><h3 id="traj-h">FORM TRAJECTORY — PROJECTED TO RACE DAY</h3><svg id="traj" viewBox="0 0 560 150" preserveAspectRatio="none"></svg><div class="trajfoot"><span>30 DAYS AGO</span><span>TODAY</span><span id="traj-race">RACE DAY</span></div></div>
@@ -530,8 +530,8 @@ svg#rc-prof{display:block;width:100%;height:340px}
   <!-- PLAN -->
   <section class="scene" id="s-plan">
     <div class="wrap" style="position:relative"><div class="wm">Roadbook</div>
-      <div class="slab cascade" style="--i:0">THIS MORNING — <b>RING &amp; BAND · 06:12</b></div>
-      <div class="planhead">
+      <div class="slab cascade" id="readyslab" style="--i:0">THIS MORNING — <b>RING &amp; BAND · 06:12</b></div>
+      <div class="planhead" id="planhead">
         <div class="panel hov dial cascade" style="--i:1">
           <svg viewBox="0 0 120 120">
             <circle cx="60" cy="60" r="52" fill="none" stroke="var(--hair)" stroke-width="9"/>
@@ -556,7 +556,7 @@ svg#rc-prof{display:block;width:100%;height:340px}
           <p>HRV back above baseline and a full night banked: <b>cleared for today's threshold work</b>. Form is still −18, so hold the plan at four efforts, not five. If the legs argue in effort two, call it and spin home — Saturday's simulation matters more than a perfect Tuesday. Fuel before, not after.</p>
         </div>
       </div>
-      <div class="slab cascade" style="--i:3">ROADBOOK — <b>16 STAGES</b> · HOVER A DAY FOR THE WORKOUT</div>
+      <div class="slab cascade" id="rbslab" style="--i:3">ROADBOOK — <b>16 STAGES</b> · HOVER A DAY FOR THE WORKOUT</div>
       <div class="weekstrip cascade" id="wksel" style="--i:4"></div>
       <div class="stagegrid cascade" id="days" style="--i:5"></div>
     </div>
@@ -571,10 +571,10 @@ svg#rc-prof{display:block;width:100%;height:340px}
       </div>
       <div id="v-cond">
         <div class="g12">
-          <div class="panel hov stt cascade" style="grid-column:span 3;--i:1"><div class="sl">FTP ESTIMATE</div><div class="sv" id="cd-ftp">280<small> W</small></div><div class="tr">+6 W over eight weeks</div><svg data-spark="266,268,270,271,273,274,276,280" data-c="#26496E"></svg></div>
-          <div class="panel hov stt cascade" style="grid-column:span 3;--i:2"><div class="sl">FITNESS · CTL</div><div class="sv">58</div><div class="tr">+14 in four weeks</div><svg data-spark="40,42,44,47,49,52,55,58" data-c="#26496E"></svg></div>
-          <div class="panel hov stt cascade" style="grid-column:span 3;--i:3"><div class="sl">DECOUPLING</div><div class="sv">3.2<small> %</small></div><div class="tr">Halved since March</div><svg data-spark="6.1,5.8,5.2,4.8,4.4,3.9,3.5,3.2" data-c="#189B69"></svg></div>
-          <div class="panel hov stt cascade" style="grid-column:span 3;--i:4"><div class="sl">POWER : WEIGHT</div><div class="sv" id="cd-wkg">3.73<small> W/kg</small></div><div class="tr" id="cd-wkgn"></div><svg data-spark="3.55,3.57,3.60,3.61,3.64,3.65,3.68,3.73" data-c="#8A6D00"></svg></div>
+          <div class="panel hov stt cascade" style="grid-column:span 3;--i:1"><div class="sl">FTP ESTIMATE</div><div class="sv" id="cd-ftp">280<small> W</small></div><div class="tr" id="cd-ftpn">+6 W over eight weeks</div><svg id="sp-ftp" data-spark="266,268,270,271,273,274,276,280" data-c="#26496E"></svg></div>
+          <div class="panel hov stt cascade" style="grid-column:span 3;--i:2"><div class="sl">FITNESS · CTL</div><div class="sv" id="cd-ctl">58</div><div class="tr" id="cd-ctln">+14 in four weeks</div><svg id="sp-ctl" data-spark="40,42,44,47,49,52,55,58" data-c="#26496E"></svg></div>
+          <div class="panel hov stt cascade" style="grid-column:span 3;--i:3"><div class="sl">DECOUPLING</div><div class="sv" id="cd-dec">3.2<small> %</small></div><div class="tr" id="cd-decn">Halved since March</div><svg id="sp-dec" data-spark="6.1,5.8,5.2,4.8,4.4,3.9,3.5,3.2" data-c="#189B69"></svg></div>
+          <div class="panel hov stt cascade" style="grid-column:span 3;--i:4"><div class="sl">POWER : WEIGHT</div><div class="sv" id="cd-wkg">3.73<small> W/kg</small></div><div class="tr" id="cd-wkgn"></div><svg id="sp-wkg" data-spark="3.55,3.57,3.60,3.61,3.64,3.65,3.68,3.73" data-c="#8A6D00"></svg></div>
           <div class="panel chartpanel cascade" style="grid-column:span 8;--i:5"><h3>THE RACE SO FAR — 90 DAYS</h3><svg id="pmc" viewBox="0 0 1100 340" preserveAspectRatio="none"></svg></div>
           <div class="panel chartpanel cascade" style="grid-column:span 4;--i:6"><h3>WHERE THE EFFORT WENT — 28 DAYS</h3><div class="zbig" id="zstack"></div><div id="zrows28"></div></div>
           <div class="panel editorial cascade" style="grid-column:span 12;border-left-color:var(--bleu);--i:7">
@@ -744,7 +744,7 @@ svg#rc-prof{display:block;width:100%;height:340px}
 <script>
 /* ═══ STATE ═══ */
 const S={ftp:280,weight:75.0,maxhr:185,rhr:47,lthr:168,tgt:{ftp:300,climb:60000,sprint:900,chain:12}};
-let startFtp=262,climbed=38420,sprintBest=892,chainNow=9;
+let startFtp=180,startWeight=68,climbed=38420,sprintBest=892,chainNow=9;
 let DNOW=new Date("2026-06-01T08:00:00");
 let SEASON0=new Date("2026-03-16");
 const fmtInt=n=>n.toLocaleString("en-GB");
@@ -838,15 +838,31 @@ function renderObjectives(){
   document.getElementById("objlist").innerHTML=fut().map(e=>`
     <div class="objrow"><div class="pr" style="${prc[e.pr]}">${e.pr}</div>
     <div class="om"><div class="on2">${e.name}</div><div class="od">${evDate(e).toUpperCase()} · ${e.km} KM · ${fmtInt(e.m)} M</div></div>
-    <button class="orecon" data-ev="${e.id}">RECON</button><div class="ox">J-${J(e)}</div></div>`).join("");
-  document.querySelectorAll(".orecon").forEach(b=>b.onclick=()=>{closeDrawer();openRecon(b.dataset.ev);});
+    <button class="orecon orc" data-ev="${e.id}">RECON</button><button class="orecon oed" data-ev="${e.id}" title="Edit">✎</button><button class="orecon odl" data-ev="${e.id}" title="Delete" style="color:var(--polka)">✕</button><div class="ox">J-${J(e)}</div></div>`).join("");
+  document.querySelectorAll(".orc").forEach(b=>b.onclick=()=>{closeDrawer();openRecon(b.dataset.ev);});
+  document.querySelectorAll(".odl").forEach(b=>b.onclick=()=>{const i=EVENTS.findIndex(e=>e.id===b.dataset.ev);if(i>=0){EVENTS.splice(i,1);updateAll();pop(document.getElementById("objlist"));}});
+  document.querySelectorAll(".oed").forEach(b=>b.onclick=()=>{const ev=EVENTS.find(e=>e.id===b.dataset.ev);if(!ev)return;
+    window.EDIT_EV=ev.id;
+    document.getElementById("ev-name").value=ev.name;document.getElementById("ev-date").value=ev.date;
+    document.getElementById("ev-km").value=ev.km;document.getElementById("ev-m").value=ev.m;
+    document.getElementById("ev-pr").value=ev.pr;
+    document.getElementById("ev-add").textContent="SAVE CHANGES — "+ev.short;});
 }
 document.getElementById("ev-add").addEventListener("click",()=>{
   const name=document.getElementById("ev-name").value.trim()||"New Event";
   const km=+document.getElementById("ev-km").value||120,m=+document.getElementById("ev-m").value||2500;
-  EVENTS.push({id:"ev"+Date.now(),name,short:name.toUpperCase().split(" ").slice(0,2).join(" "),loc:"YOUR ROADS",
-    date:document.getElementById("ev-date").value||"2026-08-16",km,m,pr:document.getElementById("ev-pr").value,
-    cols:genCols(km,m,document.getElementById("ev-char").value)});
+  const date=document.getElementById("ev-date").value||"2026-08-16";
+  const pr=document.getElementById("ev-pr").value,ch=document.getElementById("ev-char").value;
+  if(window.EDIT_EV){
+    const ev=EVENTS.find(e=>e.id===window.EDIT_EV);
+    if(ev){const regen=ev.km!==km||ev.m!==m||!ev.cols||!ev.cols.length;
+      Object.assign(ev,{name,short:name.toUpperCase().split(" ").slice(0,2).join(" "),date,km,m,pr});
+      if(regen)ev.cols=genCols(km,m,ch);}
+    window.EDIT_EV=null;document.getElementById("ev-add").textContent="ADD TO THE SEASON";
+  }else{
+    EVENTS.push({id:"ev"+Date.now(),name,short:name.toUpperCase().split(" ").slice(0,2).join(" "),loc:"YOUR ROADS",
+      date,km,m,pr,cols:genCols(km,m,ch)});
+  }
   updateAll();pop(document.getElementById("objlist"));
 });
 
@@ -917,11 +933,12 @@ function renderWeeks(){
   const flags=(window.SEASON_FLAGS||[]);
   document.getElementById("wksel").innerHTML=WEEKS.map((w,i)=>{
     const f=flags.find(e=>e.i===i);
-    const t=i===CURWK?"NOW":f?f.n:i<CURWK?"DONE":"BUILD";
+    const t=i===CURWK?"NOW":f?f.n:(window.LIVEM?String(Math.round(TSSWK[i]||0)):(i<CURWK?"DONE":"BUILD"));
     return `<div class="wkt ${i===curWk?"on":""} ${f?"ev":""}" data-i="${i}"><div class="n">S${w.n}</div><div class="t">${t}</div></div>`;}).join("");
   document.querySelectorAll(".wkt").forEach(el=>el.onclick=()=>{curWk=+el.dataset.i;renderWeeks();renderDays();});
 }
 function renderDays(){
+  if(window.LIVEM&&window.LIVEM.days14)return renderDaysLive();
   const past=curWk<CURWK,now=curWk===CURWK;
   document.getElementById("days").innerHTML=PLAN.map((s,i)=>{
     const done=past||(now&&i<3);
@@ -1182,6 +1199,19 @@ function loadRide(){
 window.addEventListener("resize",()=>drawRMap());
 
 /* ═══ JERSEYS ═══ */
+function effRows20(){const L=window.LIVEM;
+  if(L&&L.bests&&L.bests.m20)return `<div class="arow"><span>${L.bests.m20.d} · ${L.bests.m20.nm}</span><b>${L.bests.m20.v} W</b></div><div class="arow"><span>Computed from your Strava streams</span><b>LIVE</b></div>`;
+  if(L)return `<div class="arow"><span>No power streams synced yet</span><b>—</b></div>`;
+  return `<div class="arow"><span>2 Mar · Èze climb</span><b>268 W</b></div><div class="arow"><span>25 Feb · Threshold ×5</span><b>265 W</b></div>`;}
+function effRowsSprint(){const L=window.LIVEM,B=L&&L.bests;
+  if(B&&(B.s5||B.m1||B.m5))return [B.s5&&`<div class="arow"><span>${B.s5.d} · ${B.s5.nm}</span><b>${B.s5.v} W · 5 s</b></div>`,
+    B.m1&&`<div class="arow"><span>${B.m1.d} · ${B.m1.nm}</span><b>${B.m1.v} W · 1 min</b></div>`,
+    B.m5&&`<div class="arow"><span>${B.m5.d} · ${B.m5.nm}</span><b>${B.m5.v} W · 5 min</b></div>`].filter(Boolean).join("");
+  if(L)return `<div class="arow"><span>No power streams synced yet</span><b>—</b></div>`;
+  return `<div class="arow"><span>12 Apr · crit simulation, fresh</span><b>892 W</b></div><div class="arow"><span>27 Feb · chaingang, 2,300 kJ in</span><b>648 W</b></div><div class="arow"><span>15 Feb · town-sign sprint</span><b>611 W</b></div>`;}
+function avgClimbTxt(){const L=window.LIVEM;return L&&L.avgClimbWk!=null?fmtInt(L.avgClimbWk)+" m / wk":"3,842 m";}
+function chainScopeTxt(){return window.LIVEM?"this season":"ever";}
+function chainMaxTxt(){const L=window.LIVEM;return L&&L.chainMax!=null?String(L.chainMax):"14";}
 function renderJerseys(){
   document.getElementById("jwrap").innerHTML=`
   <div class="panel hov jersey cascade" style="--i:1">
@@ -1191,8 +1221,7 @@ function renderJerseys(){
       <div class="bar"><i id="jy-bar" data-w="47" style="background:var(--jaune)"></i></div></div>
     <div class="jdeep"><div class="jl">FTP THIS SEASON</div><svg id="js-y" viewBox="0 0 520 60" preserveAspectRatio="none" style="height:60px"></svg>
       <div class="jl">BEST 20-MINUTE EFFORTS</div>
-      <div class="arow"><span>2 Mar · Èze climb</span><b>268 W</b></div>
-      <div class="arow"><span>25 Feb · Threshold ×5</span><b>265 W</b></div>
+      ${effRows20()}
       <div class="aproj" id="jy-proj"></div></div>
   </div>
   <div class="panel hov jersey cascade" style="--i:2">
@@ -1203,7 +1232,7 @@ function renderJerseys(){
       <div class="bar"><i id="jp-bar" data-w="64" style="background:var(--polka)"></i></div></div>
     <div class="jdeep"><div class="jl">METRES BY MONTH</div><svg id="js-p" viewBox="0 0 520 66" style="height:66px"></svg>
       <div class="arow"><span>Needed per week to hit target</span><b id="jp-need"></b></div>
-      <div class="arow"><span>Your average</span><b>3,842 m</b></div>
+      <div class="arow"><span>Your average</span><b>${avgClimbTxt()}</b></div>
       <div class="aproj">Ahead of schedule. The A-race alone adds <b>thousands of metres</b>: the jersey is yours to lose.</div></div>
   </div>
   <div class="panel hov jersey cascade" style="--i:3">
@@ -1212,15 +1241,13 @@ function renderJerseys(){
       <div class="note"><b id="jg-gap">8 watts</b> from the line. S13 opens with a rested sprint day.</div>
       <div class="bar"><i id="jg-bar" data-w="99" style="background:var(--vert)"></i></div></div>
     <div class="jdeep"><div class="jl">RECENT PEAK EFFORTS</div>
-      <div class="arow"><span>12 Apr · crit simulation, fresh</span><b>892 W</b></div>
-      <div class="arow"><span>27 Feb · chaingang, 2,300 kJ in</span><b>648 W</b></div>
-      <div class="arow"><span>15 Feb · town-sign sprint</span><b>611 W</b></div>
+      ${effRowsSprint()}
       <div class="aproj">Your fresh number is knocking; your fatigued number is climbing faster. <b>Take it on the rested day.</b></div></div>
   </div>
   <div class="panel hov jersey cascade" style="--i:4">
     <div class="jh hw"><span class="jt">CONSISTANCE</span><span class="js">THE UNBROKEN CHAIN</span></div>
     <div class="jb"><div class="big">9<small> week chain · target <span id="jw-tgt">12</span></small></div>
-      <div class="note">Every week you train, the chain grows. Longest ever: <b>14</b>.</div>
+      <div class="note">Every week you train, the chain grows. Longest ${chainScopeTxt()}: <b>${chainMaxTxt()}</b>.</div>
       <div class="bar"><i data-w="75" style="background:#C9A400"></i></div></div>
     <div class="jdeep"><div class="jl">THE CHAIN</div><svg id="chain" viewBox="0 0 520 44" style="height:44px"></svg>
       <div class="arow"><span>What counts</span><b>3+ rides or 250+ TSS</b></div>
@@ -1228,20 +1255,24 @@ function renderJerseys(){
   </div>`;
 }
 function drawJerseyY(){
-  const y=[266,268,270,271,273,274,276,S.ftp];
-  const W=520,H=60,mn=260,mx=Math.max(S.tgt.ftp+4,306);
+  let y=FTPLOG.slice().reverse().map(e=>e.v);
+  if(y.length<2)y=[startFtp,...y];if(!y.length)y=[startFtp,S.ftp];
+  const W=520,H=60,mn=Math.min(...y,startFtp)-6,mx=Math.max(S.tgt.ftp+4,...y,mn+20);
   const px=i=>i/(y.length-1)*(W-70),py=v=>H-6-((v-mn)/(mx-mn))*(H-12);
   const l="M"+y.map((v,i)=>`${px(i).toFixed(1)},${py(v).toFixed(1)}`).join("L");
   document.getElementById("js-y").innerHTML=`
     <line x1="0" y1="${py(S.tgt.ftp)}" x2="${W-70}" y2="${py(S.tgt.ftp)}" stroke="#E8B800" stroke-width="1.3" stroke-dasharray="4 4"/>
     <text x="${W-64}" y="${py(S.tgt.ftp)+4}" font-size="11" font-family="Space Grotesk" font-weight="700" fill="#8A6D00">${S.tgt.ftp} W</text>
     <path d="${l}" fill="none" stroke="#141E28" stroke-width="2.2" stroke-linecap="round"/>
-    <circle cx="${px(7)}" cy="${py(S.ftp)}" r="4" fill="#FFD100" stroke="#141E28" stroke-width="1.8"/>`;
+    <circle cx="${px(y.length-1)}" cy="${py(S.ftp)}" r="4" fill="#FFD100" stroke="#141E28" stroke-width="1.8"/>`;
 }
 function drawJerseyP(){
-  const m=[6.4,9.8,11.2,8.9,2.1],labs=["MAR","APR","MAY","JUN","JUL"],bw=72;
+  const L=(window.LIVEM&&window.LIVEM.monthly&&window.LIVEM.monthly.length)?window.LIVEM.monthly:null;
+  const m=L?L.map(x=>+(x.m/1000).toFixed(1)):[6.4,9.8,11.2,8.9,2.1];
+  const labs=L?L.map(x=>x.label):["MAR","APR","MAY","JUN","JUL"];
+  const bw=Math.max(36,(520-20)/m.length-26),mxv=Math.max(...m,0.1);
   document.getElementById("js-p").innerHTML=m.map((v,i)=>{
-    const h=v/12*44,x=i*(bw+28)+10;
+    const h=Math.max(2,v/mxv*40),x=i*(bw+26)+10;
     return `<rect x="${x}" y="${54-h}" width="${bw}" height="${h}" rx="4" fill="${i===4?"#F5C6C2":"#E23A2E"}" opacity="${i===4?1:.88}"/>
       <text x="${x+bw/2}" y="${50-h}" text-anchor="middle" font-size="11" font-family="Space Grotesk" font-weight="700" fill="#141E28">${v}k</text>
       <text x="${x+bw/2}" y="64" text-anchor="middle" font-size="9" font-family="Space Grotesk" font-weight="700" fill="#93A0AB">${labs[i]}</text>`;}).join("");
@@ -1262,20 +1293,21 @@ function renderLadder(){
 
 /* ═══ SYNC ═══ */
 (function(){
-  const ints=[["Strava","#FC5200","S","Connected · webhook live",true],
-    ["Hammerhead Karoo","#111827","K","Karoo 3 · rides + climbs",true],
-    ["Garmin","#0A6CA8","G","Band · HR, sleep, stress",true],
-    ["Ultrahuman","#3B2F63","U","Ring Air · HRV, temp",true],
-    ["Zwift","#F26722","Z","Indoor rides land automatically",true],
-    ["Apple Health","#141E28","","Body mass · wellness",true],
-    ["Claude AI Coach","#C77B3F","C","Readiness 06:30 · notes Mon 07:00",true],
-    ["TrainingPeaks","#8A94A0","TP","Export workouts — off",false],
-    ["Wahoo SYSTM","#5A6B7A","W","Alternative turbo — off",false]];
-  document.getElementById("ints").innerHTML=ints.map(([n,c,ini,s,on])=>`
-    <div class="panel hov int"><div class="logo2" style="background:${on?c:"#E3E8EB"};color:${on?"#fff":"#93A0AB"}">${ini||"⌘"}</div>
-    <div><div class="in">${n}</div><div class="is"><span class="dot" style="background:${on?"var(--vert)":"var(--mist)"}"></span>${s}</div></div>
-    <div class="tog ${on?"on":""}"><i></i></div></div>`).join("");
-  document.querySelectorAll(".tog").forEach(t=>t.onclick=e=>{e.stopPropagation();t.classList.toggle("on");});
+  const ints=[["Strava","#FC5200","S","Rides · streams · webhook","live"],
+    ["Claude AI Coach","#C77B3F","C","Debriefs · weekly notes · recon","live"],
+    ["Hammerhead Karoo","#111827","K","Rides arrive via Strava","via"],
+    ["Zwift","#F26722","Z","Indoor rides arrive via Strava","via"],
+    ["Garmin","#0A6CA8","G","HR · sleep · stress","p2"],
+    ["Ultrahuman","#3B2F63","U","Ring Air · HRV · temperature","p2"],
+    ["Apple Health","#141E28","","Body mass · wellness","p2"],
+    ["TrainingPeaks","#8A94A0","TP","Workout export","off"],
+    ["Wahoo SYSTM","#5A6B7A","W","Alternative turbo","off"]];
+  const badge={live:["LIVE","#E2F1EA","var(--vert)"],via:["VIA STRAVA","#EDF1F4","var(--bleu)"],
+    p2:["PHASE 2","#FBEEDD","#C4761B"],off:["OFF","var(--hair)","var(--mist)"]};
+  document.getElementById("ints").innerHTML=ints.map(([n,c,ini,s,st])=>{const b=badge[st];
+    return `<div class="panel hov int"><div class="logo2" style="background:${st==="off"||st==="p2"?"#E3E8EB":c};color:${st==="off"||st==="p2"?"#93A0AB":"#fff"}">${ini||"⌘"}</div>
+    <div><div class="in">${n}</div><div class="is">${s}</div></div>
+    <span class="sg" style="margin-left:auto;flex-shrink:0;font-size:8px;font-weight:700;letter-spacing:.12em;padding:5px 10px;border-radius:8px;background:${b[1]};color:${b[2]}">${b[0]}</span></div>`;}).join("");
 })();
 
 /* ═══ PROFILE DRAWER ═══ */
@@ -1418,7 +1450,7 @@ function buildRecon(){
 document.getElementById("rc-ghost").addEventListener("click",()=>{
   if(!rcEv||!RCLAST)return;cancelAnimationFrame(ghostRAF);
   const ev=EVENTS.find(e=>e.id===rcEv);
-  const now=RCLAST,then=raceModel(ev,startFtp,S.weight+1.5);
+  const now=RCLAST,then=raceModel(ev,startFtp,startWeight);
   const dn=document.getElementById("gd-now"),dt=document.getElementById("gd-then");
   dn.setAttribute("opacity",1);dt.setAttribute("opacity",1);
   const slow=Math.max(now.total,then.total),t0=performance.now(),DUR=9000;
@@ -1457,6 +1489,7 @@ document.getElementById("rc-close").addEventListener("click",closeRecon);
 
 /* ═══ SEASON EXTRAS ═══ */
 function renderWkFront(){
+  if(window.LIVEM&&window.LIVEM.days14)return renderWkFrontLive();
   const mx=Math.max(...PLAN.map(s=>s.tss));
   document.getElementById("wkfront").innerHTML=PLAN.map((s,i)=>{
     const [bg,fg]=TYPEC[s.type],key=s.tss===mx,done=i<3;
@@ -1476,9 +1509,9 @@ function drawTraj(){
   const past=F.slice(-30).map(d=>d.tsb);
   let ctl=F[F.length-1].ctl,atl=F[F.length-1].atl;
   const a=nextA(),days=Math.max(7,J(a)),futr=[];
+  const liveLoad=window.LIVEM?Math.max(20,(F[F.length-1]||{}).atl||40):null;
   for(let d=1;d<=days;d++){
-    const wk=Math.min(15,CURWK+Math.floor(d/7));
-    let load=TSSWK[wk]/7;
+    let load=liveLoad!=null?liveLoad:TSSWK[Math.min(15,CURWK+Math.floor(d/7))]/7;
     if(days-d<7)load*=.45;
     ctl+=(load-ctl)/42;atl+=(load-atl)/7;futr.push(ctl-atl);}
   const race=futr[futr.length-1];
@@ -1791,6 +1824,89 @@ function wireSys(){
     }catch(err){out.innerHTML=`<div class="sysrow"><span class="bad">FAIL</span><span>Backend reachable</span><span class="si">${String(err.message||err)}</span></div>`;}
     b.disabled=false;b.textContent="RUN SYSTEM CHECK";};
 }
+
+
+/* ═══ LIVE v1.1 — real data everywhere, no demo residue ═══ */
+function setSpark(id,vals,c){
+  const svg=document.getElementById(id);if(!svg||!vals||vals.length<2)return;
+  const W=100,H=26;svg.setAttribute("viewBox",`0 0 ${W} ${H}`);svg.setAttribute("preserveAspectRatio","none");
+  const mn=Math.min(...vals),mx=Math.max(...vals),r=(mx-mn)||1;
+  const P=vals.map((v,i)=>[(i/(vals.length-1)*W),(H-3-((v-mn)/r)*(H-6))]);
+  const line="M"+P.map(p=>p.map(n=>n.toFixed(1)).join(",")).join("L");
+  svg.innerHTML=`<path d="${line} L${W},${H} L0,${H} Z" fill="${c}" opacity=".07"/><path d="${line}" fill="none" stroke="${c}" stroke-width="1.6" stroke-linecap="round"/><circle cx="${P[P.length-1][0]}" cy="${P[P.length-1][1]}" r="2.6" fill="${c}"/>`;
+}
+function renderWkFrontLive(){
+  const L=window.LIVEM,now=new Date();
+  const mon=new Date(now);mon.setDate(now.getDate()-((now.getDay()+6)%7));
+  const days=[];
+  for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);
+    const iso=d.toISOString().slice(0,10);
+    days.push({dow:d.toLocaleDateString("en-GB",{weekday:"short"}).toUpperCase(),
+      fut:d>now, ...(L.days14.find(x=>x.d===iso)||{nm:null,tss:0,km:0,m:0,n:0})});}
+  const mx=Math.max(...days.map(d=>d.tss),1);
+  document.getElementById("wkslab").innerHTML=`THIS WEEK — <b>S${CURWK+1}</b> · REAL RIDES FROM STRAVA`;
+  document.getElementById("wkfront").innerHTML=days.map(d=>{
+    const key=d.tss===mx&&d.tss>0;
+    return `<div class="wf7 ${key?"key":""}"><span class="rule" style="background:${key?"var(--jaune)":d.tss>0?"var(--vert)":d.fut?"var(--hair)":"var(--line)"}"></span>
+      <div class="d">${d.dow}</div><div class="n">${d.nm?d.nm:(d.fut?"—":"Rest day")}</div>
+      <div class="t">${d.tss||"—"}<small> TSS</small></div>
+      ${d.tss>0?'<span class="done">✓</span>':""}</div>`;}).join("");
+  document.querySelectorAll(".wf7").forEach(el=>el.onclick=()=>showScene("plan"));
+}
+function renderDaysLive(){
+  const L=window.LIVEM;
+  if(curWk!==CURWK){
+    document.getElementById("days").innerHTML=`<div class="stg" style="grid-column:1/-1;min-height:120px;cursor:default">
+      <div class="day">WEEK ${curWk+1}</div><div class="nm" style="margin-top:12px">${Math.round(TSSWK[curWk]||0)} TSS logged this week</div>
+      <div class="ds">Day-by-day detail is shown for the current week. Ride history lives in the Laboratory.</div></div>`;
+    return;}
+  const now=new Date(),mon=new Date(now);mon.setDate(now.getDate()-((now.getDay()+6)%7));
+  let out="";
+  for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);
+    const iso=d.toISOString().slice(0,10);
+    const e=L.days14.find(x=>x.d===iso)||{nm:null,tss:0,km:0,m:0,n:0};
+    const fut=d>now;
+    out+=`<div class="stg" style="cursor:default">
+      <div class="day">${d.toLocaleDateString("en-GB",{weekday:"short"}).toUpperCase()} ${d.getDate()}</div>
+      <div class="nm" style="margin-top:14px">${e.nm||(fut?"—":"Rest day")}</div>
+      <div class="ds">${e.n?`${e.km} km · ${fmtInt(e.m)} m${e.n>1?` · ${e.n} rides`:""}`:(fut?"Not yet ridden":"No ride logged")}</div>
+      <div class="foot"><span class="tss">${e.tss||"—"}<small> TSS</small></span>${e.tss>0?'<div class="tick">✓</div>':fut?"<span></span>":'<div class="miss"></div>'}</div>
+    </div>`;}
+  document.getElementById("days").innerHTML=out;
+}
+function patchLiveChrome(m){
+  const F=m.pmc||[],last=F[F.length-1]||{},prev=F[F.length-29]||last;
+  document.getElementById("heroline").innerHTML=`Week ${Math.min(16,CURWK+1)}. ${J(nextA())<=14?"The sharpening begins.":"The mountains are coming."}`;
+  document.getElementById("cd-ftpn").textContent=`+${Math.max(0,S.ftp-startFtp)} W since the March baseline`;
+  const ctlEl=document.getElementById("cd-ctl");if(ctlEl)ctlEl.textContent=Math.round(last.ctl||0);
+  const ctlN=document.getElementById("cd-ctln");if(ctlN)ctlN.textContent=`${last.ctl>=prev.ctl?"+":""}${Math.round((last.ctl||0)-(prev.ctl||0))} in four weeks`;
+  const decs=(m.rideIndex||[]).map(r=>r.dec).filter(v=>v!=null);
+  const decEl=document.getElementById("cd-dec");
+  if(decEl)decEl.innerHTML=decs.length?decs[0].toFixed(1)+"<small> %</small>":"—";
+  const decN=document.getElementById("cd-decn");if(decN)decN.textContent=decs.length?"Latest synced ride":"Needs power + HR streams";
+  setSpark("sp-ftp",FTPLOG.slice().reverse().map(e=>e.v),"#26496E");
+  setSpark("sp-ctl",F.filter((_,i)=>i%Math.ceil(F.length/10)===0).map(d=>d.ctl).concat(last.ctl?[last.ctl]:[]),"#26496E");
+  if(decs.length>1)setSpark("sp-dec",decs.slice(0,10).reverse(),"#189B69");
+  setSpark("sp-wkg",FTPLOG.slice().reverse().map(e=>+(e.v/S.weight).toFixed(2)),"#8A6D00");
+  if(!(m.zones28&&m.zones28.some(z=>z.pct>0))){
+    document.getElementById("zstack").innerHTML=`<i style="width:100%;background:var(--hair)"></i>`;
+    document.getElementById("zrows28").innerHTML=`<div class="zrow"><span class="znm">No power streams in the last 28 days — zone analysis appears once rides with a power meter sync.</span></div>`;}
+  const rs=document.getElementById("readyslab");
+  if(rs)rs.innerHTML=`MORNING READINESS — <b>PHASE 2</b> · RING &amp; BAND NOT YET CONNECTED`;
+  const ph=document.getElementById("planhead");if(ph)ph.style.opacity=".55";
+  const rb=document.getElementById("rbslab");
+  if(rb)rb.innerHTML=`THE SEASON — <b>WEEKLY TSS</b> · SELECT A WEEK`;
+  const t=document.getElementById("t-jd");if(t&&!EVENTS.length)t.textContent="Add an event in your rider profile";
+}
+const _applyLive1=applyLive;
+applyLive=function(m){
+  window.LIVEM=m;
+  _applyLive1(m);
+  renderJerseys();drawJerseyY();drawJerseyP();renderLadder();
+  renderWkFront();renderDays();drawTraj();
+  patchLiveChrome(m);
+  animateBars(document.querySelector(".scene.on")||document.body);
+};
 
 </script>
 </body>

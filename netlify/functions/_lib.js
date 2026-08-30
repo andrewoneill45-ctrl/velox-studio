@@ -24,10 +24,10 @@ export const strava = async (path, token) =>
   fetch("https://www.strava.com/api/v3" + path, { headers: { Authorization: "Bearer " + token } });
 
 export const DEFAULT_PROFILE = {
-  ftp: 280, weight: 75, maxhr: 185, rhr: 47, lthr: 168, startFtp: 262,
+  ftp: 180, weight: 68, maxhr: 185, rhr: 47, lthr: 168, startFtp: 180, startWeight: 68,
   tgt: { ftp: 300, climb: 60000, sprint: 900, chain: 12 },
   seasonStart: "2026-03-16",
-  ftpLog: [{ v: 280, d: "2 MAR 26", s: "MANUAL" }],
+  ftpLog: [{ v: 180, d: "1 MAR 26", s: "SEASON BASELINE" }],
   events: [
     { id: "marmotte", name: "La Marmotte Granfondo", short: "LA MARMOTTE", loc: "BOURG D'OISANS",
       date: "2026-07-05", km: 174, m: 5000, pr: "A",
@@ -38,4 +38,11 @@ export const DEFAULT_PROFILE = {
       cols: [{ n: "Mont Ventoux — Bédoin", len: 21.4, g: 7.5, top: 1909 }] }
   ]
 };
-export const getProfile = async () => ({ ...DEFAULT_PROFILE, ...(await readJSON("profile.json", {})) });
+export const getProfile = async () => {
+  const p = { ...DEFAULT_PROFILE, ...(await readJSON("profile.json", {})) };
+  if (!p.startFtp || p.startFtp === 262) p.startFtp = 180;      // March baseline
+  if (!p.startWeight) p.startWeight = 68;                        // March baseline
+  if (!(p.ftpLog || []).some(e => e.v === 180))
+    p.ftpLog = [...(p.ftpLog || []), { v: 180, d: "1 MAR 26", s: "SEASON BASELINE" }];
+  return p;
+};
