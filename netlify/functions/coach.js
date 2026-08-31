@@ -43,13 +43,13 @@ export default async (req) => {
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "content-type": "application/json", "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
-    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "weekly" ? 380 : 700,
+    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "weekly" ? 380 : mode === "planweek" ? 2400 : 700,
       system: "You are the directeur sportif for a single amateur rider. UK English. Confident, warm, specific. Use **bold** for key numbers. No preamble, no sign-off." + (mode === "planweek" ? `
 You are now planning ONE training week. Respond with ONLY a JSON object — no prose before or after, no code fences:
 {"summary": string (2–3 warm, specific sentences on why this week looks like this, referencing last week and current form),
  "question": string|null (ONLY if one crucial thing is missing; otherwise null),
- "sessions": [{"date":"YYYY-MM-DD","name":string,"type":"Recovery"|"Endurance"|"Tempo"|"Threshold"|"VO2 Max"|"Race","mins":number,"tss":number,"detail":string}]}
-Rules: use only the available days; respect the time limits per day; base load on last week's TSS, current form (TSB) and the rider's stated feeling — tired means lower load; place hard days before rest; taper if an A-event is within 10 days; "detail" says exactly how to ride it with watt targets from the rider's FTP and zones. Rest days are simply omitted. Sessions should sum to a sensible weekly TSS (target if given).` : ""),
+ "sessions": [{"date":"YYYY-MM-DD","name":string,"type":"Recovery"|"Endurance"|"Tempo"|"Threshold"|"VO2 Max"|"Race"|"Strength","mins":number,"tss":number,"detail":string (max 60 words)}]}
+Rules: use only the available days; respect the time limits per day; base load on last week's TSS, current form (TSB) and the rider's stated feeling — tired means lower load; place hard days before rest; taper if an A-event is within 10 days; "detail" says exactly how to ride it with watt targets from the rider's FTP and zones. Rest days are simply omitted; if the rider mentions strength work, add "Strength" sessions (tss 15–30) on non-riding days. Keep the whole response under 1500 tokens. Sessions should sum to a sensible weekly TSS (target if given).` : ""),
       messages: [{ role: "user", content: ask + "\n\nDATA:\n" + JSON.stringify(context) }] })});
   if (!r.ok) return json({ error: "anthropic_" + r.status, detail: await r.text() }, 502);
   const d = await r.json();

@@ -281,6 +281,30 @@ svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshai
 .sess .sv small{font-size:9px;color:var(--mist);letter-spacing:.1em}
 .sess .rm{border:none;background:none;color:var(--polka);cursor:pointer;font-size:14px}
 .aisum{font-family:'Fraunces',serif;font-style:italic;font-size:17px;line-height:1.5;color:var(--ink);margin:6px 0 10px}
+.wkboard{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-top:14px}
+.wkcard{border:1px solid var(--line);border-radius:14px;background:#fff;padding:0 0 12px;min-height:230px;position:relative;overflow:hidden;display:flex;flex-direction:column;transition:transform .25s var(--ease),box-shadow .3s}
+.wkcard:hover{transform:translateY(-3px);box-shadow:var(--sh)}
+.wkcard .band{height:5px;background:var(--hair)}
+.wkcard .wd{font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.18em;color:var(--mist);padding:12px 14px 0}
+.wkcard .wt{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.12em;padding:6px 14px 0}
+.wkcard .wn{font-weight:600;font-size:13.5px;line-height:1.3;padding:6px 14px 0}
+.wkcard .wnum{display:flex;gap:12px;padding:10px 14px 0;align-items:baseline}
+.wkcard .wnum b{font-family:'Archivo';font-weight:900;font-size:22px;letter-spacing:-.02em}
+.wkcard .wnum small{font-family:'Space Grotesk';font-size:8px;color:var(--mist);letter-spacing:.1em;margin-left:3px}
+.wkcard .wx{font-size:11px;line-height:1.55;color:var(--ink2);padding:8px 14px 0;flex:1}
+.wkcard .wc{display:flex;gap:6px;align-items:center;padding:12px 14px 0;font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.1em;color:var(--mist)}
+.wkcard .wc select{border:1px solid var(--line);border-radius:6px;font-family:'Space Grotesk';font-size:9px;font-weight:700;padding:3px 5px}
+.wkcard .wc .rm{margin-left:auto;border:none;background:none;color:var(--polka);cursor:pointer;font-size:13px}
+.wkcard.rest{background:var(--bg);border-style:dashed;justify-content:center;align-items:center;min-height:120px}
+.wkcard.rest .wd{padding:0}
+.wkcard.rest .wr{font-family:'Fraunces',serif;font-style:italic;font-size:15px;color:var(--mist);margin-top:6px}
+.wkcard.off{opacity:.45}
+.wktot{display:flex;gap:26px;align-items:center;flex-wrap:wrap;margin-top:16px;padding:16px 20px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.wktot .k{font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.16em;color:var(--mist)}
+.wktot .k b{display:block;font-family:'Archivo';font-weight:900;font-size:26px;letter-spacing:-.02em;color:var(--ink);margin-top:2px}
+.wktot .bar{flex:1;min-width:160px;height:8px;border-radius:4px;background:var(--hair);overflow:hidden;position:relative}
+.wktot .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:4px}
+@media(max-width:980px){.wkboard{grid-template-columns:1fr 1fr}}
 /* ── TIMELINE ── */
 .tlwrap{border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:var(--sh);overflow:hidden}
 .tltop{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--hair)}
@@ -1597,7 +1621,7 @@ function renderBests(){
     <div class="bestrow"><span class="bl">${l}</span><span class="bv">${v}<small> W</small></span><span class="bd">${d}</span></div>`).join("");
 }
 function drawTraj(){
-  const F=window.PMCF||[];if(!F.length)return;
+  const F=(window.TL&&window.TL.built&&window.TL.acts.length)?pmcFromActs():(window.PMCF||[]);if(!F.length)return;
   const past=F.slice(-30).map(d=>d.tsb);
   let ctl=F[F.length-1].ctl,atl=F[F.length-1].atl;
   const a=nextA(),days=Math.max(7,a?J(a):28),futr=[];
@@ -1994,7 +2018,7 @@ function renderDaysLive(){
   document.getElementById("days").innerHTML=out;
 }
 function patchLiveChrome(m){
-  const F=m.pmc||[],last=F[F.length-1]||{},prev=F[F.length-29]||last;
+  const F=(window.TL&&window.TL.built&&window.TL.acts.length)?pmcFromActs():(m.pmc||[]),last=F[F.length-1]||{},prev=F[F.length-29]||last;
   document.getElementById("heroline").innerHTML=`Week ${Math.min(16,CURWK+1)}. ${J(nextA())<=14?"The sharpening begins.":"The mountains are coming."}`;
   document.getElementById("cd-ftpn").textContent=`+${Math.max(0,S.ftp-startFtp)} W since the March baseline`;
   const ctlEl=document.getElementById("cd-ctl");if(ctlEl)ctlEl.textContent=Math.round(last.ctl||0);
@@ -2319,7 +2343,7 @@ function seasonSeries(){
   for(let i=cur+1;i<n;i++)if(!vals[i])vals[i]=avg;
   return {vals,cur,n};
 }
-const PTYPE={Recovery:.55,Endurance:.68,Tempo:.8,Threshold:.92,"VO2 Max":1.05,Race:1.0};
+const PTYPE={Recovery:.55,Endurance:.68,Tempo:.8,Threshold:.92,"VO2 Max":1.05,Race:1.0,Strength:.4};
 function renderPlanner(k){
   const mon=new Date(k+"T12:00:00"),todayIso=isoDay(new Date());
   const opts=[];for(let i=0;i<7;i++){const d=addD(mon,i),di=isoDay(d);if(di>=todayIso)opts.push(`<option value="${di}">${d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"})}</option>`);}
@@ -2473,7 +2497,10 @@ async function aiBuild(k,instruction){
   try{
     const d=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"planweek",context:aiContext(k),instruction:instruction||null})});
     st.textContent="";
-    if(!d.plan){out.innerHTML=`<div class="aitext" style="display:block">${md(d.text)}</div>`;return;}
+    let plan=d.plan;
+    if(!plan&&d.text){try{const c=d.text.replace(/```json|```/g,"").trim();plan=JSON.parse(c.slice(c.indexOf("{"),c.lastIndexOf("}")+1));}catch(e){}}
+    if(!plan){out.innerHTML=`<div class="panel" style="padding:22px 26px;margin-top:14px"><div class="aisum">"The plan came back incomplete. Let me try again."</div><button class="aibtn" id="ai-retry">TRY AGAIN</button></div>`;document.getElementById("ai-retry").onclick=()=>aiBuild(k,instruction);return;}
+    d.plan=plan;
     AIW.proposal=d.plan;renderProposal(k);
   }catch(e){st.textContent="Coach offline — "+String(e.message||e);}
 }
@@ -2502,6 +2529,52 @@ function renderProposal(k){
     saveProfile();tlRender(true);drawMassif();drawTraj();
     document.getElementById("planner").style.display="none";};
 }
+
+
+/* ═══ v2.3 — the week board ═══ */
+const AITYPE={Recovery:["#93A0AB","RECOVERY"],Endurance:["#189B69","ENDURANCE"],Tempo:["#26496E","TEMPO"],Threshold:["#D99000","THRESHOLD"],"VO2 Max":["#E8611F","VO₂ MAX"],Race:["#E23A2E","RACE"],Strength:["#141E28","STRENGTH"]};
+renderProposal=function(k){
+  const P=AIW.proposal,out=document.getElementById("ai-out");
+  if(P.question&&!(P.sessions&&P.sessions.length)){
+    out.innerHTML=`<div class="aisum">"${P.question}"</div><div style="display:flex;gap:10px"><input class="inp" id="ai-ans" placeholder="Your answer…" style="max-width:none;flex:1"/><button class="aibtn" id="ai-ansb">ANSWER &amp; BUILD</button></div>`;
+    document.getElementById("ai-ansb").onclick=()=>{AIW.answers.push({q:P.question,a:document.getElementById("ai-ans").value});aiBuild(k);};return;}
+  P.sessions.forEach(x=>{if(x.on===undefined)x.on=true;});
+  const mon=new Date(k+"T12:00:00"),days=[];
+  for(let i=0;i<7;i++){const d=addD(mon,i);days.push({di:isoDay(d),lab:d.toLocaleDateString("en-GB",{weekday:"short"}).toUpperCase(),num:d.getDate()});}
+  const opts=di=>days.map(d=>`<option value="${d.di}" ${d.di===di?"selected":""}>${d.lab} ${d.num}</option>`).join("");
+  const tot=P.sessions.filter(x=>x.on).reduce((s,x)=>s+(+x.tss||0),0);
+  const lastW=TL.weeks.get(isoDay(addD(mon,-7)))?.tss||0,tgt=(S.weekTargets&&S.weekTargets[k])||0;
+  const mx=Math.max(tot,lastW,tgt,100);
+  out.innerHTML=`<div class="aisum">${P.summary||""}</div>
+    <div class="wkboard">${days.map(d=>{
+      const ss=P.sessions.map((x,i)=>({...x,i})).filter(x=>x.date===d.di);
+      if(!ss.length)return `<div class="wkcard rest"><div class="wd">${d.lab} ${d.num}</div><div class="wr">Rest</div></div>`;
+      return ss.map(x=>{const [c,l]=AITYPE[x.type]||["#93A0AB",(x.type||"").toUpperCase()];
+        return `<div class="wkcard ${x.on?"":"off"}"><div class="band" style="background:${c}"></div>
+        <div class="wd">${d.lab} ${d.num}</div><div class="wt" style="color:${c}">${l}</div>
+        <div class="wn">${x.name}</div>
+        <div class="wnum"><span><b>${x.mins}</b><small>MIN</small></span><span style="color:${c}"><b>${x.tss}</b><small>TSS</small></span></div>
+        <div class="wx">${x.detail||""}</div>
+        <div class="wc"><label style="display:flex;gap:5px;align-items:center;cursor:pointer"><input type="checkbox" data-on="${x.i}" ${x.on?"checked":""}/> ADD</label><select data-mv="${x.i}">${opts(x.date)}</select><button class="rm" data-rm="${x.i}" title="Remove">✕</button></div></div>`;}).join("");}).join("")}</div>
+    <div class="wktot">
+      <span class="k">PLANNED<b>${tot} TSS</b></span><span class="k">LAST WEEK<b>${Math.round(lastW)}</b></span>${tgt?`<span class="k">TARGET<b>${tgt}</b></span>`:""}
+      <div class="bar"><i style="width:${Math.min(100,lastW/mx*100)}%;background:var(--hair);filter:brightness(.9)"></i><i style="width:${Math.min(100,tot/mx*100)}%;background:var(--bleu);opacity:.9"></i>${tgt?`<i style="width:2px;left:${Math.min(100,tgt/mx*100)}%;background:var(--jaune-ink)"></i>`:""}</div>
+      <button class="aibtn" id="ai-accept" style="background:var(--vert);padding:13px 20px">ADD TO THE TIMELINE</button>
+      <label class="ds" style="margin:0;display:flex;gap:6px;align-items:center"><input type="checkbox" id="ai-replace" checked/> replace this week's existing plans</label>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:12px"><input class="inp" id="ai-adj" placeholder="Adjust in plain English: make Thursday easier, swap the long ride to Sunday, add a strength day…" style="max-width:none;flex:1"/><button class="aibtn" id="ai-adjb">RE-PLAN</button></div>`;
+  out.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{P.sessions.splice(+b.dataset.rm,1);renderProposal(k);});
+  out.querySelectorAll("[data-on]").forEach(c=>c.onchange=()=>{P.sessions[+c.dataset.on].on=c.checked;renderProposal(k);});
+  out.querySelectorAll("[data-mv]").forEach(sl=>sl.onchange=()=>{P.sessions[+sl.dataset.mv].date=sl.value;renderProposal(k);});
+  document.getElementById("ai-adjb").onclick=()=>{const v=document.getElementById("ai-adj").value.trim();if(v)aiBuild(k,v);};
+  document.getElementById("ai-adj").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("ai-adjb").click();});
+  document.getElementById("ai-accept").onclick=()=>{
+    S.plan=S.plan||{};
+    if(document.getElementById("ai-replace").checked){for(let i=0;i<7;i++)delete S.plan[isoDay(addD(mon,i))];}
+    P.sessions.filter(x=>x.on).forEach(x=>{(S.plan[x.date]=S.plan[x.date]||[]).push({nm:x.name,tss:+x.tss||0,type:x.type,mins:+x.mins||0,detail:x.detail||"",ai:true});});
+    saveProfile();tlRender(true);drawMassif();drawTraj();
+    document.getElementById("planner").style.display="none";};
+};
 
 </script>
 </body>
