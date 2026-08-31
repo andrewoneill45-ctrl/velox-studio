@@ -2019,7 +2019,7 @@ function renderDaysLive(){
 }
 function patchLiveChrome(m){
   const F=(window.TL&&window.TL.built&&window.TL.acts.length)?pmcFromActs():(m.pmc||[]),last=F[F.length-1]||{},prev=F[F.length-29]||last;
-  document.getElementById("heroline").innerHTML=`Week ${Math.min(16,CURWK+1)}. ${J(nextA())<=14?"The sharpening begins.":"The mountains are coming."}`;
+  document.getElementById("heroline").innerHTML=`Week ${CURWK+1}. ${J(nextA())<=14?"The sharpening begins.":"The mountains are coming."}`;
   document.getElementById("cd-ftpn").textContent=`+${Math.max(0,S.ftp-startFtp)} W since the March baseline`;
   const ctlEl=document.getElementById("cd-ctl");if(ctlEl)ctlEl.textContent=Math.round(last.ctl||0);
   const ctlN=document.getElementById("cd-ctln");if(ctlN)ctlN.textContent=`${last.ctl>=prev.ctl?"+":""}${Math.round((last.ctl||0)-(prev.ctl||0))} in four weeks`;
