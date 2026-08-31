@@ -1,4 +1,4 @@
-import { json, readJSON, getProfile } from "./_lib.js";
+import { json, readJSON, getProfile, wellnessSummary } from "./_lib.js";
 export default async (req) => {
   if (!process.env.ANTHROPIC_API_KEY) return json({ error: "no_key" }, 501);
   const body = req.method === "POST" ? await req.json() : {};
@@ -6,7 +6,14 @@ export default async (req) => {
   const prof = await getProfile();
   const metrics = await readJSON("metrics.json", {});
   let context = { profile: { ftp: prof.ftp, weight: prof.weight, wkg: +(prof.ftp / prof.weight).toFixed(2), targets: prof.tgt } };
+  const wl = await wellnessSummary();
+  const wellness = wl.latest ? { today: wl.latest, last7: wl.days.slice(-7), readiness: wl.readiness } : null;
   let ask = "";
+  if (mode === "readiness") {
+    context.wellness = wellness; context.form = (metrics.pmc || []).slice(-1)[0] || null;
+    ask = wellness ? "Write this morning's readiness note: 45–70 words. Say whether to train as planned, ease off, or rest, and why, citing the HRV, resting HR and sleep numbers against baseline."
+                   : "No wellness data is available yet. In one sentence, say the readiness panel is waiting for Apple Health data.";
+  }
   if (mode === "debrief" && id) {
     const st = await readJSON(`streams/${id}.json`);
     const meta = (metrics.rideIndex || []).find(r => String(r.id) === String(id));
@@ -30,7 +37,7 @@ export default async (req) => {
     ask = q ? `The rider asks about their condition: "${q}". Answer directly from the data, under 120 words.`
             : "Give a full condition read from this data: the trend, one risk, and exactly what to do over the next 10 days. 120–150 words, titled short sections.";
   } else if (mode === "planweek") {
-    context = body.context || {};
+    context = body.context || {}; context.wellness = wellness;
     ask = (body.instruction ? `Adjustment from the rider: "${body.instruction}". ` : "") + "Plan this training week from the data.";
   } else if (mode === "recon" && event) {
     context.event = event;
@@ -40,6 +47,7 @@ export default async (req) => {
       bests: metrics.bests, tssSeason: metrics.tssSeason, chain: metrics.chain };
     ask = "Write this week's coach note: 70–100 words, four sentences maximum, on current form and exactly what to do this week.";
   }
+  if (mode !== "planweek" && mode !== "readiness" && wellness) context.wellness = { readiness: wellness.readiness, today: wellness.today };
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "content-type": "application/json", "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
@@ -49,7 +57,7 @@ You are now planning ONE training week. Respond with ONLY a JSON object — no p
 {"summary": string (2–3 warm, specific sentences on why this week looks like this, referencing last week and current form),
  "question": string|null (ONLY if one crucial thing is missing; otherwise null),
  "sessions": [{"date":"YYYY-MM-DD","name":string,"type":"Recovery"|"Endurance"|"Tempo"|"Threshold"|"VO2 Max"|"Race"|"Strength","mins":number,"tss":number,"detail":string (max 60 words)}]}
-Rules: use only the available days; respect the time limits per day; base load on last week's TSS, current form (TSB) and the rider's stated feeling — tired means lower load; place hard days before rest; taper if an A-event is within 10 days; "detail" says exactly how to ride it with watt targets from the rider's FTP and zones. Rest days are simply omitted; if the rider mentions strength work, add "Strength" sessions (tss 15–30) on non-riding days. Keep the whole response under 1500 tokens. Sessions should sum to a sensible weekly TSS (target if given).` : ""),
+Rules: if wellness.readiness exists, let this morning's readiness shape today and the next two days (Red = rest or very easy, Amber = no intensity today); use only the available days; respect the time limits per day; base load on last week's TSS, current form (TSB) and the rider's stated feeling — tired means lower load; place hard days before rest; taper if an A-event is within 10 days; "detail" says exactly how to ride it with watt targets from the rider's FTP and zones. Rest days are simply omitted; if the rider mentions strength work, add "Strength" sessions (tss 15–30) on non-riding days. Keep the whole response under 1500 tokens. Sessions should sum to a sensible weekly TSS (target if given).` : ""),
       messages: [{ role: "user", content: ask + "\n\nDATA:\n" + JSON.stringify(context) }] })});
   if (!r.ok) return json({ error: "anthropic_" + r.status, detail: await r.text() }, 502);
   const d = await r.json();

@@ -5,6 +5,7 @@ export default async () => {
     connected: !!tokens,
     athlete: tokens?.athlete ? `${tokens.athlete.firstname ?? ""} ${tokens.athlete.lastname ?? ""}`.trim() : null,
     mapboxToken: process.env.MAPBOX_TOKEN || null,
-    coach: !!process.env.ANTHROPIC_API_KEY
+    coach: !!process.env.ANTHROPIC_API_KEY,
+    health: !!process.env.HEALTH_INGEST_KEY
   });
 };

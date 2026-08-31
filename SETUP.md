@@ -31,6 +31,7 @@ git push -u origin main
 | `ANTHROPIC_API_KEY` | your Claude API key (server-side only, never shipped to the browser) |
 | `ANTHROPIC_MODEL` | optional, defaults to `claude-sonnet-4-6` |
 | `MAPBOX_TOKEN` | your Mapbox **public** token (`pk.…`) |
+| `HEALTH_INGEST_KEY` | any long random string; Health Auto Export sends your Apple Health data with it |
 
 In your **Strava API application** set *Authorization Callback Domain* to your Netlify host
 (`velox-studio.netlify.app` — domain only, no protocol or path).
@@ -74,3 +75,21 @@ time-in-zone, season bests, climbing totals, Everest count, consistency chain.
 Live from Claude: ride debriefs, weekly coach note, recon briefings.
 Curated for now: the 16-stage roadbook and morning readiness (HRV/sleep need the Ultrahuman
 and Garmin APIs — a later phase; the panels state their source honestly).
+
+## 7 · Apple Health (readiness) via Health Auto Export
+
+Both the Garmin band and the Ultrahuman ring already sync into Apple Health. The iPhone app
+**Health Auto Export** (Premium tier for background automations) pushes the numbers to VeloX each morning.
+
+1. Set `HEALTH_INGEST_KEY` in Netlify (any long random string) and redeploy.
+2. In Health Auto Export → Automations → **REST API**:
+   - URL: `https://YOUR-SITE.netlify.app/api/wellness?key=YOUR_HEALTH_INGEST_KEY`
+   - Method POST · Format JSON · Aggregation: Days · Period: last 7 days (so missed mornings backfill)
+   - Metrics: Heart Rate Variability, Resting Heart Rate, Sleep Analysis, Respiratory Rate,
+     Apple Sleeping Wrist Temperature, Weight/Body Mass, VO2 Max
+   - Schedule: every morning (e.g. 06:30), plus enable "Run automation on app open".
+3. Tap "Run" once to send the first batch, then Sources → Run System Check → "Apple Health data received" should PASS.
+
+Readiness is computed transparently: HRV and resting HR against your own 28-day baseline, sleep
+duration against 7.5 h, deep+REM share, with a penalty for a wrist-temperature deviation. The score
+and its parts are shown on the Season page and passed to Claude for every note and every planned week.

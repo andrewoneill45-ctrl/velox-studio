@@ -40,3 +40,37 @@ export const getProfile = async () => {
     p.ftpLog = [...(p.ftpLog || []), { v: 180, d: "1 MAR 26", s: "SEASON BASELINE" }];
   return p;
 };
+
+/* ── wellness / readiness (Apple Health via Health Auto Export) ── */
+export const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+export function computeReadiness(days) {
+  // days: [{d, hrv, rhr, sleep, deep, rem, temp, ...}] ascending by date
+  if (!days?.length) return null;
+  const today = days[days.length - 1];
+  const hist = days.slice(0, -1).slice(-28);
+  const stat = k => { const v = hist.map(x => x[k]).filter(x => typeof x === "number"); if (v.length < 3) return null;
+    const m = v.reduce((a, b) => a + b, 0) / v.length; const sd = Math.sqrt(v.reduce((a, b) => a + (b - m) ** 2, 0) / v.length) || 1; return { m, sd, n: v.length }; };
+  const H = stat("hrv"), R = stat("rhr"), T = stat("temp");
+  const parts = {};
+  if (typeof today.hrv === "number" && H) parts.hrv = clamp(50 + ((today.hrv - H.m) / H.sd) * 20, 0, 100);
+  if (typeof today.rhr === "number" && R) parts.rhr = clamp(50 + ((R.m - today.rhr) / R.sd) * 20, 0, 100);
+  if (typeof today.sleep === "number") parts.sleep = clamp(today.sleep / 7.5 * 100 - (today.sleep < 6 ? 15 : 0), 0, 100);
+  if (typeof today.sleep === "number" && today.sleep > 0 && (today.deep || today.rem)) parts.quality = clamp(((today.deep || 0) + (today.rem || 0)) / today.sleep / 0.4 * 100, 0, 100);
+  let tempDev = null, penalty = 0;
+  if (typeof today.temp === "number" && T) { tempDev = +(today.temp - T.m).toFixed(2); if (Math.abs(tempDev) > 0.5) penalty = Math.min(20, Math.round((Math.abs(tempDev) - 0.5) * 30)); }
+  const w = { hrv: .35, rhr: .25, sleep: .25, quality: .15 };
+  const keys = Object.keys(parts); if (!keys.length) return null;
+  const tw = keys.reduce((s, k) => s + w[k], 0);
+  const score = Math.round(clamp(keys.reduce((s, k) => s + parts[k] * w[k], 0) / tw - penalty, 0, 100));
+  const state = score >= 75 ? "Feu vert" : score >= 55 ? "Amber" : "Red";
+  const advice = score >= 75 ? "CLEARED TO TRAIN" : score >= 55 ? "TRAIN, BUT LISTEN" : "RECOVER TODAY";
+  const trend7 = (() => { const v = days.slice(-7).map(x => x.hrv).filter(x => typeof x === "number"); return v.length && H ? +((v.reduce((a, b) => a + b, 0) / v.length) - H.m).toFixed(1) : null; })();
+  return { score, state, advice, parts: Object.fromEntries(keys.map(k => [k, Math.round(parts[k])])), penalty, tempDev,
+    baseline: { hrv: H ? +H.m.toFixed(1) : null, rhr: R ? +R.m.toFixed(1) : null, temp: T ? +T.m.toFixed(2) : null, days: H?.n || 0 },
+    hrvTrend7: trend7, provisional: !H || H.n < 7, date: today.d };
+}
+export async function wellnessSummary() {
+  const W = await readJSON("wellness.json", {});
+  const days = Object.values(W).sort((a, b) => a.d < b.d ? -1 : 1);
+  return { days, latest: days[days.length - 1] || null, readiness: computeReadiness(days) };
+}

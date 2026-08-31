@@ -8,6 +8,10 @@ export default async (req) => {
   add("Webhook verify token", !!process.env.STRAVA_VERIFY_TOKEN);
   add("Claude API key", !!process.env.ANTHROPIC_API_KEY);
   add("Mapbox token", !!process.env.MAPBOX_TOKEN);
+  add("Apple Health ingest key", !!process.env.HEALTH_INGEST_KEY, process.env.HEALTH_INGEST_KEY ? "" : "Set HEALTH_INGEST_KEY to receive Health Auto Export data");
+  const wl = await readJSON("wellness.json");
+  const wk = wl ? Object.keys(wl).sort() : [];
+  add("Apple Health data received", wk.length > 0, wk.length ? `Latest ${wk[wk.length - 1]} · ${wk.length} days` : "No data yet — set up the Health Auto Export automation");
   try { const s = store(); const k = "healthcheck.tmp";
     await s.set(k, "ok"); const v = await s.get(k); await s.delete(k);
     add("Blobs storage read/write", v === "ok");
@@ -27,5 +31,5 @@ export default async (req) => {
       add("Claude API live call", r.ok, r.ok ? "Model responded" : "HTTP " + r.status);
     } catch (e) { add("Claude API live call", false, String(e.message || e)); }
   }
-  return json({ ok: checks.every(c => c.ok || c.name === "Strava connection" || c.name === "Synced data present"), checks });
+  return json({ ok: checks.every(c => c.ok || c.name === "Strava connection" || c.name === "Synced data present" || c.name === "Apple Health data received"), checks });
 };

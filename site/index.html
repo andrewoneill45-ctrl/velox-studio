@@ -305,6 +305,17 @@ svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshai
 .wktot .bar{flex:1;min-width:160px;height:8px;border-radius:4px;background:var(--hair);overflow:hidden;position:relative}
 .wktot .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:4px}
 @media(max-width:980px){.wkboard{grid-template-columns:1fr 1fr}}
+.rdrows{margin-top:14px;font-size:12px;color:var(--ink2)}
+.rdrows div{display:flex;justify-content:space-between;gap:16px;padding:4px 0;border-top:1px dashed var(--hair)}
+.rdrows div:first-child{border-top:none}
+.rdrows b{font-family:'Space Grotesk';font-weight:700;color:var(--ink);white-space:nowrap}
+.rdrows i{font-style:normal;font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.06em;color:var(--mist);margin-left:6px}
+.rdparts{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.rdparts span{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.1em;padding:4px 8px;border-radius:6px;background:var(--hair);color:var(--ink2)}
+.hstep{display:grid;grid-template-columns:26px 1fr;gap:10px;align-items:start;padding:8px 0;border-top:1px dashed var(--hair);font-size:12.5px;color:var(--ink2);line-height:1.6}
+.hstep:first-of-type{border-top:none}
+.hstep b{font-family:'Archivo';font-weight:900;color:var(--vert)}
+.hurl{font-family:'Space Grotesk';font-size:11px;font-weight:700;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;word-break:break-all;user-select:all}
 /* ── TIMELINE ── */
 .tlwrap{border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:var(--sh);overflow:hidden}
 .tltop{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--hair)}
@@ -601,6 +612,8 @@ svg#rc-prof{display:block;width:100%;height:340px}
       </div>
     </div>
     <div class="wrap">
+      <div class="slab cascade" id="readyslab" style="--i:2">THIS MORNING — <b>READINESS</b></div>
+      <div class="planhead" id="planhead"><div class="panel hov dial cascade" id="readydial" style="--i:2"></div><div class="panel hov readnote cascade" id="readynote" style="--i:3"></div></div>
       <div class="seasonlow">
         <div class="panel hov racepanel cascade" id="nextrace" style="--i:2"></div>
         <div class="panel hov editorial cascade" style="--i:3">
@@ -728,6 +741,7 @@ svg#rc-prof{display:block;width:100%;height:340px}
         </div>
         <div id="sysout"></div>
       </div>
+      <div class="panel cascade" id="healthpanel" style="--i:2;padding:22px 26px;margin-bottom:16px;border-left:4px solid var(--vert)"></div>
       <div class="intgrid cascade" id="ints" style="--i:1"></div>
       <div class="panel flowpanel cascade" style="--i:2">
         <b>How your data flows.</b> Rides land from Strava seconds after the Karoo uploads (webhook live). The ring and band feed sleep, HRV and recovery each morning: Claude reads the lot, scores your readiness by 06:30, and writes the coach's note every Monday at 07:00. Change a number in your rider profile and every projection in the building recalculates before you have let go of the button.
@@ -2019,7 +2033,7 @@ function renderDaysLive(){
 }
 function patchLiveChrome(m){
   const F=(window.TL&&window.TL.built&&window.TL.acts.length)?pmcFromActs():(m.pmc||[]),last=F[F.length-1]||{},prev=F[F.length-29]||last;
-  document.getElementById("heroline").innerHTML=`Week ${CURWK+1}. ${J(nextA())<=14?"The sharpening begins.":"The mountains are coming."}`;
+  document.getElementById("heroline").innerHTML=`Week ${Math.min(16,CURWK+1)}. ${J(nextA())<=14?"The sharpening begins.":"The mountains are coming."}`;
   document.getElementById("cd-ftpn").textContent=`+${Math.max(0,S.ftp-startFtp)} W since the March baseline`;
   const ctlEl=document.getElementById("cd-ctl");if(ctlEl)ctlEl.textContent=Math.round(last.ctl||0);
   const ctlN=document.getElementById("cd-ctln");if(ctlN)ctlN.textContent=`${last.ctl>=prev.ctl?"+":""}${Math.round((last.ctl||0)-(prev.ctl||0))} in four weeks`;
@@ -2034,9 +2048,7 @@ function patchLiveChrome(m){
   if(!(m.zones28&&m.zones28.some(z=>z.pct>0))){
     document.getElementById("zstack").innerHTML=`<i style="width:100%;background:var(--hair)"></i>`;
     document.getElementById("zrows28").innerHTML=`<div class="zrow"><span class="znm">No power streams in the last 28 days — zone analysis appears once rides with a power meter sync.</span></div>`;}
-  const rs=document.getElementById("readyslab");
-  if(rs)rs.innerHTML=`MORNING READINESS — <b>PHASE 2</b> · RING &amp; BAND NOT YET CONNECTED`;
-  const ph=document.getElementById("planhead");if(ph)ph.style.opacity=".55";
+
   const rb=document.getElementById("rbslab");
   if(rb)rb.innerHTML=`THE SEASON — <b>WEEKLY TSS</b> · SELECT A WEEK`;
   const t=document.getElementById("t-jd");if(t&&!EVENTS.length)t.textContent="Add an event in your rider profile";
@@ -2080,9 +2092,7 @@ function purgeDemo(){
   document.getElementById("coachnote").innerHTML="Your weekly note from Claude generates from live data after each sync.";
   const cp=document.getElementById("condpq");if(cp)cp.textContent='"Reading your live numbers."';
   const cn=document.getElementById("condnote");if(cn)cn.textContent="Interpretation appears once your history is synced.";
-  const ph=document.getElementById("planhead");
-  if(ph){ph.style.gridTemplateColumns="1fr";
-    ph.innerHTML='<div class="panel readnote"><span class="al" style="color:#C4761B">MORNING READINESS · PHASE 2</span><p>The Ultrahuman Ring and Garmin band connect in the next build. Until then this panel stays honest — no fabricated numbers.</p></div>';}
+
   document.getElementById("pmc").innerHTML='<text x="24" y="46" font-size="15" fill="#93A0AB" font-family="Inter">Press SYNC NOW in Sources to draw this from your full ride history.</text>';
   document.getElementById("zrows28").innerHTML='<div class="zrow"><span class="znm">Zone analysis appears after your first sync.</span></div>';
   document.getElementById("zstack").innerHTML='<i style="width:100%;background:var(--hair)"></i>';
@@ -2456,8 +2466,9 @@ function renderAIPlanner(k){
   const mon=new Date(k+"T12:00:00"),todayIso=isoDay(new Date());
   const days=[];for(let i=0;i<7;i++){const d=addD(mon,i),di=isoDay(d);days.push({di,lab:d.toLocaleDateString("en-GB",{weekday:"short"}).toUpperCase(),past:di<todayIso});}
   const it=AIW.intake;
+  if(!it.feeling&&window.WELL&&WELL.readiness){const sc=WELL.readiness.score;it.feeling=sc>=80?"Fresh":sc>=65?"Good":sc>=50?"Bit tired":"Wrecked";}
   el.innerHTML=`<div class="aiq">
-    <span class="ql">HOW ARE YOU FEELING?</span><div class="chips2" id="ai-feel">${["Fresh","Good","Bit tired","Wrecked"].map(f=>`<span class="chp ${it.feeling===f?"on":""}" data-v="${f}">${f.toUpperCase()}</span>`).join("")}</div>
+    <span class="ql">HOW ARE YOU FEELING?${window.WELL&&WELL.readiness?` <span style="color:var(--vert)">· READINESS ${WELL.readiness.score}</span>`:""}</span><div class="chips2" id="ai-feel">${["Fresh","Good","Bit tired","Wrecked"].map(f=>`<span class="chp ${it.feeling===f?"on":""}" data-v="${f}">${f.toUpperCase()}</span>`).join("")}</div>
     <span class="ql">DAYS I CAN TRAIN</span><div class="chips2" id="ai-days">${days.map(d=>`<span class="chp ${d.past?"":"on"}" data-v="${d.di}" ${d.past?'style="opacity:.35;pointer-events:none"':""}>${d.lab}</span>`).join("")}</div>
     <span class="ql">TIME AVAILABLE</span><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="ql">WEEKDAYS</span><input class="inp" id="ai-wd" type="number" value="${it.wd||60}" style="width:80px"/><span class="ql">MIN · WEEKEND</span><input class="inp" id="ai-we" type="number" value="${it.we||180}" style="width:80px"/><span class="ql">MIN</span></div>
     <span class="ql">THIS WEEK'S FOCUS</span><div class="chips2" id="ai-focus">${["Build fitness","Sharpen for the event","Recover","Maintain","Big miles"].map(f=>`<span class="chp ${it.focus===f?"on":""}" data-v="${f}">${f.toUpperCase()}</span>`).join("")}</div>
@@ -2575,6 +2586,75 @@ renderProposal=function(k){
     saveProfile();tlRender(true);drawMassif();drawTraj();
     document.getElementById("planner").style.display="none";};
 };
+
+
+/* ═══ v2.4 — Apple Health readiness ═══ */
+let WELL=null;window.WELL=null;
+const DEMOWELL={latest:{d:isoDay(new Date()),hrv:68,rhr:47,sleep:7.7,deep:1.4,rem:1.7,temp:36.4,weight:75},
+  readiness:{score:91,state:"Feu vert",advice:"CLEARED TO TRAIN",parts:{hrv:88,rhr:80,sleep:100,quality:97},penalty:0,tempDev:0.1,baseline:{hrv:62,rhr:49,temp:36.3,days:28},hrvTrend7:3.2,provisional:false}};
+function ring(score,col){const c=326.7,off=c*(1-score/100);
+  return `<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="var(--hair)" stroke-width="9"/>
+    <circle cx="60" cy="60" r="52" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${off}" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 1.2s var(--ease)"/>
+    <text x="60" y="57" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="26" fill="var(--ink)">${score}</text>
+    <text x="60" y="74" text-anchor="middle" font-family="Space Grotesk" font-weight="700" font-size="8" letter-spacing="2" fill="var(--mist)">READY</text></svg>`;}
+function renderReadiness(){
+  const dial=document.getElementById("readydial"),note=document.getElementById("readynote"),slab=document.getElementById("readyslab");
+  if(!dial)return;
+  const W=WELL||(LIVE?null:DEMOWELL);
+  if(!W||!W.latest){
+    slab.innerHTML=`THIS MORNING — <b>READINESS</b> · WAITING FOR APPLE HEALTH`;
+    dial.innerHTML=`<div><div class="dv" style="color:var(--mist)">Not yet connected</div><div class="dm">RING &amp; BAND VIA APPLE HEALTH</div><div class="rdrows"><div><span>Set up Health Auto Export in Sources and this panel comes alive each morning.</span></div></div></div>`;
+    note.innerHTML=`<span class="al" style="color:var(--mist)">READINESS · CLAUDE</span><p>Once HRV, resting heart rate and sleep arrive, the coach reads them against your baseline every morning and tells you whether to train as planned, ease off, or rest.</p>`;
+    return;}
+  const L=W.latest,R=W.readiness||{},col=R.state==="Feu vert"?"var(--vert)":R.state==="Amber"?"#D99000":"var(--polka)";
+  const dv=R.state==="Feu vert"?"Feu vert":R.state==="Amber"?"Amber":R.state==="Red"?"Red":"—";
+  const b=R.baseline||{};
+  const delta=(v,base,unit,inv)=>base==null||v==null?"":`<i style="color:${(inv?v<base:v>base)?"var(--vert)":"var(--polka)"}">${v>base?"+":""}${(v-base).toFixed(unit==="ms"?0:1)}${unit==="ms"?" MS":""} VS BASELINE</i>`;
+  const hh=h=>h==null?"—":`${Math.floor(h)}h${String(Math.round((h%1)*60)).padStart(2,"0")}`;
+  const day=new Date(L.d+"T12:00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"}).toUpperCase();
+  slab.innerHTML=`THIS MORNING — <b>${day}</b> · RING &amp; BAND VIA APPLE HEALTH${R.provisional?" · BASELINE BUILDING":""}`;
+  dial.innerHTML=`${ring(R.score??0,col)}<div>
+    <div class="dv" style="color:${col}">${dv}</div><div class="dm">${R.advice||"—"}</div>
+    <div class="rdrows">
+      <div><span>Sleep</span><b>${hh(L.sleep)}${L.deep!=null||L.rem!=null?` · ${Math.round(((L.deep||0)+(L.rem||0))/(L.sleep||1)*100)}% deep+REM`:""}</b></div>
+      <div><span>HRV</span><b>${L.hrv!=null?L.hrv+" ms":"—"}${delta(L.hrv,b.hrv,"ms")}</b></div>
+      <div><span>Resting HR</span><b>${L.rhr!=null?L.rhr+" bpm":"—"}${delta(L.rhr,b.rhr,"bpm",true)}</b></div>
+      ${L.temp!=null?`<div><span>Wrist temp</span><b>${R.tempDev!=null?(R.tempDev>=0?"+":"")+R.tempDev.toFixed(1)+" °C":L.temp+" °C"}</b></div>`:""}
+      ${L.rr!=null?`<div><span>Respiration</span><b>${L.rr} /min</b></div>`:""}
+      ${L.weight!=null?`<div><span>Weight</span><b>${L.weight.toFixed(1)} kg</b></div>`:""}
+    </div>
+    <div class="rdparts">${Object.entries(R.parts||{}).map(([k,v])=>`<span>${k.toUpperCase()} ${v}</span>`).join("")}${R.penalty?`<span style="background:#FBE5E3;color:var(--polka)">TEMP −${R.penalty}</span>`:""}</div>
+  </div>`;
+  note.innerHTML=`<span class="al">READINESS · CLAUDE</span><p id="readytext">${LIVE?"Reading this morning's numbers…":"HRV back above baseline and a full night banked: <b>cleared for today's threshold work</b>. Form is still −18, so hold the plan at four efforts, not five."}</p>`;
+  if(LIVE&&COACH)readinessNote(L.d);
+}
+async function readinessNote(d){
+  const el=document.getElementById("readytext");if(!el)return;
+  const ck="vx_ready_"+d;const c=localStorage.getItem(ck);
+  if(c){el.innerHTML=md(c);return;}
+  try{const r=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"readiness"})});
+    if(r.text){localStorage.setItem(ck,r.text);el.innerHTML=md(r.text);}}catch(e){el.textContent="Coach note unavailable right now.";}
+}
+async function loadWellness(){
+  if(!LIVE){renderReadiness();renderHealthPanel({configured:false});return;}
+  try{const w=await api("/api/wellness");WELL=w.latest?w:null;window.WELL=WELL;renderReadiness();renderHealthPanel(w);}
+  catch(e){renderReadiness();renderHealthPanel({configured:false});}
+}
+function renderHealthPanel(w){
+  const el=document.getElementById("healthpanel");if(!el)return;
+  const url=location.origin+"/api/wellness?key=YOUR_HEALTH_INGEST_KEY";
+  const ok=w&&w.latest;
+  el.innerHTML=`<div class="aihead"><span class="al" style="color:var(--vert)">APPLE HEALTH · RING &amp; BAND</span><span class="sg" style="font-size:9px;font-weight:700;letter-spacing:.12em;color:${ok?"var(--vert)":"var(--mist)"}">${ok?`LIVE · LATEST ${w.latest.d} · ${w.days.length} DAYS`:(w&&w.configured?"KEY SET · WAITING FOR FIRST DATA":"NOT CONFIGURED")}</span></div>
+    <div style="margin-top:12px">
+      <div class="hstep"><b>1</b><span>Garmin and Ultrahuman both sync into Apple Health already. Install <b style="color:var(--ink);font-family:Inter">Health Auto Export</b> on the iPhone (Premium for background automations).</span></div>
+      <div class="hstep"><b>2</b><span>Set <span class="sg" style="font-size:10px;font-weight:700">HEALTH_INGEST_KEY</span> in Netlify (any long random string) and redeploy.</span></div>
+      <div class="hstep"><b>3</b><span>Automations → REST API → POST · JSON · aggregate by Day · last 7 days · metrics: HRV, Resting Heart Rate, Sleep Analysis, Respiratory Rate, Sleeping Wrist Temperature, Body Mass, VO2 Max · schedule every morning. URL:<div class="hurl" style="margin-top:6px">${url}</div></span></div>
+      <div class="hstep"><b>4</b><span>Tap Run once, then Run System Check here: "Apple Health data received" should PASS and the Season page lights up.</span></div>
+    </div>`;
+}
+const _al4=applyLive;applyLive=function(m){_al4(m);loadWellness();};
+const _pd4=purgeDemo;purgeDemo=function(){_pd4();renderReadiness();};
+setTimeout(()=>{if(!WELL)loadWellness();},2200);
 
 </script>
 </body>
