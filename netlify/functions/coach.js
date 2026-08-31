@@ -19,7 +19,7 @@ export default async (req) => {
   let ask = "";
   if (mode === "readiness") {
     context.wellness = wellness; context.form = (metrics.pmc || []).slice(-1)[0] || null;
-    ask = wellness ? "Write this morning's readiness note: three sentences, 60 words maximum. Sentence one: the verdict (train as planned, ease off, or rest). Sentence two: the numbers behind it against baseline. Sentence three: today's session in one line."
+    ask = wellness ? "Fill the card for this morning. headline: train as planned, ease off, or rest — and the one-line why. stats: readiness score (coloured by state), HRV vs baseline, sleep. points: today's exact session or adjustment. bars: null."
                    : "No wellness data is available yet. In one sentence, say the readiness panel is waiting for Apple Health data.";
   }
   if (mode === "debrief" && id) {
@@ -53,14 +53,22 @@ export default async (req) => {
   } else {
     context.recent = { pmcTail: (metrics.pmc || []).slice(-14), weeks: metrics.weeks, curWeek: metrics.curWeek,
       bests: metrics.bests, tssSeason: metrics.tssSeason, chain: metrics.chain };
-    ask = "Write this week's coach note: 70–100 words, four sentences maximum, on current form and exactly what to do this week. Then on a new final line output exactly one machine tag: <viz>{\"weeks\":[{\"label\":\"S22\",\"tss\":412}],\"form\":{\"fitness\":0,\"fatigue\":0,\"tsb\":0},\"eventDays\":0,\"eventName\":\"\"}</viz> filled with the real last 4–5 weeks and current form from the context. Nothing after the tag.";
+    ask = "Fill the card for this week's coach note. headline: the verdict on current form. stats: fitness, fatigue, form, and J-days to the event. points: exactly what to do this week with watt targets. bars: the last 4-5 weeks of TSS from context, labels like S24. source: evidence titles you leaned on.";
   }
   if (mode !== "planweek" && mode !== "readiness" && wellness) context.wellness = { readiness: wellness.readiness, today: wellness.today };
+  const CARDM = ["weekly", "readiness", "debrief", "ask", "condition", "recon"];
+  const CARDRULES = `
+OUTPUT FORMAT — respond with ONLY this JSON object, no fences, nothing outside it:
+{"headline": string (≤16 words, the verdict, second person, plain English),
+ "stats": [{"l": string ≤10 chars, "v": string ≤8 chars, "c": "green"|"amber"|"red"|"ink"}] (2-4 chips: only the numbers that matter),
+ "points": [{"t": "DO"|"WHY"|"WATCH"|"NEXT", "x": string ≤20 words, key numbers in **bold**}] (2-5, sharpest first),
+ "bars": {"title": string ≤24 chars, "items": [{"l": string ≤5 chars, "v": number}]} | null (only when a tiny chart genuinely helps),
+ "source": string|null (evidence-base titles actually used, comma-separated)}`;
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "content-type": "application/json", "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
-    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "weekly" ? 600 : mode === "readiness" ? 200 : mode === "planweek" ? 2400 : 700,
-      system: "You are The DS — the directeur sportif for a single amateur rider. UK English. Confident, warm, specific. Write flowing prose in complete sentences: NO headings, NO bullet points, NO numbered lists, NO markdown of any kind except **bold** on the few numbers that matter. Short paragraphs are fine. No preamble, no sign-off."
+    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "planweek" ? 2400 : 700,
+      system: "You are The DS — the directeur sportif for a single amateur rider. UK English. Confident, warm, specific. Write flowing prose in complete sentences: NO headings, NO bullet points, NO numbered lists, NO markdown of any kind except **bold** on the few numbers that matter. Short paragraphs are fine. No preamble, no sign-off." + (CARDM.includes(mode) ? CARDRULES : "")
         + (evidence ? "\n\nEVIDENCE BASE — peer-reviewed findings the rider has curated. Ground your advice in these where relevant and name the source naturally in the prose (e.g. \"the polarised-training work suggests…\"). Do not invent citations.\n" + evidence : "") + (mode === "planweek" ? `
 You are now planning ONE training week. Respond with ONLY a JSON object — no prose before or after, no code fences:
 {"summary": string (2–3 warm, specific sentences on why this week looks like this, referencing last week and current form),
@@ -76,6 +84,12 @@ Rules: if wellness.readiness exists, let this morning's readiness shape today an
       const plan = JSON.parse(clean.slice(clean.indexOf("{"), clean.lastIndexOf("}") + 1));
       return json({ plan, text }); }
     catch { return json({ plan: null, text }); }
+  }
+  if (CARDM.includes(mode)) {
+    try { const clean = text.replace(/```json|```/g, "").trim();
+      const card = JSON.parse(clean.slice(clean.indexOf("{"), clean.lastIndexOf("}") + 1));
+      if (card && card.headline) return json({ card, text });
+    } catch {}
   }
   return json({ text });
 };

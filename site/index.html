@@ -372,6 +372,19 @@ svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshai
 .noteviz .nvl{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.14em;color:var(--mist);margin-bottom:6px}
 .noteviz .chipline{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 .noteviz .chipline span{font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.08em;padding:5px 9px;border-radius:7px;background:var(--hair);color:var(--ink2)}
+.dscard{--dsi:var(--ink);--dsm:var(--mist);animation:dsin .5s var(--ease)}
+@keyframes dsin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.dscard.dark{--dsi:#E8EEF2;--dsm:#7C8B96}
+.dshl{font-family:'Fraunces',serif;font-style:italic;font-size:18px;line-height:1.4;color:var(--dsi)}
+.dsstats{display:flex;gap:20px;flex-wrap:wrap;margin-top:13px}
+.dsst{font-family:'Archivo';font-weight:900;font-size:21px;letter-spacing:-.02em}
+.dsst i{display:block;font-style:normal;font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.16em;color:var(--dsm);margin-top:3px}
+.dspts{margin-top:13px;display:flex;flex-direction:column;gap:9px}
+.dspt{display:flex;gap:10px;align-items:flex-start}
+.dspt b{flex:0 0 auto;font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.12em;color:#fff;padding:4px 7px;border-radius:6px;margin-top:1px}
+.dspt span{font-size:13px;line-height:1.55;color:var(--dsi)}
+.dsbl{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.16em;color:var(--dsm);margin:15px 0 6px}
+.dssrc{margin-top:13px;padding-top:10px;border-top:1px dashed rgba(128,140,150,.3);font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.14em;color:var(--dsm)}
 /* ── TIMELINE ── */
 .tlwrap{border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:var(--sh);overflow:hidden}
 .tltop{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--hair)}
@@ -2010,13 +2023,14 @@ drawRMap=function(){if(GLACTIVE){if(GLMARK){
 async function refreshCoachNote(force){
   try{
     const last=+localStorage.getItem("vx_coach_t")||0;
-    if(!force&&Date.now()-last<12*3600*1000&&localStorage.getItem("vx_coach")){
-      document.getElementById("coachnote").innerHTML=md(localStorage.getItem("vx_coach"));return;}
+    const cch=localStorage.getItem("vx_coach3");
+    if(!force&&Date.now()-last<12*3600*1000&&cch){const cd=JSON.parse(cch);
+      dsRender(document.getElementById("coachnote"),cd);
+      if(cd.card&&cd.card.headline)document.getElementById("coachpq").textContent='"'+cd.card.headline+'"';return;}
 const d=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"weekly"})});
-    if(d.text){localStorage.setItem("vx_coach",d.text);localStorage.setItem("vx_coach_t",String(Date.now()));
-      document.getElementById("coachnote").innerHTML=md(d.text);
-      const first=d.text.split(/[.!]/)[0];
-      if(first&&first.length<90)document.getElementById("coachpq").textContent='"'+first.trim()+'."';}
+    if(d.card||d.text){localStorage.setItem("vx_coach3",JSON.stringify(d));localStorage.setItem("vx_coach_t",String(Date.now()));
+      dsRender(document.getElementById("coachnote"),d);
+      if(d.card&&d.card.headline)document.getElementById("coachpq").textContent='"'+d.card.headline+'"';}
   }catch(e){console.warn("coach note unavailable",e);}
 }
 (function(){
@@ -2025,14 +2039,12 @@ const d=await api("/api/coach",{method:"POST",headers:{"content-type":"applicati
   btn.addEventListener("click",async()=>{
     const txt=document.getElementById("raitext");
     clearInterval(aiTimer);txt.style.display="block";
-    const type=T=>{let i=0;txt.innerHTML="";
-      aiTimer=setInterval(()=>{if(i>=T.length){clearInterval(aiTimer);btn.disabled=false;btn.textContent="RE-ANALYSE";return;}
-        i+=4;txt.innerHTML=md(T.slice(0,i));},12);};
+    const type=T=>{dsRender(txt,typeof T==="string"?{text:T}:T);btn.disabled=false;btn.textContent="RE-ANALYSE";};
     btn.disabled=true;btn.textContent="ANALYSING…";
     const R=RIDES[curRide];
     if(LIVE&&COACH&&R&&R.id){
       try{const d=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"debrief",id:R.id})});
-        type(d.text||"No analysis returned.");}
+        type(d);}
       catch(e){type("**Coach offline.** "+String(e.message||e));}
     }else type(R.ai||"**Demo ride.** Connect Strava and sync to analyse your real rides.");
   });
@@ -2041,7 +2053,7 @@ const _openRecon=openRecon;
 openRecon=function(id){_openRecon(id);
   if(LIVE&&COACH){const ev=EVENTS.find(e=>e.id===id);
     api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"recon",event:ev})})
-      .then(d=>{if(d.text&&rcEv===id)document.getElementById("rc-notetext").innerHTML=md(d.text);})
+      .then(d=>{if((d.card||d.text)&&rcEv===id)dsRender(document.getElementById("rc-notetext"),d,{dark:true});})
       .catch(()=>{});}
 };
 
@@ -2291,7 +2303,8 @@ async function coachAsk(payload,txtEl,btns){
   btns.forEach(b=>b.disabled=true);
   txtEl.style.display="block";txtEl.innerHTML="<em>Thinking…</em>";
   try{const d=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload)});
-    coachType(txtEl,btns,d.text||"No answer returned.");}
+    if(d.card){txtEl.innerHTML=dsCard(d.card);btns.forEach(b=>{b.disabled=false;});}
+    else coachType(txtEl,btns,d.text||"No answer returned.");}
   catch(e){coachType(txtEl,btns,"**Coach offline.** "+String(e.message||e));}
 }
 (function(){
@@ -2739,9 +2752,9 @@ function renderReadiness(){
 async function readinessNote(d){
   const el=document.getElementById("readytext");if(!el)return;
   const ck="vx_ready_"+d;const c=localStorage.getItem(ck);
-  if(c){el.innerHTML=md(c);el.dataset.vizraw=c;return;}
+  if(c){try{dsRender(el,JSON.parse(c));}catch(x){el.innerHTML=md(c);}return;}
   try{const r=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"readiness"})});
-    if(r.text){localStorage.setItem(ck,r.text);el.innerHTML=md(r.text);el.dataset.vizraw=r.text;}}catch(e){el.textContent="Coach note unavailable right now.";}
+    if(r.card||r.text){localStorage.setItem(ck,JSON.stringify(r));dsRender(el,r);}}catch(e){el.textContent="Coach note unavailable right now.";}
 }
 async function loadWellness(){
   if(!LIVE){renderReadiness();renderHealthPanel({configured:false});return;}
@@ -2797,7 +2810,7 @@ renderReadiness=function(){
     ["WEIGHT",L.weight!=null?`${L.weight.toFixed(1)}<small>KG</small>`:"—",`<div class="d" style="color:var(--mist)">${L.weight!=null?`${(S.ftp/L.weight).toFixed(2)} W/KG`:"NOT SYNCED"}</div>`,spark7(d7.map(x=>x.weight),"#141E28")]];
   met.innerHTML=`<div class="rdtiles">${tiles.map(([l,v,d,sp])=>`<div class="rdt"><div class="l">${l}</div><div class="v">${v}</div>${d}${sp}</div>`).join("")}</div>`;
   note.innerHTML=`<span class="al">READINESS · THE DS</span><p id="readytext">${LIVE?"Reading this morning's numbers…":"HRV back above baseline and a full night banked: <b>cleared for today's threshold work</b>. Form is still −18, so hold the plan at four efforts, not five."}</p>`;
-  if(LIVE&&COACH)readinessNote(L.d+"-v2");
+  if(LIVE&&COACH)readinessNote(L.d+"-v3");
 };
 /* power profile: radar plus bars */
 drawRadar=function(){
@@ -3272,6 +3285,27 @@ async function renderLibraryPanel(){
 }
 const _al6=applyLive;applyLive=function(m){_al6(m);setTimeout(()=>{backfillCounts();renderLibraryPanel();},1500);};
 setTimeout(()=>{if(!BF.total&&LIVE){backfillCounts();renderLibraryPanel();}},3000);
+
+
+/* ═══ v3.2 — the DS card: designed output everywhere ═══ */
+function dsCard(c,dark){
+  const col={green:"var(--vert)",amber:"#D99000",red:"var(--polka)",ink:dark?"#E8EEF2":"var(--ink)"};
+  const tagc={DO:"#189B69",WHY:"#26496E",WATCH:"#E8611F",NEXT:"#141E28"};
+  const stats=(c.stats||[]).slice(0,4).map(s=>`<span class="dsst" style="color:${col[s.c]||col.ink}">${s.v}<i>${(s.l||"").toUpperCase()}</i></span>`).join("");
+  const pts=(c.points||[]).slice(0,5).map(p=>`<div class="dspt"><b style="background:${tagc[p.t]||"#141E28"}">${p.t||"·"}</b><span>${md(p.x||"").replace(/^<p>|<\/p>$/g,"")}</span></div>`).join("");
+  let bars="";
+  if(c.bars&&c.bars.items&&c.bars.items.length){
+    const it=c.bars.items.slice(0,6),mx=Math.max(...it.map(b=>+b.v||0),1),BW=48,W=it.length*BW;
+    bars=`<div class="dsbl">${(c.bars.title||"").toUpperCase()}</div><svg viewBox="0 0 ${W} 74" style="width:${Math.min(W+16,330)}px;height:74px">${it.map((b,i)=>{const h=Math.max(4,(+b.v||0)/mx*44);const last=i===it.length-1;
+      return `<rect x="${i*BW+7}" y="${52-h}" width="${BW-14}" height="${h}" rx="3.5" fill="${last?"#FFD100":dark?"#3E5568":"#26496E"}"/><text x="${i*BW+BW/2}" y="${46-h}" text-anchor="middle" font-size="9.5" font-weight="700" font-family="Space Grotesk" fill="${dark?"#E8EEF2":"#141E28"}">${Math.round(+b.v||0)}</text><text x="${i*BW+BW/2}" y="70" text-anchor="middle" font-size="7.5" font-weight="700" font-family="Space Grotesk" fill="${dark?"#7C8B96":"#93A0AB"}">${(b.l||"").toUpperCase()}</text>`;}).join("")}</svg>`;}
+  const src=c.source?`<div class="dssrc">GROUNDED IN — ${String(c.source).toUpperCase()}</div>`:"";
+  return `<div class="dscard ${dark?"dark":""}"><div class="dshl">${c.headline||""}</div>${stats?`<div class="dsstats">${stats}</div>`:""}${pts?`<div class="dspts">${pts}</div>`:""}${bars}${src}</div>`;
+}
+function dsRender(el,resp,opts={}){
+  if(!el)return;el.style.display="block";
+  if(resp&&resp.card)el.innerHTML=dsCard(resp.card,opts.dark);
+  else el.innerHTML=`<div class="dscard ${opts.dark?"dark":""}"><div class="dspt" style="margin-top:0"><span>${md((resp&&resp.text)||"")}</span></div></div>`;
+}
 
 </script>
 <script>
