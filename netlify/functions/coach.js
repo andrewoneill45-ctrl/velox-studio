@@ -3,6 +3,16 @@ export default async (req) => {
   if (!process.env.ANTHROPIC_API_KEY) return json({ error: "no_key" }, 501);
   const body = req.method === "POST" ? await req.json() : {};
   const { mode = "weekly", id = null, event = null, q = null } = body;
+  const CARDM = ["weekly", "readiness", "debrief", "ask", "condition", "recon"];
+  const CARDRULES = `
+OUTPUT FORMAT — respond with ONLY this JSON object, no fences, nothing outside it:
+{"headline": string (≤16 words, the verdict, second person, plain English),
+ "stats": [{"l": string ≤10 chars, "v": string ≤8 chars, "c": "green"|"amber"|"red"|"ink"}] (2-4 chips: only the numbers that matter),
+ "points": [{"t": "DO"|"WHY"|"WATCH"|"NEXT", "x": string ≤20 words, key numbers in **bold**}] (2-5, sharpest first),
+ "bars": {"title": string ≤24 chars, "items": [{"l": string ≤5 chars, "v": number}]} | null (only when a tiny chart genuinely helps),
+ "sessions": [{"date":"YYYY-MM-DD","name":string,"type":"Recovery"|"Endurance"|"Tempo"|"Threshold"|"VO2 Max"|"Race"|"Strength","mins":number,"tss":number,"detail":string ≤40 words with watt targets}] | null — include ONLY when the rider asks what to do on a specific day or over a period; use real dates from context.today onwards, respecting readiness,
+ "source": string|null (evidence-base titles actually used, comma-separated)}`;
+
   const prof = await getProfile();
   const metrics = await readJSON("metrics.json", {});
   let context = { profile: { ftp: prof.ftp, weight: prof.weight, wkg: +(prof.ftp / prof.weight).toFixed(2), targets: prof.tgt } };
@@ -59,15 +69,6 @@ export default async (req) => {
   if (CARDM.includes(mode)) { context.today = new Date().toISOString().slice(0, 10);
     context.upcoming = (prof.events || []).filter(e => +new Date(e.date) >= Date.now() - 864e5)
       .map(e => ({ name: e.name, date: e.date, priority: e.pr, days: e.days || 1, kind: e.kind || "day", purpose: e.purpose || null })).slice(0, 4); }
-  const CARDM = ["weekly", "readiness", "debrief", "ask", "condition", "recon"];
-  const CARDRULES = `
-OUTPUT FORMAT — respond with ONLY this JSON object, no fences, nothing outside it:
-{"headline": string (≤16 words, the verdict, second person, plain English),
- "stats": [{"l": string ≤10 chars, "v": string ≤8 chars, "c": "green"|"amber"|"red"|"ink"}] (2-4 chips: only the numbers that matter),
- "points": [{"t": "DO"|"WHY"|"WATCH"|"NEXT", "x": string ≤20 words, key numbers in **bold**}] (2-5, sharpest first),
- "bars": {"title": string ≤24 chars, "items": [{"l": string ≤5 chars, "v": number}]} | null (only when a tiny chart genuinely helps),
- "sessions": [{"date":"YYYY-MM-DD","name":string,"type":"Recovery"|"Endurance"|"Tempo"|"Threshold"|"VO2 Max"|"Race"|"Strength","mins":number,"tss":number,"detail":string ≤40 words with watt targets}] | null — include ONLY when the rider asks what to do on a specific day or over a period; use real dates from context.today onwards, respecting readiness,
- "source": string|null (evidence-base titles actually used, comma-separated)}`;
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "content-type": "application/json", "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
