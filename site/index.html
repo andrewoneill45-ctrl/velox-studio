@@ -350,6 +350,16 @@ svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshai
 .rlegend{display:flex;gap:14px;margin:0 0 12px;font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.14em;color:var(--mist)}
 .rlegend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
 @media(max-width:980px){.rdrow{grid-template-columns:1fr}.rdtiles{grid-template-columns:1fr 1fr}.ai-day{grid-template-columns:repeat(2,1fr)}.radarwrap{grid-template-columns:1fr}}
+#eftpbox{margin:2px 0 10px;border:1px solid var(--line);border-left:4px solid var(--vert);border-radius:12px;background:#F7FBF9;padding:14px 16px}
+#eftpbox .eh{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+#eftpbox .ev{font-family:'Archivo';font-weight:900;font-size:26px;letter-spacing:-.02em}
+#eftpbox .ec{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.14em;padding:3px 8px;border-radius:6px}
+#eftpbox .note{font-size:12px;line-height:1.6;color:var(--ink2);margin-top:8px}
+#eftpbox .evd{margin-top:10px;display:none}
+#eftpbox .evd.open{display:block}
+#eftpbox .evrow{display:grid;grid-template-columns:64px 70px 1fr auto;gap:8px;font-family:'Space Grotesk';font-size:10px;font-weight:700;padding:4px 0;border-top:1px dashed var(--hair);color:var(--ink2)}
+#eftpbox .evrow .dim{color:var(--mist);font-weight:600;font-family:Inter;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#eftpbox .ebtns{display:flex;gap:8px;margin-top:12px;align-items:center}
 /* ── TIMELINE ── */
 .tlwrap{border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:var(--sh);overflow:hidden}
 .tltop{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--hair)}
@@ -861,6 +871,7 @@ svg#rc-prof{display:block;width:100%;height:340px}
     <div class="frow"><span class="fl">FTP TARGET</span><div class="step" data-k="tftp"><button class="sbtn" data-d="-1">−</button><span class="sval" id="v-tftp">300<i>W</i></span><button class="sbtn" data-d="1">+</button></div></div>
     <div class="frow"><span class="fl">CLIMBING</span><div class="step" data-k="tclimb"><button class="sbtn" data-d="-1">−</button><span class="sval" id="v-tclimb">60<i>k m</i></span><button class="sbtn" data-d="1">+</button></div></div>
     <div class="frow"><span class="fl">SPRINT</span><div class="step" data-k="tsprint"><button class="sbtn" data-d="-1">−</button><span class="sval" id="v-tsprint">900<i>W</i></span><button class="sbtn" data-d="1">+</button></div></div>
+    <div id="eftpbox" style="display:none"></div>
     <div class="frow"><span class="fl">SEASON START</span><input class="inp" id="pf-season" type="date" style="width:160px"/></div>
     <div class="frow"><span class="fl">CHAIN</span><div class="step" data-k="tchain"><button class="sbtn" data-d="-1">−</button><span class="sval" id="v-tchain">12<i>wk</i></span><button class="sbtn" data-d="1">+</button></div></div>
   </div>
@@ -3113,6 +3124,51 @@ drawCourseProfile=function(c,sim,view){
     const r=document.createElementNS(ns,"rect");r.setAttribute("x",x0);r.setAttribute("y","50");r.setAttribute("width",Math.max(2,x1-x0));r.setAttribute("height","246");r.setAttribute("fill","none");r.setAttribute("stroke","#FFD100");r.setAttribute("stroke-dasharray","5 4");r.setAttribute("stroke-width","1.2");r.setAttribute("opacity",".8");r.setAttribute("pointer-events","none");svg.appendChild(r);
     const t=document.createElementNS(ns,"text");t.setAttribute("x",x0+6);t.setAttribute("y","64");t.setAttribute("font-family","Space Grotesk");t.setAttribute("font-size","9");t.setAttribute("font-weight","700");t.setAttribute("fill","#FFD100");t.textContent=`${sg.n.toUpperCase()} · ${sg.w} W`;svg.appendChild(t);});
 };
+
+
+/* ═══ v3.0 — suggested eFTP under the FTP setting ═══ */
+let EFTP=null,EFTPseen=null;
+const durLab=t=>t>=3600?"60 MIN":t>=60?Math.round(t/60)+" MIN":t+" S";
+async function loadEftp(force){
+  if(!LIVE)return;const box=document.getElementById("eftpbox");if(!box)return;
+  if(EFTP&&!force){renderEftp();return;}
+  try{EFTP=await api("/api/eftp");renderEftp();}catch(e){box.style.display="none";}
+}
+function renderEftp(){
+  const box=document.getElementById("eftpbox");if(!box||!EFTP)return;
+  const E=EFTP;box.style.display="block";
+  const confCol=E.conf==="high"?"var(--vert)":E.conf==="medium"?"#D99000":"var(--mist)";
+  const confBg=E.conf==="high"?"#E4F4EC":E.conf==="medium"?"#FBF3DC":"var(--hair)";
+  if(!E.suggest){
+    box.style.borderLeftColor="var(--mist)";
+    box.innerHTML=`<div class="eh"><span class="fl" style="min-width:0">SUGGESTED eFTP</span><span class="ev" style="font-size:16px;color:var(--mist)">HOLDING AT ${E.current||S.ftp} W</span></div>
+      <div class="note">${E.note||"Not enough maximal-effort evidence yet."}</div>
+      <div class="note" style="color:var(--mist);font-size:11px">Reads ${E.streams} rides with power streams · window ${E.windowDays} days${E.ageDays!=null?` · freshest effort ${E.ageDays} d ago`:""}</div>`;
+    return;}
+  const diff=E.suggest-(E.current||S.ftp);
+  box.style.borderLeftColor=confCol;
+  box.innerHTML=`<div class="eh"><span class="fl" style="min-width:0">SUGGESTED eFTP</span>
+      <span class="ev">${E.suggest} W</span>
+      <span class="ec" style="background:${confBg};color:${confCol}">${E.conf.toUpperCase()} CONFIDENCE</span>
+      <span class="ec" style="background:${diff>=0?"#E4F4EC":"#FBE9E3"};color:${diff>=0?"var(--vert)":"var(--ember)"}">${diff>=0?"+":""}${diff} W VS CURRENT</span></div>
+    <div class="note">${E.method} Candidates: ${E.candidates.map(c=>`${c.v} W (${c.src})`).join(" · ")}${E.cp?` · W′ ${E.wprime} kJ`:""}. Freshest effort ${E.ageDays} d ago.</div>
+    <div class="ebtns">
+      <button class="aibtn" id="eftp-accept" style="background:var(--vert);padding:9px 14px">ACCEPT ${E.suggest} W</button>
+      <button class="aibtn" id="eftp-evd" style="background:#fff;color:var(--ink);border:1px solid var(--line)">THE EVIDENCE</button>
+      <span class="ds" style="margin:0">Never applied automatically.</span></div>
+    <div class="evd" id="eftp-evdp">${E.evidence.map(e=>`<div class="evrow"><span>${durLab(e.dur)}</span><span style="color:${e.used?"var(--ink)":"var(--mist)"}">${e.w} W</span><span class="dim">${e.nm}</span><span style="color:var(--mist)">${e.date}</span></div>`).join("")}
+      <div class="note" style="font-size:11px;color:var(--mist)">Grey efforts sat below the frontier and were not used. Based on ${E.streams} rides with stored power streams — the backfill widens this.</div></div>`;
+  document.getElementById("eftp-evd").onclick=()=>document.getElementById("eftp-evdp").classList.toggle("open");
+  document.getElementById("eftp-accept").onclick=()=>{
+    const v=E.suggest;S.ftp=v;document.getElementById("pf-ftp").value=v;
+    FTPLOG.push({date:new Date().toISOString().slice(0,10),ftp:v,src:"eFTP"});
+    saveProfile();updateAll();sysMsg(`FTP SET TO ${v} W FROM eFTP — LOGGED TO YOUR FTP HISTORY`);
+    EFTP.current=v;renderEftp();};
+}
+/* load when the rider profile drawer opens */
+(function(){const btn=document.getElementById("btn-profile");if(!btn)return;const o=btn.onclick;
+  btn.onclick=e=>{o&&o(e);setTimeout(()=>loadEftp(),200);};})();
+const _al5=applyLive;applyLive=function(m){_al5(m);EFTP=null;};
 
 </script>
 <script>
