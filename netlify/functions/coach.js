@@ -11,7 +11,7 @@ export default async (req) => {
   let ask = "";
   if (mode === "readiness") {
     context.wellness = wellness; context.form = (metrics.pmc || []).slice(-1)[0] || null;
-    ask = wellness ? "Write this morning's readiness note: 45–70 words. Say whether to train as planned, ease off, or rest, and why, citing the HRV, resting HR and sleep numbers against baseline."
+    ask = wellness ? "Write this morning's readiness note: three sentences, 60 words maximum. Sentence one: the verdict (train as planned, ease off, or rest). Sentence two: the numbers behind it against baseline. Sentence three: today's session in one line."
                    : "No wellness data is available yet. In one sentence, say the readiness panel is waiting for Apple Health data.";
   }
   if (mode === "debrief" && id) {
@@ -51,13 +51,13 @@ export default async (req) => {
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "content-type": "application/json", "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
-    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "weekly" ? 380 : mode === "planweek" ? 2400 : 700,
+    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "weekly" ? 380 : mode === "readiness" ? 200 : mode === "planweek" ? 2400 : 700,
       system: "You are the directeur sportif for a single amateur rider. UK English. Confident, warm, specific. Use **bold** for key numbers. No preamble, no sign-off." + (mode === "planweek" ? `
 You are now planning ONE training week. Respond with ONLY a JSON object — no prose before or after, no code fences:
 {"summary": string (2–3 warm, specific sentences on why this week looks like this, referencing last week and current form),
  "question": string|null (ONLY if one crucial thing is missing; otherwise null),
  "sessions": [{"date":"YYYY-MM-DD","name":string,"type":"Recovery"|"Endurance"|"Tempo"|"Threshold"|"VO2 Max"|"Race"|"Strength","mins":number,"tss":number,"detail":string (max 60 words)}]}
-Rules: if wellness.readiness exists, let this morning's readiness shape today and the next two days (Red = rest or very easy, Amber = no intensity today); use only the available days; respect the time limits per day; base load on last week's TSS, current form (TSB) and the rider's stated feeling — tired means lower load; place hard days before rest; taper if an A-event is within 10 days; "detail" says exactly how to ride it with watt targets from the rider's FTP and zones. Rest days are simply omitted; if the rider mentions strength work, add "Strength" sessions (tss 15–30) on non-riding days. Keep the whole response under 1500 tokens. Sessions should sum to a sensible weekly TSS (target if given).` : ""),
+Rules: if wellness.readiness exists, let this morning's readiness shape today and the next two days (Red = rest or very easy, Amber = no intensity today); use only the days listed in week.available and never exceed that day's "mins"; base load on last week's TSS, current form (TSB) and the rider's stated feeling — tired means lower load; place hard days before rest; taper if an A-event is within 10 days; "detail" says exactly how to ride it with watt targets from the rider's FTP and zones. Rest days are simply omitted; if the rider mentions strength work, add "Strength" sessions (tss 15–30) on non-riding days. Keep the whole response under 1500 tokens. Sessions should sum to a sensible weekly TSS (target if given).` : ""),
       messages: [{ role: "user", content: ask + "\n\nDATA:\n" + JSON.stringify(context) }] })});
   if (!r.ok) return json({ error: "anthropic_" + r.status, detail: await r.text() }, 502);
   const d = await r.json();

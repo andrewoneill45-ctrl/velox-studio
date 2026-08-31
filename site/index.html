@@ -316,6 +316,40 @@ svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshai
 .hstep:first-of-type{border-top:none}
 .hstep b{font-family:'Archivo';font-weight:900;color:var(--vert)}
 .hurl{font-family:'Space Grotesk';font-size:11px;font-weight:700;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;word-break:break-all;user-select:all}
+.rdrow{display:grid;grid-template-columns:270px 1fr 360px;gap:16px;align-items:stretch}
+.rdhead{display:flex;gap:18px;align-items:center}
+.rdhead svg{width:104px;height:104px;flex-shrink:0}
+.rdstate{font-family:'Fraunces',serif;font-style:italic;font-size:26px;line-height:1}
+.rdadv{font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.18em;color:var(--mist);margin-top:6px}
+.rdwhy{margin-top:16px;border-top:1px solid var(--hair);padding-top:12px}
+.rdwhy div{font-size:11px;line-height:1.5;color:var(--ink2);padding:3px 0;display:flex;gap:8px}
+.rdwhy div::before{content:"›";color:var(--mist)}
+.rdtiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;height:100%}
+.rdt{border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;min-height:96px}
+.rdt .l{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.18em;color:var(--mist)}
+.rdt .v{font-family:'Archivo';font-weight:900;font-size:24px;letter-spacing:-.02em;margin-top:6px;line-height:1}
+.rdt .v small{font-size:10px;color:var(--mist);letter-spacing:.06em;margin-left:3px;font-weight:800}
+.rdt .d{font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.06em;margin-top:5px}
+.rdt svg{margin-top:auto;width:100%;height:22px}
+.readnote p{max-height:none}
+.ai-day{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.ai-day label{border:1px solid var(--line);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;cursor:pointer;background:#fff}
+.ai-day label.on{border-color:var(--ink);background:var(--ink)}
+.ai-day label.on .dl{color:#fff}
+.ai-day .dl{font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.12em;color:var(--ink2);display:flex;justify-content:space-between}
+.ai-day input[type=number]{border:1px solid var(--line);border-radius:6px;padding:5px 7px;font-family:'Space Grotesk';font-size:11px;font-weight:700;width:100%}
+.ai-day label.on input[type=number]{background:#fff}
+.ai-day label.off{opacity:.35;pointer-events:none}
+.radarwrap{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:center}
+.pp{display:grid;grid-template-columns:52px 1fr 60px;gap:8px 12px;align-items:center;font-family:'Space Grotesk';font-size:10px;font-weight:700}
+.pp .pl{color:var(--mist);letter-spacing:.14em;font-size:8.5px}
+.pp .bars{display:flex;flex-direction:column;gap:3px}
+.pp .bars i{display:block;height:6px;border-radius:3px}
+.pp .pv{text-align:right;color:var(--ink);font-size:11px}
+.pp .pv small{display:block;color:var(--mist);font-size:8px;letter-spacing:.1em}
+.rlegend{display:flex;gap:14px;margin:0 0 12px;font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.14em;color:var(--mist)}
+.rlegend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+@media(max-width:980px){.rdrow{grid-template-columns:1fr}.rdtiles{grid-template-columns:1fr 1fr}.ai-day{grid-template-columns:repeat(2,1fr)}.radarwrap{grid-template-columns:1fr}}
 /* ── TIMELINE ── */
 .tlwrap{border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:var(--sh);overflow:hidden}
 .tltop{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--hair)}
@@ -613,7 +647,7 @@ svg#rc-prof{display:block;width:100%;height:340px}
     </div>
     <div class="wrap">
       <div class="slab cascade" id="readyslab" style="--i:2">THIS MORNING — <b>READINESS</b></div>
-      <div class="planhead" id="planhead"><div class="panel hov dial cascade" id="readydial" style="--i:2"></div><div class="panel hov readnote cascade" id="readynote" style="--i:3"></div></div>
+      <div class="rdrow" id="planhead"><div class="panel hov cascade" id="readydial" style="--i:2;padding:24px"></div><div class="panel hov cascade" id="readymetrics" style="--i:3;padding:20px 22px"></div><div class="panel hov readnote cascade" id="readynote" style="--i:4"></div></div>
       <div class="seasonlow">
         <div class="panel hov racepanel cascade" id="nextrace" style="--i:2"></div>
         <div class="panel hov editorial cascade" style="--i:3">
@@ -673,7 +707,7 @@ svg#rc-prof{display:block;width:100%;height:340px}
             <div id="pmc-tip" class="pmctip" style="display:none"></div>
           </div>
           <div class="panel chartpanel cascade" style="grid-column:span 8;--i:6"><h3>POWER BESTS — RADAR · <span id="radar-n" style="color:var(--ink)"></span></h3>
-            <div style="display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:center"><svg id="radar" viewBox="0 0 420 380" style="width:100%;height:340px"></svg><div id="radar-tab"></div></div></div>
+            <div class="radarwrap"><svg id="radar" viewBox="0 0 420 400" style="width:100%;height:380px"></svg><div id="radar-tab"></div></div></div>
           <div class="panel chartpanel cascade" style="grid-column:span 4;--i:6"><h3>WHERE THE EFFORT WENT — 28 DAYS</h3><div class="zbig" id="zstack"></div><div id="zrows28"></div></div>
           <div class="panel editorial cascade" style="grid-column:span 12;border-left-color:var(--bleu);--i:7">
             <div class="pq" id="condpq">"The aerobic engine is the strongest it has been."</div>
@@ -2469,15 +2503,15 @@ function renderAIPlanner(k){
   if(!it.feeling&&window.WELL&&WELL.readiness){const sc=WELL.readiness.score;it.feeling=sc>=80?"Fresh":sc>=65?"Good":sc>=50?"Bit tired":"Wrecked";}
   el.innerHTML=`<div class="aiq">
     <span class="ql">HOW ARE YOU FEELING?${window.WELL&&WELL.readiness?` <span style="color:var(--vert)">· READINESS ${WELL.readiness.score}</span>`:""}</span><div class="chips2" id="ai-feel">${["Fresh","Good","Bit tired","Wrecked"].map(f=>`<span class="chp ${it.feeling===f?"on":""}" data-v="${f}">${f.toUpperCase()}</span>`).join("")}</div>
-    <span class="ql">DAYS I CAN TRAIN</span><div class="chips2" id="ai-days">${days.map(d=>`<span class="chp ${d.past?"":"on"}" data-v="${d.di}" ${d.past?'style="opacity:.35;pointer-events:none"':""}>${d.lab}</span>`).join("")}</div>
-    <span class="ql">TIME AVAILABLE</span><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="ql">WEEKDAYS</span><input class="inp" id="ai-wd" type="number" value="${it.wd||60}" style="width:80px"/><span class="ql">MIN · WEEKEND</span><input class="inp" id="ai-we" type="number" value="${it.we||180}" style="width:80px"/><span class="ql">MIN</span></div>
+    <span class="ql">DAYS &amp; MINUTES</span><div class="ai-day" id="ai-days">${days.map((d,i)=>{const prev=(it.days||[]).find(x=>x.d===d.di);const on=prev?true:!d.past&&!(it.days&&it.days.length);const mins=prev?prev.mins:(i>=5?180:60);
+      return `<label class="${d.past?"off":on?"on":""}" data-v="${d.di}"><span class="dl"><span>${d.lab}</span><input type="checkbox" ${on?"checked":""}/></span><input type="number" value="${mins}" min="0" step="15" title="Minutes available"/></label>`;}).join("")}</div>
     <span class="ql">THIS WEEK'S FOCUS</span><div class="chips2" id="ai-focus">${["Build fitness","Sharpen for the event","Recover","Maintain","Big miles"].map(f=>`<span class="chp ${it.focus===f?"on":""}" data-v="${f}">${f.toUpperCase()}</span>`).join("")}</div>
     <span class="ql">ANYTHING ELSE?</span><input class="inp" id="ai-note" placeholder="Club ride Saturday, sore knee, travelling Thursday…" value="${it.note||""}" style="max-width:none"/>
     </div>
     <div style="display:flex;gap:10px;align-items:center;margin-top:16px"><button class="aibtn" id="ai-build" style="background:var(--ember);padding:12px 18px">BUILD MY WEEK</button><span class="ds" id="ai-status" style="margin:0"></span></div>
     <div id="ai-out"></div>`;
   ["ai-feel","ai-focus"].forEach(id=>document.querySelectorAll("#"+id+" .chp").forEach(c=>c.onclick=()=>{document.querySelectorAll("#"+id+" .chp").forEach(x=>x.classList.remove("on"));c.classList.add("on");}));
-  document.querySelectorAll("#ai-days .chp").forEach(c=>c.onclick=()=>c.classList.toggle("on"));
+  document.querySelectorAll("#ai-days label").forEach(l=>{const cb=l.querySelector("input[type=checkbox]");cb.onchange=()=>l.classList.toggle("on",cb.checked);l.querySelector("input[type=number]").onclick=e=>e.stopPropagation();});
   document.getElementById("ai-build").onclick=()=>aiBuild(k);
 }
 function aiContext(k){
@@ -2493,14 +2527,13 @@ function aiContext(k){
     events:fut().map(e=>({name:e.name,date:e.date,daysAway:J(e),priority:e.pr,km:e.km,m:e.m})),
     weekTargetTSS:(S.weekTargets&&S.weekTargets[k])||null,
     existingPlans:days.flatMap(d=>(S.plan&&S.plan[d]||[]).map(p=>({date:d,...p}))),
-    intake:{feeling:it.feeling,weekdayMins:it.wd,weekendMins:it.we,focus:it.focus,note:it.note},
+    intake:{feeling:it.feeling,focus:it.focus,note:it.note},
     answers:AIW.answers};
 }
 async function aiBuild(k,instruction){
   const it=AIW.intake;
   it.feeling=document.querySelector("#ai-feel .chp.on")?.dataset.v||it.feeling||"Good";
-  it.days=[...document.querySelectorAll("#ai-days .chp.on")].map(c=>c.dataset.v);
-  it.wd=+document.getElementById("ai-wd")?.value||it.wd||60;it.we=+document.getElementById("ai-we")?.value||it.we||180;
+  it.days=[...document.querySelectorAll("#ai-days label.on")].map(l=>({d:l.dataset.v,mins:+l.querySelector("input[type=number]").value||60}));
   it.focus=document.querySelector("#ai-focus .chp.on")?.dataset.v||it.focus||"Build fitness";
   it.note=document.getElementById("ai-note")?.value??it.note??"";
   const st=document.getElementById("ai-status"),out=document.getElementById("ai-out");
@@ -2655,6 +2688,63 @@ function renderHealthPanel(w){
 const _al4=applyLive;applyLive=function(m){_al4(m);loadWellness();};
 const _pd4=purgeDemo;purgeDemo=function(){_pd4();renderReadiness();};
 setTimeout(()=>{if(!WELL)loadWellness();},2200);
+
+
+/* ═══ v2.5 — readiness row, power profile ═══ */
+function spark7(vals,c){if(!vals||vals.filter(v=>v!=null).length<2)return"";const W=100,H=22,v=vals.map(x=>x==null?null:x);
+  const nn=v.filter(x=>x!=null),mn=Math.min(...nn),mx=Math.max(...nn),r=(mx-mn)||1;
+  const P=v.map((x,i)=>x==null?null:[(i/(v.length-1))*W,H-3-((x-mn)/r)*(H-6)]).filter(Boolean);
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><path d="M${P.map(p=>p.map(n=>n.toFixed(1)).join(",")).join("L")}" fill="none" stroke="${c}" stroke-width="1.6" stroke-linecap="round"/><circle cx="${P[P.length-1][0]}" cy="${P[P.length-1][1]}" r="2.4" fill="${c}"/></svg>`;}
+renderReadiness=function(){
+  const dial=document.getElementById("readydial"),met=document.getElementById("readymetrics"),note=document.getElementById("readynote"),slab=document.getElementById("readyslab");
+  if(!dial)return;
+  const W=WELL||(LIVE?null:{...DEMOWELL,days:[]});
+  if(!W||!W.latest){
+    slab.innerHTML=`THIS MORNING — <b>READINESS</b> · WAITING FOR APPLE HEALTH`;
+    dial.innerHTML=`<div class="rdstate" style="color:var(--mist);font-size:20px">Not yet connected</div><div class="rdadv">RING &amp; BAND VIA APPLE HEALTH</div>`;
+    met.innerHTML=`<div class="ds">Set up Health Auto Export in Sources and this panel comes alive each morning: sleep, HRV, resting heart rate, wrist temperature, respiration and weight, each against your own baseline.</div>`;
+    note.innerHTML=`<span class="al" style="color:var(--mist)">READINESS · CLAUDE</span><p>Once the numbers arrive, the coach reads them against your baseline every morning and tells you whether to train as planned, ease off, or rest.</p>`;return;}
+  const L=W.latest,R=W.readiness||{},col=R.state==="Feu vert"?"var(--vert)":R.state==="Amber"?"#D99000":"var(--polka)";
+  const b=R.baseline||{},d7=(W.days||[]).slice(-7);
+  const day=new Date(L.d+"T12:00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"}).toUpperCase();
+  slab.innerHTML=`THIS MORNING — <b>${day}</b> · RING &amp; BAND VIA APPLE HEALTH${R.provisional?` · BASELINE BUILDING (${b.days||0}/7 DAYS)`:""}`;
+  dial.innerHTML=`<div class="rdhead">${ring(R.score??0,col)}<div><div class="rdstate" style="color:${col}">${R.state||"—"}</div><div class="rdadv">${R.advice||""}</div></div></div>
+    <div class="rdwhy">${(R.why||[]).map(w=>`<div>${w}</div>`).join("")}</div>`;
+  const hh=h=>h==null?"—":`${Math.floor(h)}<small>H</small> ${String(Math.round((h%1)*60)).padStart(2,"0")}<small>M</small>`;
+  const dlt=(v,base,inv,unit)=>{if(v==null||base==null)return `<div class="d" style="color:var(--mist)">BASELINE BUILDING</div>`;const df=v-base,good=inv?df<=0:df>=0;return `<div class="d" style="color:${good?"var(--vert)":"var(--polka)"}">${df>=0?"+":""}${df.toFixed(unit==="ms"?0:1)} ${unit} VS BASELINE</div>`;};
+  const q=L.sleep?Math.round(((L.deep||0)+(L.rem||0))/L.sleep*100):null;
+  const tiles=[
+    ["SLEEP",L.sleep!=null?hh(L.sleep):"—",q!=null?`<div class="d" style="color:${q>=40?"var(--vert)":"#D99000"}">${q}% DEEP + REM</div>`:`<div class="d" style="color:var(--mist)">NO STAGES</div>`,spark7(d7.map(x=>x.sleep),"#26496E")],
+    ["HRV",L.hrv!=null?`${L.hrv}<small>MS</small>`:"—",dlt(L.hrv,b.hrv,false,"ms"),spark7(d7.map(x=>x.hrv),"#189B69")],
+    ["RESTING HR",L.rhr!=null?`${L.rhr}<small>BPM</small>`:"—",dlt(L.rhr,b.rhr,true,"bpm"),spark7(d7.map(x=>x.rhr),"#E23A2E")],
+    ["WRIST TEMP",R.tempDev!=null?`${R.tempDev>=0?"+":""}${R.tempDev.toFixed(1)}<small>°C</small>`:(L.temp!=null?`${L.temp}<small>°C</small>`:"—"),`<div class="d" style="color:${R.penalty?"var(--polka)":"var(--mist)"}">${R.tempDev!=null?"VS BASELINE":"BASELINE BUILDING"}</div>`,spark7(d7.map(x=>x.temp),"#D99000")],
+    ["RESPIRATION",L.rr!=null?`${L.rr}<small>/MIN</small>`:"—",`<div class="d" style="color:var(--mist)">OVERNIGHT</div>`,spark7(d7.map(x=>x.rr),"#93A0AB")],
+    ["WEIGHT",L.weight!=null?`${L.weight.toFixed(1)}<small>KG</small>`:"—",`<div class="d" style="color:var(--mist)">${L.weight!=null?`${(S.ftp/L.weight).toFixed(2)} W/KG`:"NOT SYNCED"}</div>`,spark7(d7.map(x=>x.weight),"#141E28")]];
+  met.innerHTML=`<div class="rdtiles">${tiles.map(([l,v,d,sp])=>`<div class="rdt"><div class="l">${l}</div><div class="v">${v}</div>${d}${sp}</div>`).join("")}</div>`;
+  note.innerHTML=`<span class="al">READINESS · CLAUDE</span><p id="readytext">${LIVE?"Reading this morning's numbers…":"HRV back above baseline and a full night banked: <b>cleared for today's threshold work</b>. Form is still −18, so hold the plan at four efforts, not five."}</p>`;
+  if(LIVE&&COACH)readinessNote(L.d+"-v2");
+};
+/* power profile: radar plus bars */
+drawRadar=function(){
+  if(!RB)return;const AX=[["s5","5 S"],["m1","1 MIN"],["m5","5 MIN"],["m20","20 MIN"],["m60","60 MIN"]];
+  const t6=isoDay(addD(new Date(),-42)),ts=isoDay(SEASON0);
+  const best=f=>AX.map(([k])=>RB.rides.filter(f).reduce((m,r)=>r[k]>(m.v||0)?{v:r[k],nm:r.nm,d:r.d}:m,{v:0}));
+  const b6=best(r=>r.d>=t6),bs=best(r=>r.d>=ts),ba=best(()=>true);
+  const cx=210,cy=200,Rr=138,n=AX.length;
+  const pt=(i,v,mx)=>{const a=-Math.PI/2+i*2*Math.PI/n,rr=mx?Rr*Math.min(1,v/mx):0;return[cx+rr*Math.cos(a),cy+rr*Math.sin(a)];};
+  let g="";[.25,.5,.75,1].forEach(f=>{g+=`<polygon points="${AX.map((_,i)=>pt(i,f,1).join(",")).join(" ")}" fill="${f===1?"rgba(20,30,40,.02)":"none"}" stroke="#E3E8EB" stroke-width="${f===1?1.2:.8}"/>`;});
+  AX.forEach((ax,i)=>{const [x,y]=pt(i,1,1);g+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#E3E8EB"/>`;
+    const [lx,ly]=pt(i,1.22,1);g+=`<text x="${lx}" y="${ly}" text-anchor="middle" font-family="Space Grotesk" font-size="9.5" font-weight="700" letter-spacing="1.5" fill="#44515D">${ax[1]}</text>`;});
+  const poly=(arr,c,fill,w)=>`<polygon points="${arr.map((b,i)=>pt(i,b.v,ba[i].v).join(",")).join(" ")}" fill="${fill}" stroke="${c}" stroke-width="${w}" stroke-linejoin="round"/>`;
+  const dots=b6.map((b,i)=>{if(!b.v)return"";const [x,y]=pt(i,b.v,ba[i].v);return `<circle cx="${x}" cy="${y}" r="4" fill="#FFD100" stroke="#141E28" stroke-width="2"/><rect x="${x-20}" y="${y-24}" width="40" height="15" rx="4" fill="#141E28"/><text x="${x}" y="${y-13.5}" text-anchor="middle" font-family="Space Grotesk" font-size="9" font-weight="700" fill="#FFD100">${b.v} W</text>`;}).join("");
+  document.getElementById("radar").innerHTML=g+poly(ba,"#141E28","rgba(20,30,40,.05)",1.6)+poly(bs,"#26496E","rgba(38,73,110,.14)",2)+poly(b6,"#D99000","rgba(255,209,0,.30)",2.5)+dots;
+  document.getElementById("radar-n").textContent=`${RB.rides.length} RIDES WITH POWER STREAMS`;
+  const mx=Math.max(...ba.map(b=>b.v),1);
+  const bar=(v,c)=>`<i style="width:${Math.max(2,v/mx*100)}%;background:${c}"></i>`;
+  document.getElementById("radar-tab").innerHTML=`<div class="rlegend"><span><i style="background:#FFD100"></i>6 WEEKS</span><span><i style="background:#26496E"></i>SEASON</span><span><i style="background:#141E28"></i>ALL SYNCED</span></div>
+    <div class="pp">${AX.map(([k,l],i)=>`<span class="pl">${l}</span><span class="bars">${bar(b6[i].v,"#FFD100")}${bar(bs[i].v,"#26496E")}${bar(ba[i].v,"#141E28")}</span><span class="pv">${ba[i].v||"—"}<small>${ba[i].d?ba[i].d.slice(5).replace("-","/"):""}</small></span>`).join("")}</div>
+    <div class="ds" style="margin-top:14px">Gold pills mark your last six weeks. The three layers only separate once older rides are in: open them from the Timeline, or ask me for the streams backfill.</div>`;
+};
 
 </script>
 </body>

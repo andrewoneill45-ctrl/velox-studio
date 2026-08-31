@@ -21,7 +21,10 @@ export default async (req) => {
       const rec = W[d] || (W[d] = { d });
       if (k === "sleep") {
         const hrs = v => v == null ? undefined : (/min/i.test(m.units || "") ? v / 60 : v);
-        const asleep = hrs(row.asleep ?? row.totalSleep); if (asleep != null) rec.sleep = +asleep.toFixed(2);
+        let asleep = hrs(row.asleep ?? row.totalSleep);
+        const stages = hrs((row.core || 0) + (row.deep || 0) + (row.rem || 0));
+        if ((!asleep || asleep <= 0) && stages > 0) asleep = stages;
+        if (asleep != null && asleep > 0) rec.sleep = +asleep.toFixed(2);
         if (row.deep != null) rec.deep = +hrs(row.deep).toFixed(2);
         if (row.rem != null) rec.rem = +hrs(row.rem).toFixed(2);
         if (row.core != null) rec.core = +hrs(row.core).toFixed(2);
