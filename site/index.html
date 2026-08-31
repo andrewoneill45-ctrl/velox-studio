@@ -381,10 +381,20 @@ svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshai
 .dsst i{display:block;font-style:normal;font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.16em;color:var(--dsm);margin-top:3px}
 .dspts{margin-top:13px;display:flex;flex-direction:column;gap:9px}
 .dspt{display:flex;gap:10px;align-items:flex-start}
-.dspt b{flex:0 0 auto;font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.12em;color:#fff;padding:4px 7px;border-radius:6px;margin-top:1px}
+.dspt>b{flex:0 0 auto;font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.12em;color:#fff;padding:4px 7px;border-radius:6px;margin-top:1px}
+.dspt span b,.dspt span strong{font-family:inherit;font-size:inherit;letter-spacing:0;color:var(--dsi);background:none;padding:0;border-radius:0;font-weight:700}
 .dspt span{font-size:13px;line-height:1.55;color:var(--dsi)}
 .dsbl{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.16em;color:var(--dsm);margin:15px 0 6px}
 .dssrc{margin-top:13px;padding-top:10px;border-top:1px dashed rgba(128,140,150,.3);font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.14em;color:var(--dsm)}
+.dssess{margin-top:14px;border-top:1px dashed rgba(128,140,150,.3);padding-top:6px}
+.dssr{display:grid;grid-template-columns:96px 1fr auto auto auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px dashed rgba(128,140,150,.18)}
+.dssr .dd{font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--dsm)}
+.dssr .dn{font-weight:600;font-size:13px;color:var(--dsi)}
+.dssr .dn small{display:block;font-weight:500;font-size:11px;color:var(--dsm);margin-top:2px;line-height:1.5}
+.dssr .dv{font-family:'Archivo';font-weight:900;font-size:16px;color:var(--dsi);white-space:nowrap}
+.dssr .dv i{font-style:normal;font-family:'Space Grotesk';font-size:7px;color:var(--dsm);letter-spacing:.1em;margin-left:2px}
+.dssr .dtag{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.1em;color:#fff;padding:4px 7px;border-radius:6px}
+.dsact{display:flex;gap:8px;align-items:center;margin-top:12px}
 /* ── TIMELINE ── */
 .tlwrap{border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:var(--sh);overflow:hidden}
 .tltop{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--hair)}
@@ -3306,6 +3316,41 @@ function dsRender(el,resp,opts={}){
   if(resp&&resp.card)el.innerHTML=dsCard(resp.card,opts.dark);
   else el.innerHTML=`<div class="dscard ${opts.dark?"dark":""}"><div class="dspt" style="margin-top:0"><span>${md((resp&&resp.text)||"")}</span></div></div>`;
 }
+
+
+/* ═══ v3.2.1 — sessions in the card, committable to the Timeline ═══ */
+const _dsCard=dsCard;
+dsCard=function(c,dark){
+  let html=_dsCard(c,dark);
+  if(c.sessions&&c.sessions.length){
+    const rows=c.sessions.map((x,i)=>{const [col]=AITYPE[x.type]||["#93A0AB"];
+      const d=new Date(x.date+"T12:00:00");
+      return `<div class="dssr"><span class="dd">${d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}).toUpperCase()}</span>
+        <span class="dn">${x.name}${x.detail?`<small>${x.detail}</small>`:""}</span>
+        <span class="dtag" style="background:${col}">${(x.type||"").toUpperCase()}</span>
+        <span class="dv">${x.mins||"—"}<i>MIN</i></span><span class="dv" style="color:${col}">${x.tss||"—"}<i>TSS</i></span></div>`;}).join("");
+    html=html.replace('</div>$',"");
+    html=html.slice(0,-6)+`<div class="dssess">${rows}</div>
+      <div class="dsact"><button class="aibtn" data-dsall style="background:var(--vert);padding:10px 15px">ADD ${c.sessions.length>1?"ALL ":""}TO THE TIMELINE</button>
+      <span class="ds" style="margin:0">Lands as planned sessions; the massif and projection follow.</span></div></div>`;
+  }
+  return html;
+};
+function dsCommit(list){
+  S.plan=S.plan||{};
+  list.forEach(x=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(x.date||""))return;
+    (S.plan[x.date]=S.plan[x.date]||[]).push({nm:x.name||x.type||"Session",tss:+x.tss||0,type:x.type||"Endurance",mins:+x.mins||0,detail:x.detail||"",ai:true});});
+  saveProfile();if(window.TL&&TL.built)tlRender(true);drawMassif();drawTraj();
+}
+const _dsRender=dsRender;
+dsRender=function(el,resp,opts={}){
+  _dsRender(el,resp,opts);
+  const btn=el.querySelector("[data-dsall]");
+  if(btn&&resp&&resp.card&&resp.card.sessions){
+    btn.onclick=()=>{dsCommit(resp.card.sessions);
+      btn.textContent="ADDED ✓ — ON THE TIMELINE";btn.style.background="var(--ink)";btn.disabled=true;};
+  }
+};
 
 </script>
 <script>

@@ -56,6 +56,9 @@ export default async (req) => {
     ask = "Fill the card for this week's coach note. headline: the verdict on current form. stats: fitness, fatigue, form, and J-days to the event. points: exactly what to do this week with watt targets. bars: the last 4-5 weeks of TSS from context, labels like S24. source: evidence titles you leaned on.";
   }
   if (mode !== "planweek" && mode !== "readiness" && wellness) context.wellness = { readiness: wellness.readiness, today: wellness.today };
+  if (CARDM.includes(mode)) { context.today = new Date().toISOString().slice(0, 10);
+    context.upcoming = (prof.events || []).filter(e => +new Date(e.date) >= Date.now() - 864e5)
+      .map(e => ({ name: e.name, date: e.date, priority: e.pr })).slice(0, 4); }
   const CARDM = ["weekly", "readiness", "debrief", "ask", "condition", "recon"];
   const CARDRULES = `
 OUTPUT FORMAT — respond with ONLY this JSON object, no fences, nothing outside it:
@@ -63,6 +66,7 @@ OUTPUT FORMAT — respond with ONLY this JSON object, no fences, nothing outside
  "stats": [{"l": string ≤10 chars, "v": string ≤8 chars, "c": "green"|"amber"|"red"|"ink"}] (2-4 chips: only the numbers that matter),
  "points": [{"t": "DO"|"WHY"|"WATCH"|"NEXT", "x": string ≤20 words, key numbers in **bold**}] (2-5, sharpest first),
  "bars": {"title": string ≤24 chars, "items": [{"l": string ≤5 chars, "v": number}]} | null (only when a tiny chart genuinely helps),
+ "sessions": [{"date":"YYYY-MM-DD","name":string,"type":"Recovery"|"Endurance"|"Tempo"|"Threshold"|"VO2 Max"|"Race"|"Strength","mins":number,"tss":number,"detail":string ≤40 words with watt targets}] | null — include ONLY when the rider asks what to do on a specific day or over a period; use real dates from context.today onwards, respecting readiness,
  "source": string|null (evidence-base titles actually used, comma-separated)}`;
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
