@@ -618,6 +618,15 @@ svg#rc-prof{display:block;width:100%;height:340px}
 @keyframes gpulse{0%,100%{r:6}50%{r:8}}
 .gdot{animation:gpulse 1.6s ease-in-out infinite}
 
+.rc-stagetabs{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;align-items:center}
+.rc-stab{font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.12em;padding:9px 13px;border:1px solid rgba(255,255,255,.14);border-radius:9px;background:#141D26;color:#93A2AE;cursor:pointer;transition:all .2s}
+.rc-stab.on{background:var(--jaune);color:#0E151C;border-color:var(--jaune)}
+.rc-triph,.rc-tripr{display:grid;grid-template-columns:110px 1.4fr .6fr .6fr .7fr .7fr;gap:10px;padding:11px 22px;align-items:center;font-family:'Space Grotesk';font-size:11.5px;font-weight:700}
+.rc-triph{font-size:8px;letter-spacing:.16em;color:#5E6E7A;border-bottom:1px solid rgba(255,255,255,.07)}
+.rc-tripr{border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer}
+.rc-tripr:hover{background:rgba(255,255,255,.03)}
+.rc-tripr .dim{color:#7C8B96}.rc-tripr .gold{color:var(--jaune)}
+.rc-tript{border-top:1px solid rgba(255,255,255,.14)}
 /* ── RECON COURSES ── */
 .rc-courses{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
 .rc-cc{background:#141D26;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;min-width:190px;cursor:pointer;position:relative;transition:all .25s}
@@ -923,6 +932,9 @@ svg#rc-prof{display:block;width:100%;height:340px}
     <div class="frow"><span class="fl">CLIMBING</span><input class="inp" id="ev-m" type="number" value="3400" style="width:84px"/><span class="fl" style="letter-spacing:0">M</span></div>
     <div class="frow"><span class="fl">TERRAIN</span><select class="inp" id="ev-char"><option value="alpine">Alpine · several cols</option><option value="giant">One giant col</option><option value="rolling">Rolling · punchy</option></select></div>
     <div class="frow"><span class="fl">PRIORITY</span><select class="inp" id="ev-pr"><option>A</option><option selected>B</option><option>C</option></select></div>
+    <div class="frow"><span class="fl">FORMAT</span><select class="inp" id="ev-kind"><option value="day">Race / single day</option><option value="trip">Multi-day trip</option></select></div>
+    <div class="frow" id="ev-daysrow" style="display:none"><span class="fl">DAYS RIDING</span><input class="inp" id="ev-days" type="number" value="4" min="2" max="14" style="width:84px"/></div>
+    <div class="frow" style="align-items:flex-start"><span class="fl" style="margin-top:8px">PURPOSE</span><input class="inp" id="ev-purpose" placeholder="Four days with friends — big cols, café stops, arrive fit enough to enjoy it" style="max-width:none;flex:1"/></div>
     <button class="logbtn" id="ev-add">ADD TO THE SEASON</button>
   </div>
 </aside>
@@ -942,11 +954,13 @@ svg#rc-prof{display:block;width:100%;height:340px}
   <div class="rc-wrap">
     <div>
       <div class="rc-hero"><h1 id="rc-name"></h1><div class="rc-sub" id="rc-meta"></div></div>
+      <div class="rc-stagetabs" id="rc-stagetabs" style="display:none"></div>
       <div class="rc-courses" id="rc-courses"></div>
       <div class="rc-card" style="position:relative"><svg id="rc-prof" viewBox="0 0 1200 340" preserveAspectRatio="none"></svg><div class="rc-proflab" id="rc-proflab"></div><div class="rc-tip" id="rc-tip" style="display:none"></div><button class="rc-tab" id="rc-zoomout" style="position:absolute;top:14px;right:14px;display:none">↺ WHOLE COURSE</button></div>
       <div class="rc-card" id="rc-selcard" style="display:none;padding:16px 22px"></div>
       <div class="rc-card" id="rc-segcard" style="display:none"></div>
       <div class="rc-card" id="rc-mapcard" style="display:none;overflow:hidden"><div id="rc-map" style="height:300px"></div></div>
+      <div class="rc-card" id="rc-trip" style="display:none"></div>
       <div class="rc-card" id="rc-lib" style="display:none;padding:18px 22px"></div>
       <input type="file" id="gpxfile" accept=".gpx,application/gpx+xml" style="display:none" multiple/>
       <div id="rc-drop" class="rc-drop"><div>DROP YOUR GPX</div></div>
@@ -1085,7 +1099,7 @@ function renderObjectives(){
   if(!fl.length){document.getElementById("objlist").innerHTML='<div style="padding:4px 0;color:var(--mist);font-size:12.5px">No events yet — add your first below and the season re-aims itself.</div>';return;}
   document.getElementById("objlist").innerHTML=fl.map(e=>`
     <div class="objrow"><div class="pr" style="${prc[e.pr]}">${e.pr}</div>
-    <div class="om"><div class="on2">${e.name}</div><div class="od">${evDate(e).toUpperCase()} · ${e.km} KM · ${fmtInt(e.m)} M</div></div>
+    <div class="om"><div class="on2">${e.name}</div><div class="od">${evDate(e).toUpperCase()}${(e.days||1)>1?` — ${e.days} DAYS`:""} · ${e.km} KM · ${fmtInt(e.m)} M</div>${e.purpose?`<div class="od" style="letter-spacing:0;text-transform:none;font-style:italic;color:var(--ink2)">${e.purpose}</div>`:""}</div>
     <button class="orecon orc" data-ev="${e.id}">RECON</button><button class="orecon oed" data-ev="${e.id}" title="Edit">✎</button><button class="orecon odl" data-ev="${e.id}" title="Delete" style="color:var(--polka)">✕</button><div class="ox">J-${J(e)}</div></div>`).join("");
   document.querySelectorAll(".orc").forEach(b=>b.onclick=()=>{closeDrawer();openRecon(b.dataset.ev);});
   document.querySelectorAll(".odl").forEach(b=>b.onclick=()=>{const i=EVENTS.findIndex(e=>e.id===b.dataset.ev);if(i>=0){EVENTS.splice(i,1);updateAll();pop(document.getElementById("objlist"));}});
@@ -1094,22 +1108,29 @@ function renderObjectives(){
     document.getElementById("ev-name").value=ev.name;document.getElementById("ev-date").value=ev.date;
     document.getElementById("ev-km").value=ev.km;document.getElementById("ev-m").value=ev.m;
     document.getElementById("ev-pr").value=ev.pr;
+    document.getElementById("ev-kind").value=(ev.days||1)>1?"trip":"day";
+    document.getElementById("ev-days").value=ev.days||4;
+    document.getElementById("ev-daysrow").style.display=(ev.days||1)>1?"flex":"none";
+    document.getElementById("ev-purpose").value=ev.purpose||"";
     document.getElementById("ev-add").textContent="SAVE CHANGES — "+ev.short;});
 }
 document.getElementById("ev-add").addEventListener("click",()=>{
   const name=document.getElementById("ev-name").value.trim()||"New Event";
   const km=+document.getElementById("ev-km").value||120,m=+document.getElementById("ev-m").value||2500;
   const date=document.getElementById("ev-date").value||"2026-08-16";
+  const kind=document.getElementById("ev-kind").value;
+  const days=kind==="trip"?Math.max(2,Math.min(14,+document.getElementById("ev-days").value||4)):1;
+  const purpose=document.getElementById("ev-purpose").value.trim();
   const pr=document.getElementById("ev-pr").value,ch=document.getElementById("ev-char").value;
   if(window.EDIT_EV){
     const ev=EVENTS.find(e=>e.id===window.EDIT_EV);
     if(ev){const regen=ev.km!==km||ev.m!==m||!ev.cols||!ev.cols.length;
       Object.assign(ev,{name,short:name.toUpperCase().split(" ").slice(0,2).join(" "),date,km,m,pr});
-      if(regen)ev.cols=genCols(km,m,ch);}
+      if(regen)ev.cols=genCols(km,m,ch);ev.kind=kind;ev.days=days;ev.purpose=purpose;}
     window.EDIT_EV=null;document.getElementById("ev-add").textContent="ADD TO THE SEASON";
   }else{
     EVENTS.push({id:"ev"+Date.now(),name,short:name.toUpperCase().split(" ").slice(0,2).join(" "),loc:"YOUR ROADS",
-      date,km,m,pr,cols:genCols(km,m,ch)});
+      date,km,m,pr,kind,days,purpose,cols:genCols(km,m,ch)});
   }
   updateAll();pop(document.getElementById("objlist"));
 });
@@ -1137,7 +1158,7 @@ function drawMassif(){
       <circle cx="${fx}" cy="${fy}" r="4" fill="#fff" stroke="#141E28" stroke-width="2"/>
       <line x1="${fx}" y1="${fy}" x2="${fx}" y2="${fy-30}" stroke="#141E28" stroke-width="2"/>
       <path d="M${fx} ${fy-30} h20 l-5 5.5 5 5.5 h-20 Z" fill="${c}" stroke="#141E28" stroke-width="1.4"/>
-      <text x="${fx}" y="${fy-39}" text-anchor="middle" font-family="Space Grotesk" font-size="11" font-weight="700" letter-spacing="2" fill="#44515D">${e.n}${e.j!=null?" · J-"+e.j:""}</text>`;
+      <text x="${fx}" y="${fy-39}" text-anchor="middle" font-family="Space Grotesk" font-size="11" font-weight="700" letter-spacing="2" fill="#44515D">${e.n}${e.dd>1?" · "+e.dd+"D":""}${e.j!=null?" · J-"+e.j:""}</text>`;
   });
   let months="",lastM=-1;
   for(let i=0;i<T.length;i++){const d=new Date(SEASON0);d.setDate(d.getDate()+i*7);
@@ -1796,7 +1817,7 @@ function drawTraj(){
 }
 /* ═══ INIT ═══ */
 window.SEASON_FLAGS=[];
-function refreshFlags(){window.SEASON_FLAGS=EVENTS.map(e=>({i:Math.floor((new Date(e.date)-SEASON0)/(7*864e5)),n:e.short.split(" ").pop(),A:e.pr==="A",j:J(e)}));}
+function refreshFlags(){window.SEASON_FLAGS=EVENTS.map(e=>({i:Math.floor((new Date(e.date)-SEASON0)/(7*864e5)),n:e.short.split(" ").pop(),A:e.pr==="A",j:J(e),dd:e.days||1}));}
 const _renderSeasonHead=renderSeasonHead;
 renderSeasonHead=function(){refreshFlags();_renderSeasonHead();};
 renderJerseys();drawJerseyP();renderLadder();renderLog();renderWkFront();renderBests();
@@ -2379,7 +2400,7 @@ function tlRender(keepScroll){
     let days="";
     for(let i=0;i<7;i++){const di=isoDay(addD(mon,i));
       const dr=(w?w.rides:[]).filter(r=>r.d===di),dp=(S.plan&&S.plan[di])||[];
-      const ev=EVENTS.some(e=>e.date===di);
+      const ev=EVENTS.some(e=>di>=e.date&&di<=isoDay(addD(new Date(e.date+"T12:00:00"),(e.days||1)-1)));
       const t=dr.reduce((s,r)=>s+(r.tss||0),0)||dp.reduce((s,p)=>s+(+p.tss||0),0);
       const dh=t?Math.max(6,Math.min(28,4+t/(TL.max/2.2)*24)):4;
       days+=`<div class="tld ${dr.length?"has":dp.length?"plan":""} ${ev?"ev":""} ${di===todayIso?"today":""}" style="height:${dh}px" title="${dr.map(r=>r.nm+" · "+r.tss+" TSS").concat(dp.map(p=>"PLAN: "+p.nm+" · "+p.tss)).join(" · ")}"></div>`;}
@@ -2429,7 +2450,7 @@ function renderWeekDetail(k){
     if(v>0)S.weekTargets[k]=v;else delete S.weekTargets[k];tlRender(true);drawMassif();drawTraj();saveProfile();};
   let out="";
   for(let i=0;i<7;i++){const d=addD(mon,i),di=isoDay(d);
-    const rides=(w?w.rides:[]).filter(r=>r.d===di),plans=(S.plan&&S.plan[di])||[],dev=EVENTS.filter(e=>e.date===di);
+    const rides=(w?w.rides:[]).filter(r=>r.d===di),plans=(S.plan&&S.plan[di])||[],dev=EVENTS.filter(e=>di>=e.date&&di<=isoDay(addD(new Date(e.date+"T12:00:00"),(e.days||1)-1)));
     const past=di<todayIso,today=di===todayIso;
     const tot=rides.reduce((s,r)=>s+(r.tss||0),0);
     const main=rides[0];
@@ -2437,7 +2458,7 @@ function renderWeekDetail(k){
       :(plans.length?plans.map(p=>`<b>${p.nm}</b> · ${p.type||"Planned"}${p.mins?` · ${p.mins} min`:""} · ${p.tss} TSS${p.detail?`<br/><span style="opacity:.8">${p.detail}</span>`:""}`).join("<br/><br/>"):"");
     out+=`<div class="stg ${today?"pin-today":""}" ${main?`data-ride="${main.id}"`:'style="cursor:default"'}>
       <div class="day" ${today?'style="color:var(--polka)"':""}>${d.toLocaleDateString("en-GB",{weekday:"short"}).toUpperCase()} ${d.getDate()}</div>
-      ${dev.map(e=>`<span class="chip" style="background:var(--jaune);color:var(--ink);margin-top:8px;align-self:flex-start">${e.pr} · ${e.short}</span>`).join("")}
+      ${dev.map(e=>`<span class="chip" style="background:var(--jaune);color:var(--ink);margin-top:8px;align-self:flex-start">${e.pr} · ${e.short}${(e.days||1)>1?` · DAY ${Math.round((new Date(di+"T12:00:00")-new Date(e.date+"T12:00:00"))/864e5)+1}/${e.days}`:""}</span>`).join("")}
       <div class="nm" style="margin-top:12px">${main?main.nm:(past?"Rest day":plans.length?"Planned":"—")}</div>
       <div class="ds">${main?`${main.km} km · ${fmtInt(main.m)} m · ${hh(main.secs)}${rides.length>1?` · +${rides.length-1} more`:""}`:(past?"No ride logged":"")}</div>
       <div>${plans.map((p,j)=>`<span class="pchip">${p.nm} · ${p.tss} TSS <button data-del="${di}|${j}">✕</button></span>`).join("")}</div>
@@ -2622,7 +2643,7 @@ function aiContext(k){
     lastWeek:wk(prevK),twoWeeksAgo:{tss:wk(prev2).tss},
     form:{fitness:Math.round(last.ctl||0),fatigue:Math.round(last.atl||0),tsb:Math.round(last.tsb||0)},
     rider:{ftp:S.ftp,weight:S.weight,wkg:+(S.ftp/S.weight).toFixed(2),zones:ZONES.map(z=>`${z.abbr} ${z.min}-${z.max>5000?"max":z.max} W`),targets:S.tgt},
-    events:fut().map(e=>({name:e.name,date:e.date,daysAway:J(e),priority:e.pr,km:e.km,m:e.m})),
+    events:fut().map(e=>({name:e.name,date:e.date,daysAway:J(e),priority:e.pr,km:e.km,m:e.m,days:e.days||1,kind:e.kind||"day",purpose:e.purpose||null})),
     weekTargetTSS:(S.weekTargets&&S.weekTargets[k])||null,
     existingPlans:days.flatMap(d=>(S.plan&&S.plan[d]||[]).map(p=>({date:d,...p}))),
     intake:{feeling:it.feeling,focus:it.focus,note:it.note},
@@ -2865,7 +2886,7 @@ async function ingestCourse(raw,source){
   let c=buildCourse(raw,{source,name:raw.name});
   busy("NAMING THE CLIMBS…");c=await nameClimbs(c);
   busy("SAVING…");await saveCourse(c);
-  ev.routes=ev.routes||[];if(!ev.routes.includes(c.id))ev.routes.push(c.id);ev.route=c.id;
+  ev.routes=ev.routes||[];if(!ev.routes.includes(c.id))ev.routes.push(c.id);ev.route=c.id;syncStage(ev);
   if(!ev.km||source!=="manual"){ev.km=c.km;ev.m=c.m;}
   ev.cols=c.climbs.map(cl=>({n:cl.n,len:cl.len,g:cl.avg,top:cl.top}));
   saveProfile();busy("");renderRcCourses();buildRecon();
@@ -2885,8 +2906,8 @@ function renderRcCourses(){
   el.innerHTML=ids.map(id=>{const c=ROUTES[id];const on=ev.route===id;
     return `<div class="rc-cc ${on?"on":""}" data-id="${id}"><span class="src">${(c?.source||"…").toUpperCase()}</span><div class="n">${c?c.name:"Loading…"}</div><div class="m">${c?`${c.km} KM · ${fmtInt(c.m)} M · ${c.climbs.length} CLIMB${c.climbs.length===1?"":"S"}`:""}</div><button class="x" data-x="${id}" title="Detach">✕</button></div>`;}).join("")
     +`<div class="rc-cc add" id="rc-addgpx">+ DROP OR CHOOSE A GPX</div><div class="rc-cc add" id="rc-addkomoot">PASTE A KOMOOT LINK</div><div class="rc-cc add" id="rc-libbtn">ROUTES LIBRARY</div>${ev.route?"":`<div class="rc-cc add" id="rc-proc" style="opacity:.6">USING A SKETCHED PROFILE</div>`}`;
-  el.querySelectorAll(".rc-cc[data-id]").forEach(x=>x.onclick=e=>{if(e.target.closest("[data-x]"))return;ev.route=x.dataset.id;saveProfile();renderRcCourses();buildRecon();});
-  el.querySelectorAll("[data-x]").forEach(b=>b.onclick=e=>{e.stopPropagation();ev.routes=(ev.routes||[]).filter(i=>i!==b.dataset.x);if(ev.route===b.dataset.x)ev.route=ev.routes[0]||null;saveProfile();renderRcCourses();buildRecon();});
+  el.querySelectorAll(".rc-cc[data-id]").forEach(x=>x.onclick=e=>{if(e.target.closest("[data-x]"))return;ev.route=x.dataset.id;syncStage(ev);saveProfile();renderRcCourses();buildRecon();});
+  el.querySelectorAll("[data-x]").forEach(b=>b.onclick=e=>{e.stopPropagation();ev.routes=(ev.routes||[]).filter(i=>i!==b.dataset.x);if(ev.route===b.dataset.x)ev.route=ev.routes[0]||null;syncStage(ev);saveProfile();renderRcCourses();buildRecon();});
   rcEl("rc-addgpx").onclick=()=>rcEl("gpxfile").click();
   rcEl("rc-libbtn").onclick=()=>{const l=rcEl("rc-lib");if(l.style.display==="none"){renderLibrary();l.style.display="block";}else l.style.display="none";};
   rcEl("rc-addkomoot").onclick=()=>{if(rcEl("rc-linkrow"))return;const row=document.createElement("div");row.id="rc-linkrow";row.className="rc-link";
@@ -3059,9 +3080,9 @@ async function renderLibrary(){
     :`<div class="dim" style="font-size:12px;color:#7C8B96">Nothing saved yet. Drop a GPX or paste a Komoot link.</div>`);
   l.querySelectorAll("[data-rn]").forEach(inp=>inp.onchange=async()=>{const id=inp.dataset.rn,n=inp.value.trim();if(!n)return;if(ROUTES[id])ROUTES[id].name=n;
     if(LIVE)await api("/api/routes?id="+id,{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({name:n})}).catch(()=>{});renderRcCourses();if(ev.route===id)buildRecon();});
-  l.querySelectorAll("[data-attach]").forEach(b=>b.onclick=async()=>{const id=b.dataset.attach;const c=await loadRoute(id);if(!c)return;ev.routes=ev.routes||[];if(!ev.routes.includes(id))ev.routes.push(id);ev.route=id;
+  l.querySelectorAll("[data-attach]").forEach(b=>b.onclick=async()=>{const id=b.dataset.attach;const c=await loadRoute(id);if(!c)return;ev.routes=ev.routes||[];if(!ev.routes.includes(id))ev.routes.push(id);ev.route=id;syncStage(ev);
     ev.km=c.km;ev.m=c.m;ev.cols=c.climbs.map(cl=>({n:cl.n,len:cl.len,g:cl.avg,top:cl.top}));saveProfile();renderRcCourses();buildRecon();renderLibrary();});
-  l.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{ev.route=b.dataset.open;saveProfile();renderRcCourses();buildRecon();});
+  l.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{ev.route=b.dataset.open;syncStage(ev);saveProfile();renderRcCourses();buildRecon();});
   l.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{const id=b.dataset.del;if(!confirm("Delete this route from the library?"))return;
     if(LIVE)await api("/api/routes?id="+id,{method:"DELETE"}).catch(()=>{});delete ROUTES[id];
     EVENTS.forEach(e=>{e.routes=(e.routes||[]).filter(x=>x!==id);if(e.route===id)e.route=e.routes[0]||null;});saveProfile();renderRcCourses();buildRecon();renderLibrary();});
@@ -3069,7 +3090,7 @@ async function renderLibrary(){
 /* keyboard: ← → to move between the event's routes while the room is open */
 window.addEventListener("keydown",e=>{if(!rcEl("recon").classList.contains("on"))return;if(e.target.matches("input,select,textarea"))return;
   const ev=EVENTS.find(x=>x.id===rcEv);if(!ev||!(ev.routes||[]).length)return;
-  if(e.key==="ArrowLeft"||e.key==="ArrowRight"){const i=ev.routes.indexOf(ev.route),n=ev.routes.length;ev.route=ev.routes[(i+(e.key==="ArrowRight"?1:n-1))%n];saveProfile();renderRcCourses();buildRecon();}});
+  if(e.key==="ArrowLeft"||e.key==="ArrowRight"){const i=ev.routes.indexOf(ev.route),n=ev.routes.length;ev.route=ev.routes[(i+(e.key==="ArrowRight"?1:n-1))%n];syncStage(ev);saveProfile();renderRcCourses();buildRecon();}});
 
 
 /* ═══ v2.8 — profile ↔ map link ═══ */
@@ -3351,6 +3372,58 @@ dsRender=function(el,resp,opts={}){
       btn.textContent="ADDED ✓ — ON THE TIMELINE";btn.style.background="var(--ink)";btn.disabled=true;};
   }
 };
+
+
+/* ═══ v3.3 — multi-day trips with stages and purpose ═══ */
+let rcStage=1;
+document.getElementById("ev-kind").onchange=e=>{document.getElementById("ev-daysrow").style.display=e.target.value==="trip"?"flex":"none";};
+function evEnd(e){return isoDay(addD(new Date(e.date+"T12:00:00"),(e.days||1)-1));}
+function syncStage(ev){if((ev.days||1)>1){ev.stageRoute=ev.stageRoute||{};ev.stageRoute[rcStage]=ev.route;}}
+function renderStageTabs(ev){
+  const t=rcEl("rc-stagetabs");t.style.display="flex";
+  let h="";
+  for(let n=1;n<=ev.days;n++){const d=addD(new Date(ev.date+"T12:00:00"),n-1);
+    const has=ev.stageRoute&&ev.stageRoute[n];
+    h+=`<button class="rc-stab ${n===rcStage?"on":""}" data-st="${n}">STAGE ${n} · ${d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric"}).toUpperCase()}${has?"":" · —"}</button>`;}
+  h+=`<span class="rc-sl" style="margin-left:6px">${ev.purpose?'"'+ev.purpose+'"':""}</span>`;
+  t.innerHTML=h;
+  t.querySelectorAll("[data-st]").forEach(b=>b.onclick=()=>{rcStage=+b.dataset.st;RCSEL=null;RCVIEW=null;buildRecon();});
+}
+function tripTss(sim,ftp){const avg=sim.pw.reduce((a,b)=>a+b,0)/Math.max(1,sim.pw.length);const IF=avg/ftp;return Math.round(sim.total/3600*IF*IF*100);}
+function renderTrip(ev){
+  const card=rcEl("rc-trip");card.style.display="block";
+  const ftp=(ev.recon&&ev.recon.ftpDay)||ftpOnDay(ev);
+  let rows="",tk=0,tm=0,tt=0,ttss=0,missing=[];
+  for(let n=1;n<=ev.days;n++){
+    const d=addD(new Date(ev.date+"T12:00:00"),n-1);
+    const id=ev.stageRoute&&ev.stageRoute[n],c=id&&ROUTES[id];
+    if(id&&!c){missing.push(id);}
+    let cells;
+    if(c){const fresh=Math.max(.85,1-.03*(n-1));
+      const sim=simulate(c,{ftp,weight:WF.weight,cda:WF.cda||0.32,fresh,segW:(ev.recon&&ev.recon.segs&&ev.recon.segs[id])||null});
+      const tss=tripTss(sim,ftp);tk+=c.km;tm+=c.m;tt+=sim.total;ttss+=tss;
+      cells=`<span class="dim">${c.name.slice(0,26)}</span><span class="dim">${c.km} KM</span><span class="dim">${fmtInt(c.m)} M</span><span class="gold">${hms(sim.total)}</span><span>${tss} TSS${n>1?` <span class="dim" style="font-size:8px">· FATIGUE −${Math.round((1-Math.max(.85,1-.03*(n-1)))*100)}%</span>`:""}</span>`;
+    }else cells=`<span class="dim" style="grid-column:span 5">No route yet — pick this stage above, then attach a GPX or library route</span>`;
+    rows+=`<div class="rc-tripr" data-st="${n}"><span>STAGE ${n} · ${d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}).toUpperCase()}</span>${cells}</div>`;}
+  card.innerHTML=`<div class="rc-sl" style="padding:16px 22px 0">THE TRIP · ${ev.days} DAYS${ev.purpose?` — "${ev.purpose.toUpperCase()}"`:""}</div>
+    <div class="rc-triph"><span>DAY</span><span>ROUTE</span><span>DIST</span><span>CLIMB</span><span>RIDE TIME</span><span>LOAD</span></div>${rows}
+    <div class="rc-tripr rc-tript" style="cursor:default"><span>TOTAL</span><span class="dim">${ev.days} STAGES</span><span>${tk.toFixed(0)} KM</span><span>${fmtInt(Math.round(tm))} M</span><span class="gold">${hms(tt)}</span><span>${ttss} TSS</span></div>`;
+  card.querySelectorAll(".rc-tripr[data-st]").forEach(r=>r.onclick=()=>{rcStage=+r.dataset.st;RCSEL=null;RCVIEW=null;buildRecon();});
+  missing.forEach(id=>loadRoute(id).then(()=>renderTrip(ev)));
+}
+const _br5=buildRecon;
+buildRecon=function(){
+  const ev=EVENTS.find(e=>e.id===rcEv);
+  if(ev&&(ev.days||1)>1){
+    ev.stageRoute=ev.stageRoute||{};
+    if(ev.stageRoute[rcStage]===undefined)ev.stageRoute[rcStage]=(rcStage===1?ev.route||null:null);
+    ev.route=ev.stageRoute[rcStage]||null;
+    renderStageTabs(ev);
+  }else{const t=rcEl("rc-stagetabs");if(t)t.style.display="none";}
+  _br5();
+  if(ev&&(ev.days||1)>1)renderTrip(ev);else{const c=rcEl("rc-trip");if(c)c.style.display="none";}
+};
+const _or5=openRecon;openRecon=function(id){rcStage=1;_or5(id);};
 
 </script>
 <script>

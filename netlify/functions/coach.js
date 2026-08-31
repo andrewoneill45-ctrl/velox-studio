@@ -58,7 +58,7 @@ export default async (req) => {
   if (mode !== "planweek" && mode !== "readiness" && wellness) context.wellness = { readiness: wellness.readiness, today: wellness.today };
   if (CARDM.includes(mode)) { context.today = new Date().toISOString().slice(0, 10);
     context.upcoming = (prof.events || []).filter(e => +new Date(e.date) >= Date.now() - 864e5)
-      .map(e => ({ name: e.name, date: e.date, priority: e.pr })).slice(0, 4); }
+      .map(e => ({ name: e.name, date: e.date, priority: e.pr, days: e.days || 1, kind: e.kind || "day", purpose: e.purpose || null })).slice(0, 4); }
   const CARDM = ["weekly", "readiness", "debrief", "ask", "condition", "recon"];
   const CARDRULES = `
 OUTPUT FORMAT — respond with ONLY this JSON object, no fences, nothing outside it:
@@ -73,7 +73,7 @@ OUTPUT FORMAT — respond with ONLY this JSON object, no fences, nothing outside
     headers: { "content-type": "application/json", "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
     body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "planweek" ? 2400 : 700,
       system: "You are The DS — the directeur sportif for a single amateur rider. UK English. Confident, warm, specific. Write flowing prose in complete sentences: NO headings, NO bullet points, NO numbered lists, NO markdown of any kind except **bold** on the few numbers that matter. Short paragraphs are fine. No preamble, no sign-off." + (CARDM.includes(mode) ? CARDRULES : "")
-        + (evidence ? "\n\nEVIDENCE BASE — peer-reviewed findings the rider has curated. Ground your advice in these where relevant and name the source naturally in the prose (e.g. \"the polarised-training work suggests…\"). Do not invent citations.\n" + evidence : "") + (mode === "planweek" ? `
+        + (evidence ? "\n\nEVIDENCE BASE — peer-reviewed findings the rider has curated. A multi-day trip is not a race: its purpose (riding with friends, enjoyment, big cols) shapes the build — durability and fuelling over peak power, arrive fresh enough to enjoy every day. Ground your advice in these where relevant and name the source naturally in the prose (e.g. \"the polarised-training work suggests…\"). Do not invent citations.\n" + evidence : "") + (mode === "planweek" ? `
 You are now planning ONE training week. Respond with ONLY a JSON object — no prose before or after, no code fences:
 {"summary": string (2–3 warm, specific sentences on why this week looks like this, referencing last week and current form),
  "question": string|null (ONLY if one crucial thing is missing; otherwise null),
