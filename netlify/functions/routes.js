@@ -10,6 +10,16 @@ export default async (req) => {
     const idx = (await readJSON("routes-index.json", [])).filter(r => r.id !== id);
     await writeJSON("routes-index.json", idx); return json({ ok: true });
   }
+  if (req.method === "PATCH" && id) {
+    const c = await readJSON(`routes/${id}.json`); if (!c) return json({ error: "not_found" }, 404);
+    const b = await req.json();
+    if (b.name) c.name = String(b.name).slice(0, 80);
+    if (Array.isArray(b.climbs)) b.climbs.forEach(x => { if (c.climbs[x.i] && x.n) c.climbs[x.i].n = String(x.n).slice(0, 60); });
+    await writeJSON(`routes/${id}.json`, c);
+    const idx = await readJSON("routes-index.json", []);
+    const e = idx.find(r => r.id === id); if (e) { e.name = c.name; e.hardest = c.climbs.reduce((a, x) => (x.fiets > (a?.fiets || 0) ? x : a), null)?.n || null; }
+    await writeJSON("routes-index.json", idx); return json({ ok: true });
+  }
   if (req.method === "POST") {
     const c = await req.json();
     if (!c?.id || !Array.isArray(c.points)) return json({ error: "bad course" }, 400);

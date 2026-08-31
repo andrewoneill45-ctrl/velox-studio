@@ -591,6 +591,17 @@ svg#rc-prof{display:block;width:100%;height:340px}
 .rc-link{display:flex;gap:8px;margin-top:10px;width:100%}
 .rc-link input{flex:1;background:#0E151C;border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:9px 11px;color:#E8EEF2;font-family:'Space Grotesk';font-size:11px;font-weight:700}
 .rc-busy{font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.14em;color:var(--jaune);margin-top:8px}
+.rc-selstats{display:flex;gap:26px;flex-wrap:wrap;align-items:baseline}
+.rc-selstats .k{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.16em;color:#7C8B96}
+.rc-selstats .k b{display:block;font-family:'Archivo';font-weight:900;font-size:22px;color:#E8EEF2;letter-spacing:-.02em;margin-top:2px}
+.rc-selstats .k b i{font-style:normal;font-size:10px;color:#7C8B96;margin-left:2px}
+.rc-lrow{display:grid;grid-template-columns:1fr 70px 70px 60px 90px auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06);font-family:'Space Grotesk';font-size:11px;font-weight:700}
+.rc-lrow input{background:#0E151C;border:1px solid rgba(255,255,255,.12);border-radius:7px;padding:6px 9px;color:#E8EEF2;font-family:'Inter';font-size:12.5px;font-weight:600;width:100%}
+.rc-lrow .dim{color:#7C8B96}
+.rc-lrow .acts{display:flex;gap:6px}
+.rc-split input.cw{background:#0E151C;border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:4px 6px;color:#FFD100;font-family:'Space Grotesk';font-weight:700;font-size:12px;width:64px}
+.rc-split input.cn{background:transparent;border:none;border-bottom:1px dashed rgba(255,255,255,.2);color:#E8EEF2;font-family:'Inter';font-weight:600;font-size:13px;width:100%;padding:2px 0}
+.rc-split input.cn:focus{outline:none;border-bottom-color:var(--jaune)}
 /* ── MOBILE FALLBACK ── */
 @media(max-width:980px){
   .rail{top:auto;bottom:0;left:0;right:0;width:auto;height:64px;flex-direction:row;justify-content:space-around;padding:6px 8px;border-right:none;border-top:1px solid var(--line)}
@@ -872,7 +883,9 @@ svg#rc-prof{display:block;width:100%;height:340px}
       <div class="rc-hero"><h1 id="rc-name"></h1><div class="rc-sub" id="rc-meta"></div></div>
       <div class="rc-courses" id="rc-courses"></div>
       <div class="rc-card" style="position:relative"><svg id="rc-prof" viewBox="0 0 1200 340" preserveAspectRatio="none"></svg><div class="rc-proflab" id="rc-proflab"></div><div class="rc-tip" id="rc-tip" style="display:none"></div><button class="rc-tab" id="rc-zoomout" style="position:absolute;top:14px;right:14px;display:none">↺ WHOLE COURSE</button></div>
+      <div class="rc-card" id="rc-selcard" style="display:none;padding:16px 22px"></div>
       <div class="rc-card" id="rc-mapcard" style="display:none;overflow:hidden"><div id="rc-map" style="height:300px"></div></div>
+      <div class="rc-card" id="rc-lib" style="display:none;padding:18px 22px"></div>
       <input type="file" id="gpxfile" accept=".gpx,application/gpx+xml" style="display:none" multiple/>
       <div id="rc-drop" class="rc-drop"><div>DROP YOUR GPX</div></div>
       <div class="rc-card">
@@ -888,7 +901,7 @@ svg#rc-prof{display:block;width:100%;height:340px}
         <div class="wf"><div class="wl"><span>FTP RAMP / WEEK</span><b id="wfv-ramp">+0.75 W</b></div><input type="range" id="wf-ramp" min="0" max="1.5" step="0.05" value="0.75"/></div>
         <div class="wf"><div class="wl"><span>WEEKLY TSS</span><b id="wfv-tss">520</b></div><input type="range" id="wf-tss" min="300" max="700" step="10" value="520"/></div>
         <div class="wf" id="wf-cdawrap"><div class="wl"><span>AERO · CdA</span><b id="wfv-cda">0.32</b></div><input type="range" id="wf-cda" min="0.24" max="0.42" step="0.01" value="0.32"/></div>
-        <div class="rc-gread"><span>FTP ON THE DAY</span><b class="g1" id="wf-ftpday"></b></div>
+        <div class="rc-gread" style="align-items:center"><span>FTP ON THE DAY</span><span style="display:flex;gap:6px;align-items:center"><input id="wf-ftpin" type="number" style="width:70px;background:#0E151C;border:1px solid rgba(255,255,255,.14);border-radius:7px;padding:5px 8px;color:#FFD100;font-family:'Space Grotesk';font-weight:700;font-size:12px"/><b class="g1" id="wf-ftpday"></b><button class="rc-tab" id="wf-ftpauto" style="padding:5px 8px;font-size:8px">AUTO</button></span></div>
         <div class="rc-gread"><span>W/KG ON THE DAY</span><b class="g1" id="wf-wkgday"></b></div>
       </div>
       <div class="rc-card">
@@ -2809,10 +2822,11 @@ function renderRcCourses(){
   const ids=ev.routes||[];
   el.innerHTML=ids.map(id=>{const c=ROUTES[id];const on=ev.route===id;
     return `<div class="rc-cc ${on?"on":""}" data-id="${id}"><span class="src">${(c?.source||"…").toUpperCase()}</span><div class="n">${c?c.name:"Loading…"}</div><div class="m">${c?`${c.km} KM · ${fmtInt(c.m)} M · ${c.climbs.length} CLIMB${c.climbs.length===1?"":"S"}`:""}</div><button class="x" data-x="${id}" title="Detach">✕</button></div>`;}).join("")
-    +`<div class="rc-cc add" id="rc-addgpx">+ DROP OR CHOOSE A GPX</div><div class="rc-cc add" id="rc-addkomoot">PASTE A KOMOOT LINK</div>${ev.route?"":`<div class="rc-cc add" id="rc-proc" style="opacity:.6">USING A SKETCHED PROFILE</div>`}`;
+    +`<div class="rc-cc add" id="rc-addgpx">+ DROP OR CHOOSE A GPX</div><div class="rc-cc add" id="rc-addkomoot">PASTE A KOMOOT LINK</div><div class="rc-cc add" id="rc-libbtn">ROUTES LIBRARY</div>${ev.route?"":`<div class="rc-cc add" id="rc-proc" style="opacity:.6">USING A SKETCHED PROFILE</div>`}`;
   el.querySelectorAll(".rc-cc[data-id]").forEach(x=>x.onclick=e=>{if(e.target.closest("[data-x]"))return;ev.route=x.dataset.id;saveProfile();renderRcCourses();buildRecon();});
   el.querySelectorAll("[data-x]").forEach(b=>b.onclick=e=>{e.stopPropagation();ev.routes=(ev.routes||[]).filter(i=>i!==b.dataset.x);if(ev.route===b.dataset.x)ev.route=ev.routes[0]||null;saveProfile();renderRcCourses();buildRecon();});
   rcEl("rc-addgpx").onclick=()=>rcEl("gpxfile").click();
+  rcEl("rc-libbtn").onclick=()=>{const l=rcEl("rc-lib");if(l.style.display==="none"){renderLibrary();l.style.display="block";}else l.style.display="none";};
   rcEl("rc-addkomoot").onclick=()=>{if(rcEl("rc-linkrow"))return;const row=document.createElement("div");row.id="rc-linkrow";row.className="rc-link";
     row.innerHTML=`<input id="rc-linkin" placeholder="https://www.komoot.com/tour/123456789?share_token=…"/><button class="rc-tab on" id="rc-linkgo">FETCH</button><button class="rc-tab" id="rc-linkx">✕</button>`;el.after(row);
     rcEl("rc-linkx").onclick=()=>row.remove();
@@ -2824,13 +2838,17 @@ function renderRcCourses(){
 }
 const hms=s=>{const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h?`${h}h${String(m).padStart(2,"0")}`:`${m}m${String(Math.round(s%60)).padStart(2,"0")}`;};
 function buildReconCourse(ev,c){
-  const ftp=ftpOnDay(ev),wt=WF.weight,cda=WF.cda||0.32;
-  const sim=simulate(c,{ftp,weight:wt,cda,fresh:fresh()});RCX=c;RCSIM=sim;
+  const r=ev.recon||{},ftp=r.ftpDay||ftpOnDay(ev),wt=WF.weight,cda=WF.cda||0.32;
+  const sim=simulate(c,{ftp,weight:wt,cda,fresh:fresh(),climbW:(r.climbW&&r.climbW[c.id])||null});RCX=c;RCSIM=sim;
+  const fi=rcEl("wf-ftpin");if(fi&&document.activeElement!==fi)fi.value=ftp;rcEl("wf-ftpauto").style.display=r.ftpDay?"inline-block":"none";
   rcEl("rc-name").textContent=ev.name;
   rcEl("rc-meta").innerHTML=`${evDate(ev).toUpperCase()} · J-${J(ev)} · <b>${c.name}</b> · ${c.km} KM · ${fmtInt(c.m)} M · TOP ${c.maxAlt} M — RIDDEN AT <b>${ftp} W</b> · <b>${(ftp/wt).toFixed(2)} W/KG</b>`;
   rcEl("wf-ftpday").textContent=ftp+" W";rcEl("wf-wkgday").textContent=(ftp/wt).toFixed(2);
   drawCourseProfile(c,sim,RCVIEW);
-  rcEl("rc-splits").innerHTML=sim.splits.map(sp=>`<div class="rc-split"><span class="cn">${sp.n} <span class="dim">· CAT ${sp.cat}</span></span><span class="dim">${sp.len}</span><span class="dim">${sp.avg}%</span><span class="cw">${sp.w} W</span><span>${sp.wkg}</span><span class="dim">${sp.vam}</span><span>${hms(sp.secs)} <span class="dim">· ETA ${hms(sp.eta)}</span></span></div>`).join("")||`<div class="rc-split"><span class="cn">No categorised climbs on this course</span></div>`;
+  rcEl("rc-splits").innerHTML=sim.splits.map((sp,ci)=>`<div class="rc-split"><span><input class="cn" data-ci="${ci}" value="${sp.n.replace(/"/g,"&quot;")}" title="Rename this climb"/><span class="dim" style="font-size:9px">CAT ${sp.cat} · FROM KM ${sp.startKm}</span></span><span class="dim">${sp.len}</span><span class="dim">${sp.avg}%</span><span><input class="cw" type="number" data-cw="${ci}" value="${sp.w}" title="Target watts for this climb"/></span><span>${sp.wkg}</span><span class="dim">${sp.vam}</span><span>${hms(sp.secs)} <span class="dim">· ETA ${hms(sp.eta)}</span></span></div>`).join("")||`<div class="rc-split"><span class="cn">No categorised climbs on this course</span></div>`;
+  rcEl("rc-splits").querySelectorAll("input.cw").forEach(inp=>inp.onchange=()=>{const ci=+inp.dataset.cw,v=+inp.value;ev.recon=ev.recon||{};ev.recon.climbW=ev.recon.climbW||{};ev.recon.climbW[c.id]=ev.recon.climbW[c.id]||{};if(v>0)ev.recon.climbW[c.id][ci]=v;else delete ev.recon.climbW[c.id][ci];saveProfile();buildRecon();});
+  rcEl("rc-splits").querySelectorAll("input.cn").forEach(inp=>inp.onchange=async()=>{const ci=+inp.dataset.cn,n=inp.value.trim();if(!n)return;c.climbs[ci].n=n;if(ev.cols&&ev.cols[ci])ev.cols[ci].n=n;saveProfile();
+    if(LIVE)await api("/api/routes?id="+c.id,{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({climbs:[{i:ci,n}]})}).catch(()=>{});buildRecon();});
   rcEl("rc-fin").textContent=hms(sim.total);
   rcEl("rc-finband").textContent=`PROJECTED FINISH · ${sim.finishKmh} KM/H · BAND ${hms(sim.total*.97)} – ${hms(sim.total*1.045)} · PHYSICS ON THE REAL ROAD`;
   const hard=sim.splits.reduce((a,b)=>(!a||b.fiets>a.fiets)?b:a,null);
@@ -2927,6 +2945,70 @@ openRecon=function(id){_openRecon2(id);const ev=EVENTS.find(e=>e.id===id);if(!ev
       if(p<1)ghostRAF=requestAnimationFrame(frame);else rcEl("g-gap").textContent=hms(Math.abs(tThen-tNow))+(tNow<=tThen?" AHEAD":" BEHIND");}
     ghostRAF=requestAnimationFrame(frame);});})();
 
+
+/* ═══ v2.7 — recon controls, selection stats, routes library ═══ */
+rcEl("wf-ftpin").addEventListener("change",e=>{const ev=EVENTS.find(x=>x.id===rcEv);if(!ev)return;const v=+e.target.value;ev.recon=ev.recon||{};if(v>0)ev.recon.ftpDay=v;else delete ev.recon.ftpDay;saveProfile();buildRecon();});
+rcEl("wf-ftpauto").onclick=()=>{const ev=EVENTS.find(x=>x.id===rcEv);if(!ev)return;if(ev.recon)delete ev.recon.ftpDay;saveProfile();buildRecon();};
+/* drag-select a stretch of the profile */
+let RCSEL=null;
+const _dcp=drawCourseProfile;
+drawCourseProfile=function(c,sim,view){
+  _dcp(c,sim,view);
+  const P=c.points,svg=rcEl("rc-prof"),Wd=1200;
+  const i0=view?view[0]:0,i1=view?view[1]:P.length-1,d0=P[i0].d,d1=P[i1].d;
+  const kmAt=e=>{const r=svg.getBoundingClientRect();return d0+Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*(d1-d0);};
+  const idxAt=d=>{let i=i0;while(i<i1&&P[i+1].d<d)i++;return i;};
+  const rect=document.createElementNS("http://www.w3.org/2000/svg","rect");rect.setAttribute("y","0");rect.setAttribute("height","340");rect.setAttribute("fill","#FFD100");rect.setAttribute("opacity","0");rect.setAttribute("pointer-events","none");svg.appendChild(rect);
+  const paint=()=>{if(!RCSEL){rect.setAttribute("opacity","0");return;}const x0=(P[RCSEL[0]].d-d0)/(d1-d0)*Wd,x1=(P[RCSEL[1]].d-d0)/(d1-d0)*Wd;rect.setAttribute("x",Math.min(x0,x1));rect.setAttribute("width",Math.max(2,Math.abs(x1-x0)));rect.setAttribute("opacity",".14");};
+  paint();
+  let down=null,moved=false;
+  svg.addEventListener("mousedown",e=>{down=idxAt(kmAt(e));moved=false;});
+  svg.addEventListener("mousemove",e=>{if(down==null)return;const i=idxAt(kmAt(e));if(Math.abs(i-down)>2){moved=true;RCSEL=[Math.min(down,i),Math.max(down,i)];paint();}});
+  const finish=e=>{if(down==null)return;if(moved){RCSEL=[Math.min(down,idxAt(kmAt(e))),Math.max(down,idxAt(kmAt(e)))];paint();renderSelection(c,sim);}down=null;};
+  svg.addEventListener("mouseup",finish);svg.addEventListener("mouseleave",e=>{if(down!=null&&moved)finish(e);down=null;});
+};
+function renderSelection(c,sim){
+  const card=rcEl("rc-selcard");if(!RCSEL){card.style.display="none";return;}
+  const [a,b]=RCSEL,P=c.points;if(b-a<2){card.style.display="none";return;}
+  const len=(P[b].d-P[a].d)/1000;let gain=0,loss=0,mx=-99;
+  for(let i=a;i<b;i++){const df=P[i+1].alt-P[i].alt;if(df>0)gain+=df;else loss-=df;mx=Math.max(mx,P[i].g);}
+  const secs=sim.cum[b]-sim.cum[a],pw=sim.pw.slice(a,b),avgW=Math.round(pw.reduce((x,y)=>x+y,0)/Math.max(1,pw.length));
+  const avg=(P[b].alt-P[a].alt)/(P[b].d-P[a].d)*100;
+  card.style.display="block";
+  card.innerHTML=`<div class="rc-sl" style="margin-bottom:10px">SELECTION · KM ${(P[a].d/1000).toFixed(1)} → ${(P[b].d/1000).toFixed(1)}</div>
+    <div class="rc-selstats">
+      <span class="k">DISTANCE<b>${len.toFixed(1)}<i>KM</i></b></span><span class="k">GAIN<b>${Math.round(gain)}<i>M</i></b></span><span class="k">LOSS<b>${Math.round(loss)}<i>M</i></b></span>
+      <span class="k">AVG<b>${avg.toFixed(1)}<i>%</i></b></span><span class="k">MAX<b>${mx.toFixed(1)}<i>%</i></b></span>
+      <span class="k">TIME<b>${hms(secs)}</b></span><span class="k">AVG POWER<b>${avgW}<i>W</i></b></span><span class="k">SPEED<b>${(len/(secs/3600)).toFixed(1)}<i>KM/H</i></b></span>
+      ${gain>50?`<span class="k">VAM<b>${Math.round(gain/(secs/3600))}<i>M/H</i></b></span>`:""}
+      <span class="k">ETA<b>${hms(sim.cum[a])} → ${hms(sim.cum[b])}</b></span>
+      <span style="margin-left:auto;display:flex;gap:6px"><button class="rc-tab on" id="rc-selzoom">ZOOM IN</button><button class="rc-tab" id="rc-selclear">CLEAR</button></span></div>`;
+  rcEl("rc-selzoom").onclick=()=>{RCVIEW=[Math.max(0,a-3),Math.min(P.length-1,b+3)];drawCourseProfile(c,sim,RCVIEW);};
+  rcEl("rc-selclear").onclick=()=>{RCSEL=null;card.style.display="none";drawCourseProfile(c,sim,RCVIEW);};
+}
+const _brc=buildReconCourse;buildReconCourse=function(ev,c){if(RCX&&RCX.id!==c.id){RCSEL=null;rcEl("rc-selcard").style.display="none";}_brc(ev,c);if(RCSEL)renderSelection(c,RCSIM);};
+/* routes library */
+async function renderLibrary(){
+  const l=rcEl("rc-lib"),ev=EVENTS.find(e=>e.id===rcEv);if(!l||!ev)return;
+  let list=[];try{list=LIVE?(await api("/api/routes")).routes:Object.values(ROUTES).map(c=>({id:c.id,name:c.name,km:c.km,m:c.m,climbs:c.climbs.length,source:c.source,hardest:c.climbs[0]?.n}));}catch(e){}
+  l.innerHTML=`<div class="rc-sl" style="margin-bottom:6px">ROUTES LIBRARY · ${list.length} SAVED · RENAME BY TYPING · ATTACH TO ${ev.short}</div>`+
+    (list.length?list.map(r=>`<div class="rc-lrow" data-id="${r.id}"><input value="${(r.name||"").replace(/"/g,"&quot;")}" data-rn="${r.id}"/><span class="dim">${r.km} KM</span><span class="dim">${fmtInt(r.m)} M</span><span class="dim">${r.climbs} CL</span><span class="dim">${(r.source||"").toUpperCase()}${r.hardest?" · "+r.hardest.toUpperCase().slice(0,14):""}</span>
+      <span class="acts">${(ev.routes||[]).includes(r.id)?`<button class="rc-tab on" data-open="${r.id}">OPEN</button>`:`<button class="rc-tab" data-attach="${r.id}">ATTACH</button>`}<button class="rc-tab" data-del="${r.id}" style="color:#E23A2E">DELETE</button></span></div>`).join("")
+    :`<div class="dim" style="font-size:12px;color:#7C8B96">Nothing saved yet. Drop a GPX or paste a Komoot link.</div>`);
+  l.querySelectorAll("[data-rn]").forEach(inp=>inp.onchange=async()=>{const id=inp.dataset.rn,n=inp.value.trim();if(!n)return;if(ROUTES[id])ROUTES[id].name=n;
+    if(LIVE)await api("/api/routes?id="+id,{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({name:n})}).catch(()=>{});renderRcCourses();if(ev.route===id)buildRecon();});
+  l.querySelectorAll("[data-attach]").forEach(b=>b.onclick=async()=>{const id=b.dataset.attach;const c=await loadRoute(id);if(!c)return;ev.routes=ev.routes||[];if(!ev.routes.includes(id))ev.routes.push(id);ev.route=id;
+    ev.km=c.km;ev.m=c.m;ev.cols=c.climbs.map(cl=>({n:cl.n,len:cl.len,g:cl.avg,top:cl.top}));saveProfile();renderRcCourses();buildRecon();renderLibrary();});
+  l.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{ev.route=b.dataset.open;saveProfile();renderRcCourses();buildRecon();});
+  l.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{const id=b.dataset.del;if(!confirm("Delete this route from the library?"))return;
+    if(LIVE)await api("/api/routes?id="+id,{method:"DELETE"}).catch(()=>{});delete ROUTES[id];
+    EVENTS.forEach(e=>{e.routes=(e.routes||[]).filter(x=>x!==id);if(e.route===id)e.route=e.routes[0]||null;});saveProfile();renderRcCourses();buildRecon();renderLibrary();});
+}
+/* keyboard: ← → to move between the event's routes while the room is open */
+window.addEventListener("keydown",e=>{if(!rcEl("recon").classList.contains("on"))return;if(e.target.matches("input,select,textarea"))return;
+  const ev=EVENTS.find(x=>x.id===rcEv);if(!ev||!(ev.routes||[]).length)return;
+  if(e.key==="ArrowLeft"||e.key==="ArrowRight"){const i=ev.routes.indexOf(ev.route),n=ev.routes.length;ev.route=ev.routes[(i+(e.key==="ArrowRight"?1:n-1))%n];saveProfile();renderRcCourses();buildRecon();}});
+
 </script>
 <script>
 /* ═══ VeloX course pipeline: GPX → resampled profile → climbs → physics ═══ */
@@ -3013,7 +3095,7 @@ function simulate(course,r){
   for(let i=0;i<P.length-1;i++){
     const p=P[i],dd=(P[i+1].d-p.d)||50;
     const ci=inClimb[i];let power;
-    if(ci!=null)power=r.ftp*pacePct(course.climbs[ci].len)*fresh;
+    if(ci!=null)power=(r.climbW&&r.climbW[ci])?+r.climbW[ci]:r.ftp*pacePct(course.climbs[ci].len)*fresh;
     else if(p.g<-2)power=30;else if(p.g<-0.5)power=r.ftp*0.5;else if(p.g>3)power=r.ftp*0.9*fresh;else power=r.ftp*0.72*fresh;
     const rho=1.225*Math.exp(-p.alt/8500);
     const v=solveV(power*k,p.g,mass,cda,rho,crr);
