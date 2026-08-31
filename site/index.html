@@ -3166,8 +3166,7 @@ function renderEftp(){
     EFTP.current=v;renderEftp();};
 }
 /* load when the rider profile drawer opens */
-(function(){const btn=document.getElementById("btn-profile");if(!btn)return;const o=btn.onclick;
-  btn.onclick=e=>{o&&o(e);setTimeout(()=>loadEftp(),200);};})();
+const _od=openDrawer;openDrawer=function(){_od();setTimeout(()=>loadEftp(),150);};
 const _al5=applyLive;applyLive=function(m){_al5(m);EFTP=null;};
 
 </script>
