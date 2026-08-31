@@ -573,6 +573,24 @@ svg#rc-prof{display:block;width:100%;height:340px}
 @keyframes gpulse{0%,100%{r:6}50%{r:8}}
 .gdot{animation:gpulse 1.6s ease-in-out infinite}
 
+/* ── RECON COURSES ── */
+.rc-courses{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.rc-cc{background:#141D26;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;min-width:190px;cursor:pointer;position:relative;transition:all .25s}
+.rc-cc:hover{border-color:rgba(255,255,255,.25)}
+.rc-cc.on{border-color:var(--jaune);box-shadow:inset 0 0 0 1px var(--jaune)}
+.rc-cc .n{font-weight:600;font-size:13px;color:#E8EEF2}
+.rc-cc .m{font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.1em;color:#7C8B96;margin-top:5px}
+.rc-cc .src{position:absolute;top:10px;right:12px;font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.14em;color:#5E6E7A}
+.rc-cc .x{position:absolute;bottom:8px;right:10px;border:none;background:none;color:#7C8B96;cursor:pointer;font-size:12px}
+.rc-cc.add{border-style:dashed;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.14em;color:#93A2AE;min-height:62px}
+.rc-cc.add:hover{color:var(--jaune);border-color:var(--jaune)}
+.rc-tip{position:absolute;top:16px;left:16px;background:rgba(14,21,28,.92);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:9px 12px;font-family:'Space Grotesk';font-size:10.5px;font-weight:700;line-height:1.65;color:#E8EEF2;pointer-events:none;z-index:3}
+.rc-tip .d{color:#7C8B96;font-size:8.5px;letter-spacing:.14em}
+.rc-drop{position:fixed;inset:0;z-index:130;background:rgba(14,21,28,.86);display:none;align-items:center;justify-content:center;font-family:'Space Grotesk';font-size:14px;font-weight:700;letter-spacing:.3em;color:var(--jaune);border:3px dashed var(--jaune);margin:16px;border-radius:24px}
+.rc-drop.on{display:flex}
+.rc-link{display:flex;gap:8px;margin-top:10px;width:100%}
+.rc-link input{flex:1;background:#0E151C;border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:9px 11px;color:#E8EEF2;font-family:'Space Grotesk';font-size:11px;font-weight:700}
+.rc-busy{font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.14em;color:var(--jaune);margin-top:8px}
 /* ── MOBILE FALLBACK ── */
 @media(max-width:980px){
   .rail{top:auto;bottom:0;left:0;right:0;width:auto;height:64px;flex-direction:row;justify-content:space-around;padding:6px 8px;border-right:none;border-top:1px solid var(--line)}
@@ -852,7 +870,11 @@ svg#rc-prof{display:block;width:100%;height:340px}
   <div class="rc-wrap">
     <div>
       <div class="rc-hero"><h1 id="rc-name"></h1><div class="rc-sub" id="rc-meta"></div></div>
-      <div class="rc-card"><svg id="rc-prof" viewBox="0 0 1200 340" preserveAspectRatio="none"></svg><div class="rc-proflab" id="rc-proflab"></div></div>
+      <div class="rc-courses" id="rc-courses"></div>
+      <div class="rc-card" style="position:relative"><svg id="rc-prof" viewBox="0 0 1200 340" preserveAspectRatio="none"></svg><div class="rc-proflab" id="rc-proflab"></div><div class="rc-tip" id="rc-tip" style="display:none"></div><button class="rc-tab" id="rc-zoomout" style="position:absolute;top:14px;right:14px;display:none">↺ WHOLE COURSE</button></div>
+      <div class="rc-card" id="rc-mapcard" style="display:none;overflow:hidden"><div id="rc-map" style="height:300px"></div></div>
+      <input type="file" id="gpxfile" accept=".gpx,application/gpx+xml" style="display:none" multiple/>
+      <div id="rc-drop" class="rc-drop"><div>DROP YOUR GPX</div></div>
       <div class="rc-card">
         <div class="rc-splith"><span>COL</span><span>KM</span><span>AVG</span><span>TARGET</span><span>W/KG</span><span>VAM</span><span>TIME</span></div>
         <div id="rc-splits"></div>
@@ -865,6 +887,7 @@ svg#rc-prof{display:block;width:100%;height:340px}
         <div class="wf"><div class="wl"><span>RACE WEIGHT</span><b id="wfv-weight">75.0 kg</b></div><input type="range" id="wf-weight" min="65" max="85" step="0.5"/></div>
         <div class="wf"><div class="wl"><span>FTP RAMP / WEEK</span><b id="wfv-ramp">+0.75 W</b></div><input type="range" id="wf-ramp" min="0" max="1.5" step="0.05" value="0.75"/></div>
         <div class="wf"><div class="wl"><span>WEEKLY TSS</span><b id="wfv-tss">520</b></div><input type="range" id="wf-tss" min="300" max="700" step="10" value="520"/></div>
+        <div class="wf" id="wf-cdawrap"><div class="wl"><span>AERO · CdA</span><b id="wfv-cda">0.32</b></div><input type="range" id="wf-cda" min="0.24" max="0.42" step="0.01" value="0.32"/></div>
         <div class="rc-gread"><span>FTP ON THE DAY</span><b class="g1" id="wf-ftpday"></b></div>
         <div class="rc-gread"><span>W/KG ON THE DAY</span><b class="g1" id="wf-wkgday"></b></div>
       </div>
@@ -2745,6 +2768,261 @@ drawRadar=function(){
     <div class="pp">${AX.map(([k,l],i)=>`<span class="pl">${l}</span><span class="bars">${bar(b6[i].v,"#FFD100")}${bar(bs[i].v,"#26496E")}${bar(ba[i].v,"#141E28")}</span><span class="pv">${ba[i].v||"—"}<small>${ba[i].d?ba[i].d.slice(5).replace("-","/"):""}</small></span>`).join("")}</div>
     <div class="ds" style="margin-top:14px">Gold pills mark your last six weeks. The three layers only separate once older rides are in: open them from the Timeline, or ask me for the streams backfill.</div>`;
 };
+
+
+/* ═══ v2.6 — real courses in the Recon Room ═══ */
+window.ROUTES={};let RCX=null,RCSIM=null,RCVIEW=null;
+const rcEl=id=>document.getElementById(id);
+async function loadRoute(id){if(ROUTES[id])return ROUTES[id];try{const c=await api("/api/routes?id="+id);ROUTES[id]=c;return c;}catch(e){return null;}}
+async function saveCourse(c){if(!LIVE){ROUTES[c.id]=c;return c;}await api("/api/routes",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(c)});ROUTES[c.id]=c;return c;}
+async function nameClimbs(c){
+  if(!MAPTOKEN)return c;
+  for(const cl of c.climbs){try{
+    const r=await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${cl.lng},${cl.lat}.json?types=poi,locality,neighborhood,place&limit=3&access_token=${MAPTOKEN}`).then(x=>x.json());
+    const f=(r.features||[]);const poi=f.find(x=>/col |mont |mount|pass|sommet|côte|cote |hill|summit|peak/i.test(x.text||""));
+    cl.n=poi?poi.text:(f[0]?`Climb to ${f[0].text}`:cl.n);}catch(e){}}
+  return c;
+}
+function busy(t){let el=rcEl("rc-busy");if(!el){el=document.createElement("div");el.id="rc-busy";el.className="rc-busy";rcEl("rc-courses").after(el);}el.textContent=t||"";el.style.display=t?"block":"none";}
+async function ingestCourse(raw,source){
+  const ev=EVENTS.find(e=>e.id===rcEv);if(!ev)return;
+  busy("BUILDING THE COURSE…");
+  let c=buildCourse(raw,{source,name:raw.name});
+  busy("NAMING THE CLIMBS…");c=await nameClimbs(c);
+  busy("SAVING…");await saveCourse(c);
+  ev.routes=ev.routes||[];if(!ev.routes.includes(c.id))ev.routes.push(c.id);ev.route=c.id;
+  if(!ev.km||source!=="manual"){ev.km=c.km;ev.m=c.m;}
+  ev.cols=c.climbs.map(cl=>({n:cl.n,len:cl.len,g:cl.avg,top:cl.top}));
+  saveProfile();busy("");renderRcCourses();buildRecon();
+}
+function attachDrop(){
+  const rec=rcEl("recon"),dz=rcEl("rc-drop");if(!rec||rec.dataset.drop)return;rec.dataset.drop="1";
+  let n=0;rec.addEventListener("dragenter",e=>{e.preventDefault();n++;dz.classList.add("on");});
+  rec.addEventListener("dragover",e=>e.preventDefault());
+  rec.addEventListener("dragleave",()=>{if(--n<=0){n=0;dz.classList.remove("on");}});
+  rec.addEventListener("drop",async e=>{e.preventDefault();n=0;dz.classList.remove("on");
+    for(const f of [...e.dataTransfer.files]){if(!/\.gpx$/i.test(f.name))continue;const t=await f.text();await ingestCourse(parseGPX(t),"gpx");}});
+  rcEl("gpxfile").onchange=async e=>{for(const f of [...e.target.files]){const t=await f.text();await ingestCourse(parseGPX(t),"gpx");}e.target.value="";};
+}
+function renderRcCourses(){
+  const ev=EVENTS.find(e=>e.id===rcEv),el=rcEl("rc-courses");if(!ev||!el)return;
+  const ids=ev.routes||[];
+  el.innerHTML=ids.map(id=>{const c=ROUTES[id];const on=ev.route===id;
+    return `<div class="rc-cc ${on?"on":""}" data-id="${id}"><span class="src">${(c?.source||"…").toUpperCase()}</span><div class="n">${c?c.name:"Loading…"}</div><div class="m">${c?`${c.km} KM · ${fmtInt(c.m)} M · ${c.climbs.length} CLIMB${c.climbs.length===1?"":"S"}`:""}</div><button class="x" data-x="${id}" title="Detach">✕</button></div>`;}).join("")
+    +`<div class="rc-cc add" id="rc-addgpx">+ DROP OR CHOOSE A GPX</div><div class="rc-cc add" id="rc-addkomoot">PASTE A KOMOOT LINK</div>${ev.route?"":`<div class="rc-cc add" id="rc-proc" style="opacity:.6">USING A SKETCHED PROFILE</div>`}`;
+  el.querySelectorAll(".rc-cc[data-id]").forEach(x=>x.onclick=e=>{if(e.target.closest("[data-x]"))return;ev.route=x.dataset.id;saveProfile();renderRcCourses();buildRecon();});
+  el.querySelectorAll("[data-x]").forEach(b=>b.onclick=e=>{e.stopPropagation();ev.routes=(ev.routes||[]).filter(i=>i!==b.dataset.x);if(ev.route===b.dataset.x)ev.route=ev.routes[0]||null;saveProfile();renderRcCourses();buildRecon();});
+  rcEl("rc-addgpx").onclick=()=>rcEl("gpxfile").click();
+  rcEl("rc-addkomoot").onclick=()=>{if(rcEl("rc-linkrow"))return;const row=document.createElement("div");row.id="rc-linkrow";row.className="rc-link";
+    row.innerHTML=`<input id="rc-linkin" placeholder="https://www.komoot.com/tour/123456789?share_token=…"/><button class="rc-tab on" id="rc-linkgo">FETCH</button><button class="rc-tab" id="rc-linkx">✕</button>`;el.after(row);
+    rcEl("rc-linkx").onclick=()=>row.remove();
+    rcEl("rc-linkgo").onclick=async()=>{const url=rcEl("rc-linkin").value.trim();if(!url)return;busy("READING THE KOMOOT TOUR…");
+      try{const d=await api("/api/komoot?url="+encodeURIComponent(url));row.remove();await ingestCourse({name:d.name,pts:d.pts},"komoot");}
+      catch(e){busy("");alert("Komoot: couldn't read that tour. Make it public or shared by link, or export the GPX and drop it here.");}};
+    rcEl("rc-linkin").focus();};
+  ids.forEach(id=>{if(!ROUTES[id])loadRoute(id).then(()=>{renderRcCourses();if(ev.route===id)buildRecon();});});
+}
+const hms=s=>{const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h?`${h}h${String(m).padStart(2,"0")}`:`${m}m${String(Math.round(s%60)).padStart(2,"0")}`;};
+function buildReconCourse(ev,c){
+  const ftp=ftpOnDay(ev),wt=WF.weight,cda=WF.cda||0.32;
+  const sim=simulate(c,{ftp,weight:wt,cda,fresh:fresh()});RCX=c;RCSIM=sim;
+  rcEl("rc-name").textContent=ev.name;
+  rcEl("rc-meta").innerHTML=`${evDate(ev).toUpperCase()} · J-${J(ev)} · <b>${c.name}</b> · ${c.km} KM · ${fmtInt(c.m)} M · TOP ${c.maxAlt} M — RIDDEN AT <b>${ftp} W</b> · <b>${(ftp/wt).toFixed(2)} W/KG</b>`;
+  rcEl("wf-ftpday").textContent=ftp+" W";rcEl("wf-wkgday").textContent=(ftp/wt).toFixed(2);
+  drawCourseProfile(c,sim,RCVIEW);
+  rcEl("rc-splits").innerHTML=sim.splits.map(sp=>`<div class="rc-split"><span class="cn">${sp.n} <span class="dim">· CAT ${sp.cat}</span></span><span class="dim">${sp.len}</span><span class="dim">${sp.avg}%</span><span class="cw">${sp.w} W</span><span>${sp.wkg}</span><span class="dim">${sp.vam}</span><span>${hms(sp.secs)} <span class="dim">· ETA ${hms(sp.eta)}</span></span></div>`).join("")||`<div class="rc-split"><span class="cn">No categorised climbs on this course</span></div>`;
+  rcEl("rc-fin").textContent=hms(sim.total);
+  rcEl("rc-finband").textContent=`PROJECTED FINISH · ${sim.finishKmh} KM/H · BAND ${hms(sim.total*.97)} – ${hms(sim.total*1.045)} · PHYSICS ON THE REAL ROAD`;
+  const hard=sim.splits.reduce((a,b)=>(!a||b.fiets>a.fiets)?b:a,null);
+  rcEl("rc-notetext").innerHTML=hard?`This course is decided on <b>${hard.n}</b>: ${hard.len} km at ${hard.avg}% (max ${hard.max}%), reached at km ${hard.startKm}. Ride it at <b>${hard.w} W</b> and you summit in <b>${hms(hard.secs)}</b> at ${hard.vam} m/h; the projection of <b>${hms(sim.total)}</b> stands. Drag weight, ramp, freshness or CdA and watch the finish move.`
+    :`A flat course: the projection of <b>${hms(sim.total)}</b> rests on aero and pacing. Lower the CdA slider to see what a better position buys.`;
+  drawCourseMap(c);
+}
+function drawCourseProfile(c,sim,view){
+  const P=c.points,Wd=1200,H=340,pb=44,pt=60;
+  const i0=view?view[0]:0,i1=view?view[1]:P.length-1;
+  const seg=P.slice(i0,i1+1),d0=P[i0].d,d1=P[i1].d;
+  const alts=seg.map(p=>p.alt),mn=Math.min(...alts),mx=Math.max(...alts),r=Math.max(60,mx-mn);
+  const px=d=>(d-d0)/(d1-d0)*Wd,py=a=>H-pb-((a-mn)/(r*1.08))*(H-pt-pb);
+  const line="M"+seg.map(p=>`${px(p.d).toFixed(1)},${py(p.alt).toFixed(1)}`).join("L");
+  const area=line+`L${Wd},${H-pb}L0,${H-pb}Z`;
+  const gcol=g=>g<2?"#5E6E7A":g<5?"#189B69":g<8?"#D99000":g<11?"#E8611F":"#E23A2E";
+  let bands="",labels="";
+  c.climbs.forEach((cl,ci)=>{if(cl.i1<i0||cl.i0>i1)return;
+    const x0=px(P[Math.max(cl.i0,i0)].d),x1=px(P[Math.min(cl.i1,i1)].d);
+    bands+=`<rect x="${x0}" y="${pt-10}" width="${Math.max(2,x1-x0)}" height="${H-pt-pb+10}" fill="${gcol(cl.avg)}" opacity=".10" data-cl="${ci}" style="cursor:zoom-in"/>`;
+    const sx=px(P[cl.i1].d),sy=py(P[cl.i1].alt);
+    labels+=`<line x1="${sx}" y1="${sy}" x2="${sx}" y2="${sy-22}" stroke="#FFD100" stroke-width="1.4"/>
+      <text x="${Math.min(Wd-90,Math.max(90,sx))}" y="${sy-30}" text-anchor="middle" font-family="Space Grotesk" font-size="12" font-weight="700" fill="#E8EEF2">${cl.n.toUpperCase()}</text>
+      <text x="${Math.min(Wd-90,Math.max(90,sx))}" y="${sy-46}" text-anchor="middle" font-family="Space Grotesk" font-size="9.5" font-weight="700" fill="#7C8B96">${cl.top} M · ${cl.len} KM @ ${cl.avg}% · CAT ${cl.cat}</text>`;});
+  let grad="";for(let i=i0;i<i1;i++){const p=P[i],q=P[i+1];grad+=`<line x1="${px(p.d).toFixed(1)}" y1="${py(p.alt).toFixed(1)}" x2="${px(q.d).toFixed(1)}" y2="${py(q.alt).toFixed(1)}" stroke="${gcol(p.g)}" stroke-width="2.6" stroke-linecap="round"/>`;}
+  const svg=rcEl("rc-prof");
+  svg.innerHTML=`<defs><linearGradient id="rcg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD100" stop-opacity=".14"/><stop offset="1" stop-color="#FFD100" stop-opacity="0"/></linearGradient></defs>
+    <path d="${area}" fill="url(#rcg2)"/>${bands}${grad}${labels}
+    <g id="rc-x" style="display:none"><line id="rc-xl" y1="${pt-10}" y2="${H-pb}" stroke="#E8EEF2" stroke-opacity=".5" stroke-width="1.2"/><circle id="rc-xc" r="5" fill="#FFD100" stroke="#0E151C" stroke-width="2"/></g>
+    <circle id="gd-now" class="gdot" r="6" fill="#FFD100" stroke="#0E151C" stroke-width="2.5" opacity="0"/><circle id="gd-then" class="gdot" r="6" fill="#5E6E7A" stroke="#0E151C" stroke-width="2.5" opacity="0"/>`;
+  RCPTS=P.map(p=>({x:px(p.d),y:py(p.alt)}));
+  rcEl("rc-proflab").innerHTML=`<span>KM ${(d0/1000).toFixed(0)}</span><span>${view?"ZOOMED":"GRADIENT: GREY <2% · GREEN 2–5 · GOLD 5–8 · EMBER 8–11 · RED 11+"}</span><span>KM ${(d1/1000).toFixed(1)}</span>`;
+  rcEl("rc-zoomout").style.display=view?"block":"none";
+  rcEl("rc-zoomout").onclick=()=>{RCVIEW=null;drawCourseProfile(c,sim,null);};
+  svg.querySelectorAll("[data-cl]").forEach(b=>b.onclick=()=>{const cl=c.climbs[+b.dataset.cl];RCVIEW=[Math.max(0,cl.i0-6),Math.min(P.length-1,cl.i1+6)];drawCourseProfile(c,sim,RCVIEW);});
+  const tip=rcEl("rc-tip");
+  svg.onmousemove=e=>{const rct=svg.getBoundingClientRect();const fx=(e.clientX-rct.left)/rct.width;const d=d0+fx*(d1-d0);
+    let i=i0;while(i<i1&&P[i+1].d<d)i++;const p=P[i];
+    rcEl("rc-x").style.display="block";const xl=rcEl("rc-xl");xl.setAttribute("x1",px(p.d));xl.setAttribute("x2",px(p.d));
+    const xc=rcEl("rc-xc");xc.setAttribute("cx",px(p.d));xc.setAttribute("cy",py(p.alt));
+    tip.style.display="block";tip.style.left=Math.min(rct.width-180,Math.max(12,(e.clientX-rct.left)+14))+"px";
+    tip.innerHTML=`<div class="d">KM ${(p.d/1000).toFixed(1)} · ${Math.round(p.alt)} M</div>GRADIENT <span style="color:${gcol(p.g)}">${p.g>0?"+":""}${p.g}%</span><br/>TARGET <span style="color:#FFD100">${sim.pw[Math.min(i,sim.pw.length-1)]} W</span> · ${sim.spd[Math.min(i,sim.spd.length-1)]} KM/H<br/>ETA <span style="color:#E8EEF2">${hms(sim.cum[i])}</span>`;};
+  svg.onmouseleave=()=>{tip.style.display="none";const g=rcEl("rc-x");if(g)g.style.display="none";};
+}
+let RCMAP=null;
+function drawCourseMap(c){
+  const card=rcEl("rc-mapcard");if(!MAPTOKEN||!window.mapboxgl){card.style.display="none";return;}
+  card.style.display="block";
+  const coords=c.points.map(p=>[p.lng,p.lat]);
+  const stops=[];const N=60;for(let i=0;i<N;i++){const f=i/(N-1);const p=c.points[Math.floor(f*(c.points.length-1))];const g=p.g;stops.push(f,g<2?"#5E6E7A":g<5?"#189B69":g<8?"#D99000":g<11?"#E8611F":"#E23A2E");}
+  const bounds=[[c.bounds[0],c.bounds[1]],[c.bounds[2],c.bounds[3]]];
+  const paint=()=>{if(RCMAP.getLayer("crt"))RCMAP.removeLayer("crt");if(RCMAP.getSource("cr"))RCMAP.removeSource("cr");
+    RCMAP.addSource("cr",{type:"geojson",data:{type:"Feature",geometry:{type:"LineString",coordinates:coords}},lineMetrics:true});
+    RCMAP.addLayer({id:"crt",type:"line",source:"cr",layout:{"line-cap":"round","line-join":"round"},paint:{"line-width":4,"line-gradient":["interpolate",["linear"],["line-progress"],...stops]}});
+    (RCMAP._vxm||[]).forEach(m=>m.remove());RCMAP._vxm=c.climbs.map(cl=>{const d=document.createElement("div");d.style.cssText="background:#FFD100;color:#0E151C;font:700 9px 'Space Grotesk';padding:3px 7px;border-radius:6px;white-space:nowrap";d.textContent=cl.n.toUpperCase();return new mapboxgl.Marker({element:d}).setLngLat([cl.lng,cl.lat]).addTo(RCMAP);});
+    RCMAP.fitBounds(bounds,{padding:50,duration:0});setTimeout(()=>RCMAP.resize(),100);};
+  if(!RCMAP){RCMAP=new mapboxgl.Map({container:"rc-map",style:"mapbox://styles/mapbox/dark-v11",bounds,fitBoundsOptions:{padding:50}});RCMAP.on("load",paint);}
+  else{if(RCMAP.isStyleLoaded())paint();else RCMAP.once("idle",paint);}
+}
+/* route the recon through the course engine when the event has one */
+const _buildRecon2=buildRecon;
+buildRecon=function(){
+  const ev=EVENTS.find(e=>e.id===rcEv);if(!ev)return;
+  attachDrop();renderRcCourses();
+  rcEl("wf-cdawrap").style.display=ev.route?"block":"none";
+  if(ev.route){const c=ROUTES[ev.route];if(c){buildReconCourse(ev,c);return;}loadRoute(ev.route).then(cc=>{if(cc&&rcEv===ev.id)buildReconCourse(ev,cc);});return;}
+  RCX=null;RCSIM=null;rcEl("rc-mapcard").style.display="none";rcEl("rc-zoomout").style.display="none";_buildRecon2();
+};
+rcEl("wf-cda").addEventListener("input",e=>{WF.cda=+e.target.value;rcEl("wfv-cda").textContent=WF.cda.toFixed(2);requestAnimationFrame(buildRecon);});
+/* persist what-if settings per event */
+["weight","ramp","tss","cda"].forEach(k=>rcEl("wf-"+k).addEventListener("change",()=>{const ev=EVENTS.find(e=>e.id===rcEv);if(!ev)return;ev.recon={...(ev.recon||{}),[k]:WF[k]};saveProfile();}));
+const _openRecon2=openRecon;
+openRecon=function(id){_openRecon2(id);const ev=EVENTS.find(e=>e.id===id);if(!ev)return;
+  const r=ev.recon||{};if(r.weight){WF.weight=r.weight;rcEl("wf-weight").value=r.weight;rcEl("wfv-weight").textContent=r.weight.toFixed(1)+" kg";}
+  if(r.ramp!=null){WF.ramp=r.ramp;rcEl("wf-ramp").value=r.ramp;rcEl("wfv-ramp").textContent="+"+r.ramp.toFixed(2)+" W";}
+  if(r.tss){WF.tss=r.tss;rcEl("wf-tss").value=r.tss;rcEl("wfv-tss").textContent=r.tss;}
+  WF.cda=r.cda||0.32;rcEl("wf-cda").value=WF.cda;rcEl("wfv-cda").textContent=WF.cda.toFixed(2);
+  RCVIEW=null;setTimeout(buildRecon,450);};
+/* ghost race on the real road */
+(function(){const old=rcEl("rc-ghost"),btn=old.cloneNode(true);old.parentNode.replaceChild(btn,old);
+  btn.addEventListener("click",()=>{
+    cancelAnimationFrame(ghostRAF);const ev=EVENTS.find(e=>e.id===rcEv);if(!ev)return;
+    const dn=rcEl("gd-now"),dt=rcEl("gd-then");if(!dn||!dt)return;dn.setAttribute("opacity",1);dt.setAttribute("opacity",1);
+    let posNow,posThen,tNow,tThen;
+    if(RCX&&RCSIM){const then=simulate(RCX,{ftp:startFtp,weight:startWeight,cda:WF.cda||0.32});tNow=RCSIM.total;tThen=then.total;
+      const at=(cum,t)=>{let lo=0,hi=cum.length-1;while(lo<hi){const m=(lo+hi+1)>>1;if(cum[m]<=t)lo=m;else hi=m-1;}return RCPTS[Math.min(lo,RCPTS.length-1)];};
+      posNow=t=>at(RCSIM.cum,t);posThen=t=>at(then.cum,t);}
+    else{if(!RCLAST)return;const then=raceModel(ev,startFtp,startWeight);tNow=RCLAST.total*3600;tThen=then.total*3600;
+      const at=(T,t)=>RCPTS[Math.min(RCPTS.length-1,Math.floor(Math.min(1,t/T)*RCPTS.length))];posNow=t=>at(tNow,t);posThen=t=>at(tThen,t);}
+    const slow=Math.max(tNow,tThen),t0=performance.now(),DUR=9000;
+    function frame(ts){const p=Math.min(1,(ts-t0)/DUR),sim=p*slow;const a=posNow(sim),b=posThen(sim);
+      dn.setAttribute("cx",a.x);dn.setAttribute("cy",a.y-7);dt.setAttribute("cx",b.x);dt.setAttribute("cy",b.y-7);
+      rcEl("g-now").textContent=sim>=tNow?hms(tNow)+" ✓":hms(sim);rcEl("g-then").textContent=sim>=tThen?hms(tThen)+" ✓":hms(sim);
+      if(p<1)ghostRAF=requestAnimationFrame(frame);else rcEl("g-gap").textContent=hms(Math.abs(tThen-tNow))+(tNow<=tThen?" AHEAD":" BEHIND");}
+    ghostRAF=requestAnimationFrame(frame);});})();
+
+</script>
+<script>
+/* ═══ VeloX course pipeline: GPX → resampled profile → climbs → physics ═══ */
+function parseGPX(text){
+  const name=(text.match(/<name>([^<]*)<\/name>/)||[])[1]||"Course";
+  const re=/<(trkpt|rtept)\s+[^>]*lat="([-\d.]+)"[^>]*lon="([-\d.]+)"[^>]*>([\s\S]*?)<\/\1>/g;
+  const pts=[];let m;
+  while((m=re.exec(text))){const ele=(m[4].match(/<ele>([-\d.]+)<\/ele>/)||[])[1];
+    pts.push({lat:+m[2],lng:+m[3],ele:ele!=null?+ele:null});}
+  return {name:name.replace(/&apos;|’/g,"'").trim(),pts};
+}
+function hav(a,b){const R=6371000,dLat=(b.lat-a.lat)*Math.PI/180,dLng=(b.lng-a.lng)*Math.PI/180;
+  const s=Math.sin(dLat/2)**2+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLng/2)**2;
+  return 2*R*Math.asin(Math.sqrt(s));}
+function bearing(a,b){const y=Math.sin((b.lng-a.lng)*Math.PI/180)*Math.cos(b.lat*Math.PI/180);
+  const x=Math.cos(a.lat*Math.PI/180)*Math.sin(b.lat*Math.PI/180)-Math.sin(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.cos((b.lng-a.lng)*Math.PI/180);
+  return (Math.atan2(y,x)*180/Math.PI+360)%360;}
+function buildCourse(raw,opts={}){
+  const step=opts.step||50;
+  const pts=raw.pts.filter(p=>isFinite(p.lat)&&isFinite(p.lng));
+  const cum=[0];for(let i=1;i<pts.length;i++)cum.push(cum[i-1]+hav(pts[i-1],pts[i]));
+  const total=cum[cum.length-1];
+  const out=[];let j=0;
+  for(let d=0;d<=total;d+=step){
+    while(j<cum.length-2&&cum[j+1]<d)j++;
+    const a=pts[j],b=pts[Math.min(j+1,pts.length-1)],span=(cum[j+1]-cum[j])||1,f=Math.max(0,Math.min(1,(d-cum[j])/span));
+    const ea=a.ele??b.ele??0,eb=b.ele??a.ele??0;
+    out.push({d,lat:a.lat+(b.lat-a.lat)*f,lng:a.lng+(b.lng-a.lng)*f,ele:ea+(eb-ea)*f});}
+  if(out[out.length-1].d<total)out.push({d:total,lat:pts[pts.length-1].lat,lng:pts[pts.length-1].lng,ele:pts[pts.length-1].ele??out[out.length-1].ele});
+  const w=Math.max(1,Math.round(100/step));
+  for(let i=0;i<out.length;i++){let s=0,n=0;for(let k=Math.max(0,i-w);k<=Math.min(out.length-1,i+w);k++){s+=out[k].ele;n++;}out[i].alt=s/n;}
+  let gain=0,loss=0;
+  for(let i=0;i<out.length;i++){
+    const p=out[i],q=out[Math.min(i+1,out.length-1)],dd=(q.d-p.d)||step;
+    p.g=i<out.length-1?((q.alt-p.alt)/dd)*100:0;
+    p.brg=i<out.length-1?bearing(p,q):(out[i-1]?out[i-1].brg:0);
+    if(i>0){const df=p.alt-out[i-1].alt;if(df>0)gain+=df;else loss-=df;}}
+  const lats=out.map(p=>p.lat),lngs=out.map(p=>p.lng);
+  const course={id:opts.id||("c"+Date.now().toString(36)),name:opts.name||raw.name,source:opts.source||"gpx",
+    km:+(total/1000).toFixed(1),m:Math.round(gain),loss:Math.round(loss),maxAlt:Math.round(Math.max(...out.map(p=>p.alt))),
+    start:{lat:out[0].lat,lng:out[0].lng},bounds:[Math.min(...lngs),Math.min(...lats),Math.max(...lngs),Math.max(...lats)],
+    points:out.map(p=>({d:Math.round(p.d),lat:+p.lat.toFixed(5),lng:+p.lng.toFixed(5),alt:+p.alt.toFixed(1),g:+p.g.toFixed(1),brg:Math.round(p.brg)})),
+    createdAt:new Date().toISOString()};
+  course.climbs=detectClimbs(course.points);
+  return course;
+}
+function detectClimbs(P){
+  const climbs=[];let i=0;
+  while(i<P.length-1){
+    if(P[i].g<=1.5){i++;continue;}
+    let start=i,hi=i,hiAlt=P[i].alt,lowSince=P[i].alt,k=i+1;
+    while(k<P.length){
+      if(P[k].alt>hiAlt){hiAlt=P[k].alt;hi=k;lowSince=hiAlt;}
+      else{lowSince=Math.min(lowSince,P[k].alt);
+        const gainSoFar=hiAlt-P[start].alt;
+        if(hiAlt-lowSince>Math.max(15,gainSoFar*0.15)||(P[hi].d-P[start].d>500&&P[k].d-P[hi].d>2500))break;}
+      k++;}
+    const len=P[hi].d-P[start].d,gain=hiAlt-P[start].alt;
+    if(gain>=60&&len>=800&&gain/len*100>=2.5){
+      let mx=0;const win=Math.round(500/50);
+      for(let a=start;a+win<=hi;a++){mx=Math.max(mx,(P[a+win].alt-P[a].alt)/((P[a+win].d-P[a].d)||1)*100);}
+      const fiets=(gain*gain)/(len*10)+(hiAlt>1000?(hiAlt-1000)/1000:0);
+      climbs.push({i0:start,i1:hi,startKm:+(P[start].d/1000).toFixed(1),len:+(len/1000).toFixed(1),gain:Math.round(gain),
+        avg:+(gain/len*100).toFixed(1),max:+mx.toFixed(1),top:Math.round(hiAlt),fiets:+fiets.toFixed(1),
+        cat:fiets>=8?"HC":fiets>=6?"1":fiets>=4?"2":fiets>=2?"3":fiets>=1?"4":"—",
+        lat:P[hi].lat,lng:P[hi].lng,n:"Climb "+(climbs.length+1)});}
+    i=Math.max(k,hi+1);}
+  return climbs;
+}
+/* physics */
+function solveV(P,grade,mass,cda,rho,crr){
+  const g=9.81,eff=0.97,slope=grade/100,sinT=slope/Math.sqrt(1+slope*slope),cosT=1/Math.sqrt(1+slope*slope);
+  const a=0.5*rho*cda,b=mass*g*(sinT+crr*cosT),Pe=P*eff;
+  if(Pe<=0&&b>=0)return 0.5;
+  let v=(b<0?Math.sqrt(-b/a):0)+Math.cbrt(Math.max(Pe,1)/a)+1;  // start above the root: Newton converges monotonically
+  for(let it=0;it<25;it++){const f=a*v*v*v+b*v-Pe,fp=3*a*v*v+b;if(!isFinite(fp)||fp===0)break;const nv=v-f/fp;if(nv<=0.3){v=0.3;break;}if(Math.abs(nv-v)<1e-4){v=nv;break;}v=nv;}
+  return Math.min(v,16.7);
+}
+function pacePct(lenKm){return lenKm>16?.82:lenKm>10?.86:lenKm>5?.90:lenKm>2?.94:.97;}
+function simulate(course,r){
+  const P=course.points,mass=(r.weight||70)+(r.bike||8.5),cda=r.cda||0.32,crr=r.crr||0.004,fresh=r.fresh||1,k=r.k||1;
+  const inClimb=new Array(P.length).fill(null);course.climbs.forEach((c,ci)=>{for(let i=c.i0;i<=c.i1;i++)inClimb[i]=ci;});
+  let t=0;const cum=[0],pw=[],spd=[];
+  for(let i=0;i<P.length-1;i++){
+    const p=P[i],dd=(P[i+1].d-p.d)||50;
+    const ci=inClimb[i];let power;
+    if(ci!=null)power=r.ftp*pacePct(course.climbs[ci].len)*fresh;
+    else if(p.g<-2)power=30;else if(p.g<-0.5)power=r.ftp*0.5;else if(p.g>3)power=r.ftp*0.9*fresh;else power=r.ftp*0.72*fresh;
+    const rho=1.225*Math.exp(-p.alt/8500);
+    const v=solveV(power*k,p.g,mass,cda,rho,crr);
+    const dt=dd/v;t+=dt;cum.push(t);pw.push(Math.round(power));spd.push(+(v*3.6).toFixed(1));}
+  const splits=course.climbs.map(c=>{const tt=cum[c.i1]-cum[c.i0];const avgW=Math.round(pw.slice(c.i0,c.i1).reduce((a,b)=>a+b,0)/Math.max(1,c.i1-c.i0));
+    return {...c,secs:Math.round(tt),w:avgW,wkg:+(avgW/(r.weight||70)).toFixed(2),vam:Math.round(c.gain/(tt/3600)),eta:Math.round(cum[c.i1])};});
+  return {total:t,cum,pw,spd,splits,finishKmh:+(course.km/(t/3600)).toFixed(1)};
+}
+
 
 </script>
 </body>
