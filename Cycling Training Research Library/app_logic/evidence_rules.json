@@ -1,0 +1,179 @@
+{
+  "as_of": "2026-08-31",
+  "rules": [
+    {
+      "rule_id": "TID_001",
+      "domain": "cycling",
+      "rule": "Keep most weekly endurance training time below LT1/VT1; use targeted moderate/high intensity rather than threshold-heavy training every day.",
+      "confidence": "high",
+      "evidence": [
+        "OLIVEIRA2024_POLARIZED",
+        "SPERLICH2023_ELITE_TID",
+        "TONNESSEN2024_NORWEGIAN"
+      ],
+      "exceptions": "Very low-volume athletes may need a higher fraction of quality work; event-specific phases can shift distribution."
+    },
+    {
+      "rule_id": "HIIT_001",
+      "domain": "cycling",
+      "rule": "For VO2-focused HIIT, prefer repeatable 2–5 min intervals or validated microinterval formats that accumulate substantial high-aerobic time.",
+      "confidence": "high",
+      "evidence": [
+        "SCHOENMAKERS2026_VO2TIME",
+        "WIESINGER2025_HIIT_ELITE",
+        "RONNESTAD2015_SHORT_INTERVALS"
+      ],
+      "exceptions": "Athlete preference/tolerance and sport specificity matter; do not force one format."
+    },
+    {
+      "rule_id": "FTP_001",
+      "domain": "testing",
+      "rule": "Treat FTP as a practical field metric, not a physiological truth or sole zone anchor.",
+      "confidence": "high",
+      "evidence": [
+        "MACKEY2021_FTP20",
+        "LEO2022_POWER_PROFILE"
+      ],
+      "exceptions": "FTP can remain the primary UI metric if limitations are explicit and other performance data refine prescriptions."
+    },
+    {
+      "rule_id": "DUR_001",
+      "domain": "testing",
+      "rule": "For long-event cyclists, measure performance degradation after standardized prior work as a separate durability metric.",
+      "confidence": "moderate",
+      "evidence": [
+        "HUNTER2025_DURABILITY",
+        "BARSUMYAN2025_DURABILITY"
+      ],
+      "exceptions": "Emerging field; protocol must be standardized before longitudinal comparison."
+    },
+    {
+      "rule_id": "STR_001",
+      "domain": "strength",
+      "rule": "After a technical adaptation phase, prescribe heavy lower-body strength approximately 2x/week during development blocks and ~1x/week for maintenance.",
+      "confidence": "high",
+      "evidence": [
+        "LLANOSLAGOS2025_STRENGTH",
+        "RONNESTAD2014_OPTIMIZE_STRENGTH",
+        "RONNESTAD2015_25W_STRENGTH"
+      ],
+      "exceptions": "Novices, injury history, older/frail users, or medical constraints require individualized loading."
+    },
+    {
+      "rule_id": "CONCURRENT_001",
+      "domain": "strength",
+      "rule": "Separate key endurance and strength sessions by several hours or days where possible when preserving explosive-strength quality matters.",
+      "confidence": "high",
+      "evidence": [
+        "SCHUMANN2022_CONCURRENT"
+      ],
+      "exceptions": "Same-day stress consolidation can be useful; athlete schedule and recovery capacity matter."
+    },
+    {
+      "rule_id": "MOB_001",
+      "domain": "mobility",
+      "rule": "Prescribe mobility/stretching according to ROM/comfort goals; do not make it mandatory for cycling performance.",
+      "confidence": "high",
+      "evidence": [
+        "ARNTZ2023_STRETCH",
+        "SKOPAL2024_MOBILITY"
+      ],
+      "exceptions": "Rehabilitation needs are clinician-led."
+    },
+    {
+      "rule_id": "YOGA_001",
+      "domain": "yoga",
+      "rule": "Offer yoga as an optional flexibility/balance/wellbeing adjunct, not a primary cycling-performance intervention.",
+      "confidence": "moderate",
+      "evidence": [
+        "YOGA2025_TRACK"
+      ],
+      "exceptions": "Individual preference/adherence may make yoga highly valuable even without direct performance evidence."
+    },
+    {
+      "rule_id": "REC_001",
+      "domain": "recovery",
+      "rule": "Prioritize sleep, nutrition and load management before recovery gadgets/modalities.",
+      "confidence": "high",
+      "evidence": [
+        "LI2024_RECOVERY",
+        "WALSH2021_SLEEP"
+      ],
+      "exceptions": "Specific modalities can still improve soreness/perception or suit individual preference."
+    },
+    {
+      "rule_id": "READY_001",
+      "domain": "monitoring",
+      "rule": "Use multiple readiness signals and individualized trends; do not alter training from a single HRV/resting-HR value.",
+      "confidence": "high",
+      "evidence": [
+        "BOURDON2017_LOAD",
+        "MANRESA2021_HRV"
+      ],
+      "exceptions": "Acute illness symptoms override the multi-signal rule."
+    },
+    {
+      "rule_id": "CARB_001",
+      "domain": "nutrition",
+      "rule": "Scale carbohydrate intake during exercise to duration/intensity; use higher intakes for prolonged demanding sessions and train the gut before very high intakes.",
+      "confidence": "high",
+      "evidence": [
+        "THOMAS2016_NUTRITION",
+        "PODLOGAR2022_CARBS"
+      ],
+      "exceptions": "GI tolerance, diabetes/metabolic disease and clinical nutrition needs require individual medical/dietetic guidance."
+    },
+    {
+      "rule_id": "REDS_001",
+      "domain": "safety",
+      "rule": "Do not recommend chronic energy restriction or repeated under-fuelled hard training; flag RED-S risk features.",
+      "confidence": "high",
+      "evidence": [
+        "MOUNTJOY2023_REDS"
+      ],
+      "exceptions": "None for safety; specialist-guided strategies may manipulate carbohydrate availability without low energy availability."
+    },
+    {
+      "rule_id": "TAPER_001",
+      "domain": "periodization",
+      "rule": "For priority endurance events, reduce volume about 40–60% while maintaining frequency and some intensity for roughly 7–14 days as a default.",
+      "confidence": "high",
+      "evidence": [
+        "WANG2023_TAPER",
+        "BOSQUET2007_TAPER"
+      ],
+      "exceptions": "Individual taper response and accumulated fatigue can justify shorter/longer tapers up to ~21 days."
+    },
+    {
+      "rule_id": "RETURN_001",
+      "domain": "return",
+      "rule": "After meaningful detraining, reduce historical targets and use a progressive 2–4+ week re-entry phase.",
+      "confidence": "high",
+      "evidence": [
+        "BARBIERI2024_DETRAINING"
+      ],
+      "exceptions": "Post-illness/injury progression must respect clinical guidance."
+    },
+    {
+      "rule_id": "FEMALE_001",
+      "domain": "female-athlete",
+      "rule": "Do not auto-adjust training by predicted menstrual-cycle phase; adapt to individual symptoms and repeated personal response patterns.",
+      "confidence": "high",
+      "evidence": [
+        "MCNULTY2020_MENSTRUAL",
+        "FEMALEATHLETE2025_CONSENSUS"
+      ],
+      "exceptions": "Clinically diagnosed conditions and individual patterns may require specific management."
+    },
+    {
+      "rule_id": "INJURY_001",
+      "domain": "safety",
+      "rule": "Do not diagnose overuse pain from bike-fit formulas; consider recent load changes and symptom history and refer persistent pain.",
+      "confidence": "high",
+      "evidence": [
+        "OVERUSE2022_CYCLING"
+      ],
+      "exceptions": "Qualified clinician/bike fitter assessment can use detailed biomechanics in context."
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "athlete_profile": {
+    "calibre": "0-5 McKay tier",
+    "training_age_years": "number",
+    "weekly_hours_recent": "rolling 6-week median",
+    "event_type": "road|TT|gran_fondo|gravel|track|other",
+    "health_clearance": "boolean/unknown"
+  },
+  "performance_model": [
+    "power_duration_curve",
+    "ftp_field_estimate",
+    "critical_power_optional",
+    "sprint_power",
+    "vo2_related_power",
+    "durability_score",
+    "endurance_decoupling"
+  ],
+  "session_metrics": [
+    "duration",
+    "power_load",
+    "heart_rate_load",
+    "session_RPE",
+    "carbohydrate_g_per_h",
+    "temperature",
+    "completion_quality"
+  ],
+  "readiness": [
+    "sleep",
+    "fatigue",
+    "soreness",
+    "mood",
+    "resting_hr",
+    "hrv",
+    "pain_flag",
+    "illness_flag"
+  ],
+  "rule_metadata": [
+    "evidence_grade",
+    "directness",
+    "population_calibre",
+    "last_reviewed",
+    "source_ids",
+    "confidence",
+    "exceptions"
+  ]
+}

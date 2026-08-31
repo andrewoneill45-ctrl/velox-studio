@@ -1,4 +1,4 @@
-import { json, readJSON, writeJSON, stravaToken, strava, getProfile } from "./_lib.js";
+import { json, readJSON, writeJSON, stravaToken, strava, getProfile, store } from "./_lib.js";
 
 const ds = (a, n) => { if (!a || a.length <= n) return a || [];
   const o = []; for (let i = 0; i < n; i++) o.push(a[Math.round(i * (a.length - 1) / (n - 1))]); return o; };
@@ -49,6 +49,14 @@ export default async (req) => {
     return json({ ok: true, total: all.length, new: fresh.length, need });
   }
 
+  if (phase === "queue") {
+    const all = await readJSON("activities.json", []);
+    const rides = all.filter(isRide);
+    const { blobs } = await store().list({ prefix: "streams/" });
+    const have = new Set((blobs || []).map(b => b.key.replace("streams/", "").replace(".json", "")));
+    const need = rides.map(a => String(a.id)).filter(id => !have.has(id));
+    return json({ total: rides.length, have: have.size, need });
+  }
   if (phase === "streams") {
     const id = u.searchParams.get("id");
     if (!id) return json({ error: "id required" }, 400);

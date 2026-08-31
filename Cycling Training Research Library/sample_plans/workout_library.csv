@@ -1,0 +1,23 @@
+id,name,modality,target,structure,intensity,purpose,notes
+REC30,Recovery spin,Cycling,Recovery,30–45 min,Very easy / RPE 1–2,Restore movement without adding meaningful stress,Keep cadence comfortable; skip if rest is more appropriate.
+END60,Endurance 60,Cycling,Low aerobic,60 min,Below LT1 / RPE 2–3,Aerobic consistency,"Steady, conversational."
+END90,Endurance 90,Cycling,Low aerobic,90 min,Below LT1 / RPE 2–3,Aerobic volume,Fuel if needed according to context.
+END120,Endurance 2h,Cycling,Low aerobic,120 min,Below LT1 / RPE 2–3,Aerobic volume/durability,Keep intensity controlled.
+LONG180,Long endurance,Cycling,Durability,3 h,Mostly below LT1,Long-event endurance,Practise event fuelling.
+TEMPO2X20,Tempo 2×20,Cycling,Heavy-domain,"2×20 min, 5 min easy",RPE 4–5,Sustained aerobic muscular work,Use individualized power; avoid turning it into threshold failure.
+THR3X12,Threshold 3×12,Cycling,Threshold/MMSS,"3×12 min, 5 min easy",RPE 6–7,Sustainable high aerobic power,Progress duration before power.
+THR2X20,Threshold 2×20,Cycling,Threshold/MMSS,"2×20 min, 8 min easy",RPE 6–7,Race-specific sustained power,Classic template; not mandatory.
+OU3X12,Over-unders,Cycling,Threshold specificity,3×12 min alternating 2 min just below / 1 min just above threshold,RPE 6–8,Tolerance of variable race power,Keep average controlled.
+VO2_4X5,VO2 4×5,Cycling,VO2/high aerobic,"4×5 min, 3 min easy",RPE 8–9,Time near VO2max,"Strong, even pacing; avoid sprint starts."
+VO2_5X4,VO2 5×4,Cycling,VO2/high aerobic,"5×4 min, 3 min easy",RPE 8–9,High aerobic power,Stop before repeated major power collapse.
+VO2_6X3,VO2 6×3,Cycling,VO2/high aerobic,"6×3 min, 2–3 min easy",RPE 8–9,High aerobic power,Useful when 5-min repeats are too long.
+MICRO_30_15,30/15 microintervals,Cycling,VO2/high aerobic,3×10–13 reps of 30 s hard / 15 s float; 4 min sets,Hard but controlled,Accumulate high aerobic time,"Use power-duration curve, not fixed FTP alone."
+SPRINT8X10,Neuromuscular sprints,Cycling,Sprint,"6–8×8–12 s, 3–5 min full recovery",Maximal,Peak power/neuromuscular,Only when fresh; stop if peak power drops substantially.
+SIT3X30,Sprint interval session,Cycling,SIT,"2–4×30 s all-out, 4–5 min easy",Maximal,Time-efficient VO2/anaerobic stimulus,High fatigue; not default for all riders.
+DURABILITY_FINISH,Long ride + late effort,Cycling,Durability,2.5–4 h easy then 15–30 min event-specific,Late RPE 6–8,Fatigue resistance,Use only after base and with adequate fuelling.
+CADENCE,Cadence skill,Cycling,Technique,6×1 min fast cadence within easy ride,Easy power,Coordination,No bouncing; not a fitness interval.
+STRENGTH_A,Strength A,Strength,Heavy strength,45–60 min,3–5 reps heavy after adaptation,Max strength,Squat/leg press; RDL; split squat; calf; brief trunk.
+STRENGTH_B,Strength B,Strength,Heavy strength,45–60 min,3–6 reps heavy after adaptation,Max strength,Alternative exercise selection; long rests; leave reps in reserve.
+STRENGTH_MAINT,Strength maintenance,Strength,Maintenance,30–45 min,2–3 work sets/exercise,Preserve strength,"Low volume, high quality."
+MOBILITY10,Mobility 10,Mobility,ROM,10 min,Easy,Maintain useful ROM/comfort,Dynamic hips/ankles/T-spine.
+YOGA25,Easy yoga 25,Yoga,Mobility/wellbeing,25 min,Easy–moderate,"Mobility, balance, relaxation",Avoid making it a fatiguing workout before key sessions.

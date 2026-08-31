@@ -6,6 +6,14 @@ export default async (req) => {
   const prof = await getProfile();
   const metrics = await readJSON("metrics.json", {});
   let context = { profile: { ftp: prof.ftp, weight: prof.weight, wkg: +(prof.ftp / prof.weight).toFixed(2), targets: prof.tgt } };
+  const libIdx = await readJSON("library-index.json", []);
+  let evidence = "";
+  for (const x of libIdx.slice(0, 16)) {
+    const d = await readJSON(`library/${x.id}.json`); if (!d) continue;
+    const add = `• ${d.title} [${d.quality}]: ${d.summary} Protocols: ${(d.protocols || []).join(" | ")}${d.cautions?.length ? " Cautions: " + d.cautions.join(" | ") : ""}
+`;
+    if (evidence.length + add.length > 9500) break; evidence += add;
+  }
   const wl = await wellnessSummary();
   const wellness = wl.latest ? { today: wl.latest, last7: wl.days.slice(-7), readiness: wl.readiness } : null;
   let ask = "";
@@ -45,14 +53,15 @@ export default async (req) => {
   } else {
     context.recent = { pmcTail: (metrics.pmc || []).slice(-14), weeks: metrics.weeks, curWeek: metrics.curWeek,
       bests: metrics.bests, tssSeason: metrics.tssSeason, chain: metrics.chain };
-    ask = "Write this week's coach note: 70–100 words, four sentences maximum, on current form and exactly what to do this week.";
+    ask = "Write this week's coach note: 70–100 words, four sentences maximum, on current form and exactly what to do this week. Then on a new final line output exactly one machine tag: <viz>{\"weeks\":[{\"label\":\"S22\",\"tss\":412}],\"form\":{\"fitness\":0,\"fatigue\":0,\"tsb\":0},\"eventDays\":0,\"eventName\":\"\"}</viz> filled with the real last 4–5 weeks and current form from the context. Nothing after the tag.";
   }
   if (mode !== "planweek" && mode !== "readiness" && wellness) context.wellness = { readiness: wellness.readiness, today: wellness.today };
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "content-type": "application/json", "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
-    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "weekly" ? 380 : mode === "readiness" ? 200 : mode === "planweek" ? 2400 : 700,
-      system: "You are the directeur sportif for a single amateur rider. UK English. Confident, warm, specific. Use **bold** for key numbers. No preamble, no sign-off." + (mode === "planweek" ? `
+    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "weekly" ? 600 : mode === "readiness" ? 200 : mode === "planweek" ? 2400 : 700,
+      system: "You are The DS — the directeur sportif for a single amateur rider. UK English. Confident, warm, specific. Write flowing prose in complete sentences: NO headings, NO bullet points, NO numbered lists, NO markdown of any kind except **bold** on the few numbers that matter. Short paragraphs are fine. No preamble, no sign-off."
+        + (evidence ? "\n\nEVIDENCE BASE — peer-reviewed findings the rider has curated. Ground your advice in these where relevant and name the source naturally in the prose (e.g. \"the polarised-training work suggests…\"). Do not invent citations.\n" + evidence : "") + (mode === "planweek" ? `
 You are now planning ONE training week. Respond with ONLY a JSON object — no prose before or after, no code fences:
 {"summary": string (2–3 warm, specific sentences on why this week looks like this, referencing last week and current form),
  "question": string|null (ONLY if one crucial thing is missing; otherwise null),

@@ -360,6 +360,18 @@ svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshai
 #eftpbox .evrow{display:grid;grid-template-columns:64px 70px 1fr auto;gap:8px;font-family:'Space Grotesk';font-size:10px;font-weight:700;padding:4px 0;border-top:1px dashed var(--hair);color:var(--ink2)}
 #eftpbox .evrow .dim{color:var(--mist);font-weight:600;font-family:Inter;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #eftpbox .ebtns{display:flex;gap:8px;margin-top:12px;align-items:center}
+.bfbar{height:10px;border-radius:5px;background:var(--hair);overflow:hidden;margin:12px 0 8px;position:relative}
+.bfbar i{position:absolute;left:0;top:0;bottom:0;background:var(--bleu);border-radius:5px;transition:width .4s var(--ease)}
+.aitext p,.readnote p,#readytext{margin:0 0 .7em}
+.aitext p:last-child{margin-bottom:0}
+.aitext ul{margin:.3em 0 .8em 1.1em;padding:0}
+.aitext li{margin:.25em 0;line-height:1.6}
+.noteviz{margin-top:14px;padding-top:14px;border-top:1px solid var(--hair)}
+.noteviz .nvrow{display:flex;gap:18px;align-items:flex-end}
+.noteviz .nvb{flex:1}
+.noteviz .nvl{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.14em;color:var(--mist);margin-bottom:6px}
+.noteviz .chipline{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.noteviz .chipline span{font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.08em;padding:5px 9px;border-radius:7px;background:var(--hair);color:var(--ink2)}
 /* ── TIMELINE ── */
 .tlwrap{border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:var(--sh);overflow:hidden}
 .tltop{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--hair)}
@@ -703,7 +715,7 @@ svg#rc-prof{display:block;width:100%;height:340px}
         <div class="panel hov racepanel cascade" id="nextrace" style="--i:2"></div>
         <div class="panel hov editorial cascade" style="--i:3">
           <div class="pq" id="coachpq">"Sunday's Èze effort is knocking on the door."</div>
-          <div><div class="cl">COACH'S NOTE · CLAUDE</div>
+          <div><div class="cl">COACH'S NOTE · THE DS</div>
           <p id="coachnote"><b>268 W for 22 minutes</b> on the Èze climb is 95.7% of your FTP, held with heart-rate decoupling of just 1.8%. Absorb this block, then test on Thursday. If it confirms, the yellow jersey target moves within reach a month early, and every col in the Recon Room gets recalculated around the new number.</p></div>
         </div>
       </div>
@@ -762,11 +774,11 @@ svg#rc-prof{display:block;width:100%;height:340px}
           <div class="panel chartpanel cascade" style="grid-column:span 4;--i:6"><h3>WHERE THE EFFORT WENT — 28 DAYS</h3><div class="zbig" id="zstack"></div><div id="zrows28"></div></div>
           <div class="panel editorial cascade" style="grid-column:span 12;border-left-color:var(--bleu);--i:7">
             <div class="pq" id="condpq">"The aerobic engine is the strongest it has been."</div>
-            <div><div class="cl" style="color:var(--bleu)">READING THE NUMBERS · CLAUDE</div>
+            <div><div class="cl" style="color:var(--bleu)">READING THE NUMBERS · THE DS</div>
             <p id="condnote">Decoupling has halved since March. The FTP line is still climbing while fatigue peaks, which means <b>Thursday's fresh test should beat 280 W</b>. Everything says the block worked: hold your nerve through three quiet days and let the form arrive.</p></div>
           </div>
           <div class="panel aipanel cascade" style="grid-column:span 12;--i:8">
-            <div class="aihead"><span class="al">CONDITION · CLAUDE</span><span style="display:flex;gap:8px;flex:1;justify-content:flex-end;align-items:center;flex-wrap:wrap"><input class="inp" id="cask" placeholder="Ask about your form, fatigue, the next block…" style="max-width:360px;flex:1"/><button class="aibtn" id="caskbtn">ASK</button><button class="aibtn" id="canalyse">ANALYSE MY CONDITION</button></span></div>
+            <div class="aihead"><span class="al">CONDITION · THE DS</span><span style="display:flex;gap:8px;flex:1;justify-content:flex-end;align-items:center;flex-wrap:wrap"><input class="inp" id="cask" placeholder="Ask about your form, fatigue, the next block…" style="max-width:360px;flex:1"/><button class="aibtn" id="caskbtn">ASK</button><button class="aibtn" id="canalyse">ANALYSE MY CONDITION</button></span></div>
             <div class="aitext" id="catext"></div>
           </div>
         </div>
@@ -791,7 +803,7 @@ svg#rc-prof{display:block;width:100%;height:340px}
             <svg id="relev" viewBox="0 0 1200 52" preserveAspectRatio="none"></svg>
           </div>
           <div class="panel aipanel cascade" style="grid-column:span 12;--i:6">
-            <div class="aihead"><span class="al">DEBRIEF · CLAUDE</span><span style="display:flex;gap:8px;flex:1;justify-content:flex-end;align-items:center;flex-wrap:wrap"><input class="inp" id="rask" placeholder="Ask the coach about this ride…" style="max-width:340px;flex:1"/><button class="aibtn" id="raskbtn">ASK</button><button class="aibtn" id="raibtn">ANALYSE THIS RIDE</button></span></div>
+            <div class="aihead"><span class="al">DEBRIEF · THE DS</span><span style="display:flex;gap:8px;flex:1;justify-content:flex-end;align-items:center;flex-wrap:wrap"><input class="inp" id="rask" placeholder="Ask the coach about this ride…" style="max-width:340px;flex:1"/><button class="aibtn" id="raskbtn">ASK</button><button class="aibtn" id="raibtn">ANALYSE THIS RIDE</button></span></div>
             <div class="aitext" id="raitext"></div>
           </div>
         </div>
@@ -827,6 +839,8 @@ svg#rc-prof{display:block;width:100%;height:340px}
         <div id="sysout"></div>
       </div>
       <div class="panel cascade" id="healthpanel" style="--i:2;padding:22px 26px;margin-bottom:16px;border-left:4px solid var(--vert)"></div>
+      <div class="panel cascade" id="backfillpanel" style="--i:3;padding:22px 26px;margin-bottom:16px;border-left:4px solid var(--bleu)"></div>
+      <div class="panel cascade" id="librarypanel" style="--i:4;padding:22px 26px;margin-bottom:16px;border-left:4px solid var(--jaune)"></div>
       <div class="intgrid cascade" id="ints" style="--i:1"></div>
       <div class="panel flowpanel cascade" style="--i:2">
         <b>How your data flows.</b> Rides land from Strava seconds after the Karoo uploads (webhook live). The ring and band feed sleep, HRV and recovery each morning: Claude reads the lot, scores your readiness by 06:30, and writes the coach's note every Monday at 07:00. Change a number in your rider profile and every projection in the building recalculates before you have let go of the button.
@@ -936,7 +950,7 @@ svg#rc-prof{display:block;width:100%;height:340px}
         <div class="rc-gread"><span class="g2">● MARCH</span><b class="g2" id="g-then">—</b></div>
         <div class="rc-gread"><span>GAP AT THE LINE</span><b class="g1" id="g-gap">—</b></div>
       </div>
-      <div class="rc-card rc-note"><span class="al">RECON · CLAUDE</span><span id="rc-notetext"></span></div>
+      <div class="rc-card rc-note"><span class="al">RECON · THE DS</span><span id="rc-notetext"></span></div>
     </div>
   </div>
 </div>
@@ -2384,7 +2398,7 @@ function renderWeekDetail(k){
     <span>RIDDEN<b>${act||"—"} TSS</b></span><span>PLANNED<b>${pl||"—"}</b></span>
     <span>TARGET <input class="inp" id="wktgt" type="number" value="${tgt||""}" placeholder="TSS" style="width:90px;margin-left:6px"/> <button class="aibtn" id="wktgtsave" style="padding:8px 12px">SET</button></span>
     ${w?`<span>DISTANCE<b>${Math.round(w.km)} km</b></span><span>CLIMBING<b>${fmtInt(Math.round(w.m))} m</b></span>`:""}
-    <span class="grow"></span><button class="aibtn" id="wkai" style="padding:9px 14px;background:var(--ember)">PLAN MY WEEK · CLAUDE</button><button class="aibtn" id="wkplan" style="padding:9px 14px">+ PLAN A RIDE</button>${evs.map(e=>`<span class="chip" style="background:var(--jaune);color:var(--ink)">${e.short} · ${new Date(e.date).toLocaleDateString("en-GB",{weekday:"short",day:"numeric"}).toUpperCase()}</span>`).join("")}`;
+    <span class="grow"></span><button class="aibtn" id="wkai" style="padding:9px 14px;background:var(--ember)">PLAN MY WEEK · THE DS</button><button class="aibtn" id="wkplan" style="padding:9px 14px">+ PLAN A RIDE</button>${evs.map(e=>`<span class="chip" style="background:var(--jaune);color:var(--ink)">${e.short} · ${new Date(e.date).toLocaleDateString("en-GB",{weekday:"short",day:"numeric"}).toUpperCase()}</span>`).join("")}`;
   renderPlanner(k);
   document.getElementById("wkplan").onclick=()=>{const pl=document.getElementById("planner");if(pl.dataset.mode==="ai"){renderPlanner(k);pl.style.display="block";return;}pl.style.display=pl.style.display==="none"?"block":"none";};
   document.getElementById("wkai").onclick=()=>{renderAIPlanner(k);document.getElementById("planner").style.display="block";};
@@ -2698,7 +2712,7 @@ function renderReadiness(){
   if(!W||!W.latest){
     slab.innerHTML=`THIS MORNING — <b>READINESS</b> · WAITING FOR APPLE HEALTH`;
     dial.innerHTML=`<div><div class="dv" style="color:var(--mist)">Not yet connected</div><div class="dm">RING &amp; BAND VIA APPLE HEALTH</div><div class="rdrows"><div><span>Set up Health Auto Export in Sources and this panel comes alive each morning.</span></div></div></div>`;
-    note.innerHTML=`<span class="al" style="color:var(--mist)">READINESS · CLAUDE</span><p>Once HRV, resting heart rate and sleep arrive, the coach reads them against your baseline every morning and tells you whether to train as planned, ease off, or rest.</p>`;
+    note.innerHTML=`<span class="al" style="color:var(--mist)">READINESS · THE DS</span><p>Once HRV, resting heart rate and sleep arrive, the coach reads them against your baseline every morning and tells you whether to train as planned, ease off, or rest.</p>`;
     return;}
   const L=W.latest,R=W.readiness||{},col=R.state==="Feu vert"?"var(--vert)":R.state==="Amber"?"#D99000":"var(--polka)";
   const dv=R.state==="Feu vert"?"Feu vert":R.state==="Amber"?"Amber":R.state==="Red"?"Red":"—";
@@ -2719,15 +2733,15 @@ function renderReadiness(){
     </div>
     <div class="rdparts">${Object.entries(R.parts||{}).map(([k,v])=>`<span>${k.toUpperCase()} ${v}</span>`).join("")}${R.penalty?`<span style="background:#FBE5E3;color:var(--polka)">TEMP −${R.penalty}</span>`:""}</div>
   </div>`;
-  note.innerHTML=`<span class="al">READINESS · CLAUDE</span><p id="readytext">${LIVE?"Reading this morning's numbers…":"HRV back above baseline and a full night banked: <b>cleared for today's threshold work</b>. Form is still −18, so hold the plan at four efforts, not five."}</p>`;
+  note.innerHTML=`<span class="al">READINESS · THE DS</span><p id="readytext">${LIVE?"Reading this morning's numbers…":"HRV back above baseline and a full night banked: <b>cleared for today's threshold work</b>. Form is still −18, so hold the plan at four efforts, not five."}</p>`;
   if(LIVE&&COACH)readinessNote(L.d);
 }
 async function readinessNote(d){
   const el=document.getElementById("readytext");if(!el)return;
   const ck="vx_ready_"+d;const c=localStorage.getItem(ck);
-  if(c){el.innerHTML=md(c);return;}
+  if(c){el.innerHTML=md(c);el.dataset.vizraw=c;return;}
   try{const r=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"readiness"})});
-    if(r.text){localStorage.setItem(ck,r.text);el.innerHTML=md(r.text);}}catch(e){el.textContent="Coach note unavailable right now.";}
+    if(r.text){localStorage.setItem(ck,r.text);el.innerHTML=md(r.text);el.dataset.vizraw=r.text;}}catch(e){el.textContent="Coach note unavailable right now.";}
 }
 async function loadWellness(){
   if(!LIVE){renderReadiness();renderHealthPanel({configured:false});return;}
@@ -2764,7 +2778,7 @@ renderReadiness=function(){
     slab.innerHTML=`THIS MORNING — <b>READINESS</b> · WAITING FOR APPLE HEALTH`;
     dial.innerHTML=`<div class="rdstate" style="color:var(--mist);font-size:20px">Not yet connected</div><div class="rdadv">RING &amp; BAND VIA APPLE HEALTH</div>`;
     met.innerHTML=`<div class="ds">Set up Health Auto Export in Sources and this panel comes alive each morning: sleep, HRV, resting heart rate, wrist temperature, respiration and weight, each against your own baseline.</div>`;
-    note.innerHTML=`<span class="al" style="color:var(--mist)">READINESS · CLAUDE</span><p>Once the numbers arrive, the coach reads them against your baseline every morning and tells you whether to train as planned, ease off, or rest.</p>`;return;}
+    note.innerHTML=`<span class="al" style="color:var(--mist)">READINESS · THE DS</span><p>Once the numbers arrive, the coach reads them against your baseline every morning and tells you whether to train as planned, ease off, or rest.</p>`;return;}
   const L=W.latest,R=W.readiness||{},col=R.state==="Feu vert"?"var(--vert)":R.state==="Amber"?"#D99000":"var(--polka)";
   const b=R.baseline||{},d7=(W.days||[]).slice(-7);
   const day=new Date(L.d+"T12:00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"}).toUpperCase();
@@ -2782,7 +2796,7 @@ renderReadiness=function(){
     ["RESPIRATION",L.rr!=null?`${L.rr}<small>/MIN</small>`:"—",`<div class="d" style="color:var(--mist)">OVERNIGHT</div>`,spark7(d7.map(x=>x.rr),"#93A0AB")],
     ["WEIGHT",L.weight!=null?`${L.weight.toFixed(1)}<small>KG</small>`:"—",`<div class="d" style="color:var(--mist)">${L.weight!=null?`${(S.ftp/L.weight).toFixed(2)} W/KG`:"NOT SYNCED"}</div>`,spark7(d7.map(x=>x.weight),"#141E28")]];
   met.innerHTML=`<div class="rdtiles">${tiles.map(([l,v,d,sp])=>`<div class="rdt"><div class="l">${l}</div><div class="v">${v}</div>${d}${sp}</div>`).join("")}</div>`;
-  note.innerHTML=`<span class="al">READINESS · CLAUDE</span><p id="readytext">${LIVE?"Reading this morning's numbers…":"HRV back above baseline and a full night banked: <b>cleared for today's threshold work</b>. Form is still −18, so hold the plan at four efforts, not five."}</p>`;
+  note.innerHTML=`<span class="al">READINESS · THE DS</span><p id="readytext">${LIVE?"Reading this morning's numbers…":"HRV back above baseline and a full night banked: <b>cleared for today's threshold work</b>. Form is still −18, so hold the plan at four efforts, not five."}</p>`;
   if(LIVE&&COACH)readinessNote(L.d+"-v2");
 };
 /* power profile: radar plus bars */
@@ -3135,7 +3149,7 @@ async function loadEftp(force){
   if(EFTP&&!force){renderEftp();return;}
   box.style.display="block";box.innerHTML='<div class="note">Reading your power history…</div>';
   try{EFTP=await api("/api/eftp");renderEftp();}
-  catch(e){box.style.borderLeftColor="var(--polka)";box.innerHTML='<div class="note">eFTP unavailable — '+String(e.message||e)+'</div>';}
+  catch(e){box.style.borderLeftColor="var(--polka)";box.innerHTML='<div class="note">eFTP unavailable — '+String(e.message||e)+'. Deploy v3.0 functions and sync, then reopen this drawer.</div>';}
 }
 function renderEftp(){
   const box=document.getElementById("eftpbox");if(!box||!EFTP)return;
@@ -3171,6 +3185,93 @@ function renderEftp(){
 /* load when the rider profile drawer opens */
 const _od=openDrawer;openDrawer=function(){_od();setTimeout(()=>loadEftp(),150);};
 const _al5=applyLive;applyLive=function(m){_al5(m);EFTP=null;setTimeout(()=>loadEftp(),2500);};
+
+
+/* ═══ v3.1 — backfill, the library, fluent notes with visuals ═══ */
+/* prose renderer: markdown in, clean typography out */
+md=function(t){
+  if(!t)return"";
+  t=String(t).replace(/<viz>[\s\S]*?(<\/viz>|$)/g,"").trim();
+  t=t.replace(/^#{1,4}\s*(.+)$/gm,"<b>$1</b>");
+  t=t.replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>").replace(/(^|\s)\*([^*\n]+)\*(?=\s|[.,;:]|$)/g,"$1<i>$2</i>");
+  const lines=t.split(/\n+/);let out="",list=null;
+  for(const L of lines){const m=L.match(/^\s*(?:[-•]|\d+[.)])\s+(.*)/);
+    if(m){(list=list||[]).push(m[1]);continue;}
+    if(list){out+="<ul>"+list.map(x=>`<li>${x}</li>`).join("")+"</ul>";list=null;}
+    if(L.trim())out+=`<p>${L.trim()}</p>`;}
+  if(list)out+="<ul>"+list.map(x=>`<li>${x}</li>`).join("")+"</ul>";
+  return out;
+};
+function parseViz(t){const m=String(t||"").match(/<viz>([\s\S]*?)<\/viz>/);if(!m)return null;try{return JSON.parse(m[1]);}catch(e){return null;}}
+function noteViz(v){
+  if(!v||!v.weeks||!v.weeks.length)return"";
+  const mx=Math.max(...v.weeks.map(w=>w.tss||0),100);
+  const BW=52,W=v.weeks.length*BW,H=86;
+  const bars=v.weeks.map((w,i)=>{const h=Math.max(4,(w.tss||0)/mx*56);const last=i===v.weeks.length-1;
+    return `<rect x="${i*BW+7}" y="${64-h}" width="${BW-14}" height="${h}" rx="4" fill="${last?"#FFD100":"#26496E"}" opacity="${last?1:.85}"/>
+      <text x="${i*BW+BW/2}" y="${58-h}" text-anchor="middle" font-family="Space Grotesk" font-size="9.5" font-weight="700" fill="#141E28">${Math.round(w.tss||0)}</text>
+      <text x="${i*BW+BW/2}" y="${H-8}" text-anchor="middle" font-family="Space Grotesk" font-size="7.5" font-weight="700" letter-spacing="1" fill="#93A0AB">${(w.label||"").toUpperCase()}</text>`;}).join("");
+  const f=v.form||{};
+  const chips=`<div class="chipline">
+    ${f.fitness?`<span>FITNESS <b>${Math.round(f.fitness)}</b></span>`:""}
+    ${f.fatigue?`<span>FATIGUE <b>${Math.round(f.fatigue)}</b></span>`:""}
+    ${f.tsb!=null?`<span style="background:${f.tsb>=-10?"#E4F4EC":"#FBF3DC"};color:${f.tsb>=-10?"#0E7A4E":"#8A6D00"}">FORM <b>${f.tsb>=0?"+":""}${Math.round(f.tsb)}</b></span>`:""}
+    ${v.eventDays?`<span style="background:var(--ink);color:#fff">${(v.eventName||"THE EVENT").toUpperCase()} <b>J-${v.eventDays}</b></span>`:""}</div>`;
+  return `<div class="noteviz"><div class="nvrow"><div class="nvb"><div class="nvl">THE LAST WEEKS · TSS</div><svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W+40}px;height:${H}px">${bars}</svg></div></div>${chips}</div>`;
+}
+/* the weekly note gets its infographic */
+if(typeof coachNote==="function"){const _cn=coachNote;coachNote=async function(...a){await _cn(...a);};}
+(function(){
+  const host=document.getElementById("coachtext")||document.querySelector(".editorial p");
+  // wrap the generic note writer wherever it lands: patch after coach calls via observer
+  const obs=new MutationObserver(()=>{
+    document.querySelectorAll("[data-vizraw]").forEach(el=>{
+      const v=parseViz(el.dataset.vizraw);el.removeAttribute("data-vizraw");
+      if(v)el.insertAdjacentHTML("beforeend",noteViz(v));});
+  });
+  obs.observe(document.body,{subtree:true,childList:true});
+})();
+/* streams backfill */
+let BF={running:false,done:0,total:0,batch:0};
+function renderBackfill(state){
+  const el=document.getElementById("backfillpanel");if(!el)return;
+  const pct=BF.total?Math.round(BF.done/BF.total*100):0;
+  el.innerHTML=`<div class="aihead"><span class="al" style="color:var(--bleu)">POWER STREAMS · FULL-HISTORY BACKFILL</span>
+      <span class="sg" style="font-size:9px;font-weight:700;letter-spacing:.12em;color:var(--mist)" id="bf-status">${state||(BF.total?`${BF.done}/${BF.total} RIDES HOLD STREAMS`:"…")}</span></div>
+    <div class="bfbar"><i style="width:${pct}%"></i></div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <button class="aibtn" id="bf-go" style="background:var(--bleu);padding:10px 16px">${BF.running?"PAUSE":BF.done>0&&BF.done<BF.total?"CONTINUE BACKFILL":"START BACKFILL"}</button>
+      <span class="ds" style="margin:0">Strava allows about 100 calls per 15 minutes; this runs in polite batches of 90, newest rides first, and remembers where it stopped. Every batch sharpens eFTP, the power radar and the curve.</span></div>`;
+  document.getElementById("bf-go").onclick=()=>BF.running?(BF.running=false,renderBackfill("PAUSED")):runBackfill();
+}
+async function backfillCounts(){try{const q=await api("/api/sync?phase=queue");BF.total=q.total;BF.done=q.have;renderBackfill();return q;}catch(e){renderBackfill("DEPLOY V3.1 FIRST");return null;}}
+async function runBackfill(){
+  const q=await backfillCounts();if(!q||!q.need.length){renderBackfill("COMPLETE — EVERY RIDE HOLDS ITS STREAMS");return;}
+  BF.running=true;BF.batch=0;renderBackfill("RUNNING…");
+  for(const id of q.need){
+    if(!BF.running)break;
+    try{const r=await api("/api/sync?phase=streams&id="+id);
+      if(r&&r.status===429){BF.running=false;renderBackfill("STRAVA RATE LIMIT — CONTINUE IN ~15 MIN");return;}
+      BF.done++;BF.batch++;
+      if(BF.batch%5===0)renderBackfill(`RUNNING… ${BF.done}/${BF.total}`);
+      if(BF.batch>=90){BF.running=false;renderBackfill("BATCH OF 90 DONE — CONTINUE IN ~15 MIN (RATE LIMIT COURTESY)");api("/api/bests").catch(()=>{});api("/api/eftp").catch(()=>{});return;}
+    }catch(e){BF.running=false;renderBackfill("PAUSED — "+String(e.message||e));return;}
+  }
+  BF.running=false;renderBackfill("COMPLETE — EVERY RIDE HOLDS ITS STREAMS");
+  api("/api/bests").catch(()=>{});api("/api/eftp").catch(()=>{});RB=null;EFTP=null;
+}
+/* the research library panel */
+async function renderLibraryPanel(){
+  const el=document.getElementById("librarypanel");if(!el)return;
+  let idx=[];try{idx=(await api("/api/library")).docs||[];}catch(e){}
+  el.innerHTML=`<div class="aihead"><span class="al" style="color:#8A6D00">THE EVIDENCE BASE · RESEARCH LIBRARY</span>
+      <span class="sg" style="font-size:9px;font-weight:700;letter-spacing:.12em;color:${idx.length?"var(--vert)":"var(--mist)"}">${idx.length?`${idx.length} PAPERS DISTILLED — THE DS READS THESE IN EVERY PLAN`:"EMPTY — TWO WAYS TO FILL IT"}</span></div>
+    ${idx.length?`<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">${idx.slice(0,24).map(d=>`<span class="chip" style="background:var(--hair);color:var(--ink2)" title="${d.title.replace(/"/g,"&quot;")}">${d.title.slice(0,34)}${d.title.length>34?"…":""} · ${(d.quality||"").toUpperCase()}</span>`).join("")}</div>`:""}
+    <div style="margin-top:12px" class="hstep"><b>1</b><span>From the repo folder on your Mac: <span class="hurl" style="display:inline;padding:4px 8px">bash tools/upload-library.sh "Cycling Training Research Library"</span> — extracts each PDF, distils it once, and files it here.</span></div>
+    <div class="hstep"><b>2</b><span>Or drag PDFs into a chat with Claude, who will distil and add them for you.</span></div>`;
+}
+const _al6=applyLive;applyLive=function(m){_al6(m);setTimeout(()=>{backfillCounts();renderLibraryPanel();},1500);};
+setTimeout(()=>{if(!BF.total&&LIVE){backfillCounts();renderLibraryPanel();}},3000);
 
 </script>
 <script>
