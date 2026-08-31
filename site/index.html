@@ -856,6 +856,8 @@ svg#rc-prof{display:block;width:100%;height:340px}
     <button class="logbtn" id="logftp">LOG THIS FTP · STAMP TODAY</button>
     <div class="dsect" style="margin:16px 0 4px">HISTORY</div>
     <div id="ftplog"></div>
+    <div class="dsect" style="margin:16px 0 4px">SUGGESTED eFTP</div>
+    <div id="eftpbox" style="display:none"></div>
   </div>
   <div class="dsect">BODY</div>
   <div class="dcard">
@@ -871,7 +873,6 @@ svg#rc-prof{display:block;width:100%;height:340px}
     <div class="frow"><span class="fl">FTP TARGET</span><div class="step" data-k="tftp"><button class="sbtn" data-d="-1">−</button><span class="sval" id="v-tftp">300<i>W</i></span><button class="sbtn" data-d="1">+</button></div></div>
     <div class="frow"><span class="fl">CLIMBING</span><div class="step" data-k="tclimb"><button class="sbtn" data-d="-1">−</button><span class="sval" id="v-tclimb">60<i>k m</i></span><button class="sbtn" data-d="1">+</button></div></div>
     <div class="frow"><span class="fl">SPRINT</span><div class="step" data-k="tsprint"><button class="sbtn" data-d="-1">−</button><span class="sval" id="v-tsprint">900<i>W</i></span><button class="sbtn" data-d="1">+</button></div></div>
-    <div id="eftpbox" style="display:none"></div>
     <div class="frow"><span class="fl">SEASON START</span><input class="inp" id="pf-season" type="date" style="width:160px"/></div>
     <div class="frow"><span class="fl">CHAIN</span><div class="step" data-k="tchain"><button class="sbtn" data-d="-1">−</button><span class="sval" id="v-tchain">12<i>wk</i></span><button class="sbtn" data-d="1">+</button></div></div>
   </div>
@@ -3132,7 +3133,9 @@ const durLab=t=>t>=3600?"60 MIN":t>=60?Math.round(t/60)+" MIN":t+" S";
 async function loadEftp(force){
   if(!LIVE)return;const box=document.getElementById("eftpbox");if(!box)return;
   if(EFTP&&!force){renderEftp();return;}
-  try{EFTP=await api("/api/eftp");renderEftp();}catch(e){box.style.display="none";}
+  box.style.display="block";box.innerHTML='<div class="note">Reading your power history…</div>';
+  try{EFTP=await api("/api/eftp");renderEftp();}
+  catch(e){box.style.borderLeftColor="var(--polka)";box.innerHTML='<div class="note">eFTP unavailable — '+String(e.message||e)+'</div>';}
 }
 function renderEftp(){
   const box=document.getElementById("eftpbox");if(!box||!EFTP)return;
@@ -3166,9 +3169,8 @@ function renderEftp(){
     EFTP.current=v;renderEftp();};
 }
 /* load when the rider profile drawer opens */
-(function(){const btn=document.getElementById("btn-profile");if(!btn)return;const o=btn.onclick;
-  btn.onclick=e=>{o&&o(e);setTimeout(()=>loadEftp(),200);};})();
-const _al5=applyLive;applyLive=function(m){_al5(m);EFTP=null;};
+const _od=openDrawer;openDrawer=function(){_od();setTimeout(()=>loadEftp(),150);};
+const _al5=applyLive;applyLive=function(m){_al5(m);EFTP=null;setTimeout(()=>loadEftp(),2500);};
 
 </script>
 <script>
