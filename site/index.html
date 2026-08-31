@@ -3009,6 +3009,44 @@ window.addEventListener("keydown",e=>{if(!rcEl("recon").classList.contains("on")
   const ev=EVENTS.find(x=>x.id===rcEv);if(!ev||!(ev.routes||[]).length)return;
   if(e.key==="ArrowLeft"||e.key==="ArrowRight"){const i=ev.routes.indexOf(ev.route),n=ev.routes.length;ev.route=ev.routes[(i+(e.key==="ArrowRight"?1:n-1))%n];saveProfile();renderRcCourses();buildRecon();}});
 
+
+/* ═══ v2.8 — profile ↔ map link ═══ */
+let RCHOVER=null;
+function mapReady(){return RCMAP&&RCMAP.isStyleLoaded&&RCMAP.isStyleLoaded();}
+function mapHover(p){
+  if(!RCMAP)return;
+  if(!RCHOVER){const d=document.createElement("div");d.style.cssText="width:16px;height:16px;border-radius:50%;background:#FFD100;border:3px solid #0E151C;box-shadow:0 0 0 3px rgba(255,209,0,.35),0 2px 8px rgba(0,0,0,.5)";RCHOVER=new mapboxgl.Marker({element:d}).setLngLat([p.lng,p.lat]).addTo(RCMAP);}
+  RCHOVER.setLngLat([p.lng,p.lat]);RCHOVER.getElement().style.display="block";
+}
+function mapHoverOff(){if(RCHOVER)RCHOVER.getElement().style.display="none";}
+function mapSelect(c,a,b){
+  if(!mapReady())return;
+  const seg=c.points.slice(a,b+1),coords=seg.map(p=>[p.lng,p.lat]);
+  if(RCMAP.getLayer("selline"))RCMAP.removeLayer("selline");if(RCMAP.getSource("sel"))RCMAP.removeSource("sel");
+  if(!coords.length){RCMAP.fitBounds([[c.bounds[0],c.bounds[1]],[c.bounds[2],c.bounds[3]]],{padding:50,duration:600});return;}
+  RCMAP.addSource("sel",{type:"geojson",data:{type:"Feature",geometry:{type:"LineString",coordinates:coords}}});
+  RCMAP.addLayer({id:"selline",type:"line",source:"sel",layout:{"line-cap":"round","line-join":"round"},paint:{"line-color":"#FFD100","line-width":7,"line-opacity":.9}});
+  const lats=seg.map(p=>p.lat),lngs=seg.map(p=>p.lng);
+  RCMAP.fitBounds([[Math.min(...lngs),Math.min(...lats)],[Math.max(...lngs),Math.max(...lats)]],{padding:70,duration:700,maxZoom:15});
+}
+const _dcp2=drawCourseProfile;
+drawCourseProfile=function(c,sim,view){
+  _dcp2(c,sim,view);
+  const P=c.points,svg=rcEl("rc-prof");
+  const i0=view?view[0]:0,i1=view?view[1]:P.length-1,d0=P[i0].d,d1=P[i1].d;
+  svg.addEventListener("mousemove",e=>{const r=svg.getBoundingClientRect();const d=d0+Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*(d1-d0);let i=i0;while(i<i1&&P[i+1].d<d)i++;mapHover(P[i]);});
+  svg.addEventListener("mouseleave",mapHoverOff);
+  if(RCSEL)mapSelect(c,RCSEL[0],RCSEL[1]);
+};
+const _rs2=renderSelection;
+renderSelection=function(c,sim){_rs2(c,sim);
+  if(RCSEL&&RCSEL[1]-RCSEL[0]>=2)mapSelect(c,RCSEL[0],RCSEL[1]);else mapSelect(c,0,-1);
+  const cl=rcEl("rc-selclear");if(cl){const o=cl.onclick;cl.onclick=()=>{o&&o();mapSelect(c,0,-1);};}
+};
+/* when the map first paints, restore any selection and keep the hover marker on the new map */
+const _dcm=drawCourseMap;
+drawCourseMap=function(c){_dcm(c);if(RCMAP){RCHOVER=null;RCMAP.once("idle",()=>{if(RCSEL&&RCX&&RCX.id===c.id)mapSelect(c,RCSEL[0],RCSEL[1]);});}};
+
 </script>
 <script>
 /* ═══ VeloX course pipeline: GPX → resampled profile → climbs → physics ═══ */
