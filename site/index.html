@@ -602,6 +602,18 @@ svg#rc-prof{display:block;width:100%;height:340px}
 .rc-split input.cw{background:#0E151C;border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:4px 6px;color:#FFD100;font-family:'Space Grotesk';font-weight:700;font-size:12px;width:64px}
 .rc-split input.cn{background:transparent;border:none;border-bottom:1px dashed rgba(255,255,255,.2);color:#E8EEF2;font-family:'Inter';font-weight:600;font-size:13px;width:100%;padding:2px 0}
 .rc-split input.cn:focus{outline:none;border-bottom-color:var(--jaune)}
+.rc-selpow{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.07)}
+.rc-selpow input{background:#0E151C;border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:8px 10px;color:#E8EEF2;font-family:'Space Grotesk';font-weight:700;font-size:12px}
+.rc-selpow .res{font-family:'Space Grotesk';font-size:10px;font-weight:700;letter-spacing:.08em;color:#93A2AE}
+.rc-selpow .res b{color:#FFD100;font-size:14px;margin:0 4px}
+.rc-segh,.rc-seg{display:grid;grid-template-columns:1.5fr .9fr .5fr .5fr .5fr .8fr .8fr .9fr 30px;gap:8px;padding:11px 22px;align-items:center}
+.rc-segh{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.16em;color:#5E6E7A;border-bottom:1px solid rgba(255,255,255,.07)}
+.rc-seg{border-bottom:1px solid rgba(255,255,255,.05);font-family:'Space Grotesk';font-size:12px;font-weight:700;cursor:pointer}
+.rc-seg:hover{background:rgba(255,255,255,.03)}
+.rc-seg input{background:#0E151C;border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:4px 7px;color:#E8EEF2;font-family:'Inter';font-weight:600;font-size:12px;width:100%}
+.rc-seg input.w{color:#FFD100;font-family:'Space Grotesk';font-weight:700;width:70px}
+.rc-seg .dim{color:#7C8B96}
+.rc-seg .x{border:none;background:none;color:#E23A2E;cursor:pointer;font-size:13px}
 /* ── MOBILE FALLBACK ── */
 @media(max-width:980px){
   .rail{top:auto;bottom:0;left:0;right:0;width:auto;height:64px;flex-direction:row;justify-content:space-around;padding:6px 8px;border-right:none;border-top:1px solid var(--line)}
@@ -884,6 +896,7 @@ svg#rc-prof{display:block;width:100%;height:340px}
       <div class="rc-courses" id="rc-courses"></div>
       <div class="rc-card" style="position:relative"><svg id="rc-prof" viewBox="0 0 1200 340" preserveAspectRatio="none"></svg><div class="rc-proflab" id="rc-proflab"></div><div class="rc-tip" id="rc-tip" style="display:none"></div><button class="rc-tab" id="rc-zoomout" style="position:absolute;top:14px;right:14px;display:none">↺ WHOLE COURSE</button></div>
       <div class="rc-card" id="rc-selcard" style="display:none;padding:16px 22px"></div>
+      <div class="rc-card" id="rc-segcard" style="display:none"></div>
       <div class="rc-card" id="rc-mapcard" style="display:none;overflow:hidden"><div id="rc-map" style="height:300px"></div></div>
       <div class="rc-card" id="rc-lib" style="display:none;padding:18px 22px"></div>
       <input type="file" id="gpxfile" accept=".gpx,application/gpx+xml" style="display:none" multiple/>
@@ -2839,7 +2852,7 @@ function renderRcCourses(){
 const hms=s=>{const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h?`${h}h${String(m).padStart(2,"0")}`:`${m}m${String(Math.round(s%60)).padStart(2,"0")}`;};
 function buildReconCourse(ev,c){
   const r=ev.recon||{},ftp=r.ftpDay||ftpOnDay(ev),wt=WF.weight,cda=WF.cda||0.32;
-  const sim=simulate(c,{ftp,weight:wt,cda,fresh:fresh(),climbW:(r.climbW&&r.climbW[c.id])||null});RCX=c;RCSIM=sim;
+  const sim=simulate(c,{ftp,weight:wt,cda,fresh:fresh(),climbW:(r.climbW&&r.climbW[c.id])||null,segW:(r.segs&&r.segs[c.id])||null});RCX=c;RCSIM=sim;
   const fi=rcEl("wf-ftpin");if(fi&&document.activeElement!==fi)fi.value=ftp;rcEl("wf-ftpauto").style.display=r.ftpDay?"inline-block":"none";
   rcEl("rc-name").textContent=ev.name;
   rcEl("rc-meta").innerHTML=`${evDate(ev).toUpperCase()} · J-${J(ev)} · <b>${c.name}</b> · ${c.km} KM · ${fmtInt(c.m)} M · TOP ${c.maxAlt} M — RIDDEN AT <b>${ftp} W</b> · <b>${(ftp/wt).toFixed(2)} W/KG</b>`;
@@ -3047,6 +3060,60 @@ renderSelection=function(c,sim){_rs2(c,sim);
 const _dcm=drawCourseMap;
 drawCourseMap=function(c){_dcm(c);if(RCMAP){RCHOVER=null;RCMAP.once("idle",()=>{if(RCSEL&&RCX&&RCX.id===c.id)mapSelect(c,RCSEL[0],RCSEL[1]);});}};
 
+
+/* ═══ v2.9 — pacing segments from selections ═══ */
+function segTime(c,a,b,w){
+  const ev=EVENTS.find(e=>e.id===rcEv)||{},mass=WF.weight+8.5,cda=WF.cda||0.32;let t=0;
+  for(let i=a;i<b;i++){const p=c.points[i],dd=(c.points[i+1].d-p.d)||50;const rho=1.225*Math.exp(-p.alt/8500);t+=dd/solveV(w,p.g,mass,cda,rho,0.004);}
+  return t;
+}
+function segsOf(ev,c){ev.recon=ev.recon||{};ev.recon.segs=ev.recon.segs||{};return ev.recon.segs[c.id]=ev.recon.segs[c.id]||[];}
+const _rs3=renderSelection;
+renderSelection=function(c,sim){
+  _rs3(c,sim);
+  const card=rcEl("rc-selcard");if(!RCSEL||card.style.display==="none")return;
+  const [a,b]=RCSEL,P=c.points,ev=EVENTS.find(e=>e.id===rcEv);
+  const len=(P[b].d-P[a].d)/1000;let gain=0;for(let i=a;i<b;i++){const df=P[i+1].alt-P[i].alt;if(df>0)gain+=df;}
+  const cur=Math.round(sim.pw.slice(a,b).reduce((x,y)=>x+y,0)/Math.max(1,b-a)),curT=sim.cum[b]-sim.cum[a];
+  const existing=segsOf(ev,c).find(x=>x.a===a&&x.b===b);
+  const row=document.createElement("div");row.className="rc-selpow";
+  row.innerHTML=`<span class="res">RIDE THIS STRETCH AT</span><input id="selw" type="number" value="${existing?existing.w:cur}" style="width:80px"/><span class="res">W</span>
+    <span class="res" id="selres"></span>
+    <span style="margin-left:auto;display:flex;gap:8px;align-items:center"><input id="seln" placeholder="Name it (e.g. Valley into the col)" value="${existing?existing.n:""}" style="width:220px"/><button class="rc-tab on" id="selsave">${existing?"UPDATE SEGMENT":"SAVE AS PACING SEGMENT"}</button></span>`;
+  card.appendChild(row);
+  const upd=()=>{const w=+rcEl("selw").value||cur;const t=segTime(c,a,b,w);const d=t-curT;
+    rcEl("selres").innerHTML=`→ <b>${hms(t)}</b> · ${(len/(t/3600)).toFixed(1)} KM/H${gain>50?` · VAM <b>${Math.round(gain/(t/3600))}</b>`:""} · <span style="color:${d<=0?"#189B69":"#E8611F"}">${d<=0?"−":"+"}${hms(Math.abs(d))} VS PLAN</span> · ${(w/WF.weight).toFixed(2)} W/KG${w>S.ftp*1.05?' · <span style="color:#E23A2E">ABOVE FTP</span>':""}`;};
+  rcEl("selw").oninput=upd;upd();
+  rcEl("selsave").onclick=()=>{const w=+rcEl("selw").value||cur,n=rcEl("seln").value.trim()||`KM ${(P[a].d/1000).toFixed(1)}–${(P[b].d/1000).toFixed(1)}`;
+    const list=segsOf(ev,c);const i=list.findIndex(x=>x.a===a&&x.b===b);const seg={a,b,n,w};if(i>=0)list[i]=seg;else list.push(seg);list.sort((x,y)=>x.a-y.a);
+    saveProfile();buildRecon();};
+};
+function renderSegments(ev,c,sim){
+  const card=rcEl("rc-segcard"),list=segsOf(ev,c);
+  if(!list.length){card.style.display="none";return;}
+  card.style.display="block";const P=c.points;
+  card.innerHTML=`<div class="rc-sl" style="padding:16px 22px 0">YOUR PACING SEGMENTS · ${list.length} · CLICK A ROW TO SELECT IT ON THE PROFILE</div>
+    <div class="rc-segh"><span>SEGMENT</span><span>KM</span><span>LEN</span><span>GAIN</span><span>AVG</span><span>TARGET</span><span>TIME</span><span>ETA</span><span></span></div>`+
+    list.map((sg,i)=>{let gain=0;for(let k=sg.a;k<sg.b;k++){const df=P[k+1].alt-P[k].alt;if(df>0)gain+=df;}const len=(P[sg.b].d-P[sg.a].d)/1000;const t=sim.cum[sg.b]-sim.cum[sg.a];
+      return `<div class="rc-seg" data-i="${i}"><input value="${sg.n.replace(/"/g,"&quot;")}" data-n="${i}"/><span class="dim">${(P[sg.a].d/1000).toFixed(1)}–${(P[sg.b].d/1000).toFixed(1)}</span><span class="dim">${len.toFixed(1)}</span><span class="dim">${Math.round(gain)} m</span><span class="dim">${((P[sg.b].alt-P[sg.a].alt)/(P[sg.b].d-P[sg.a].d)*100).toFixed(1)}%</span><span><input class="w" type="number" value="${sg.w}" data-w="${i}"/></span><span>${hms(t)}</span><span class="dim">${hms(sim.cum[sg.a])} → ${hms(sim.cum[sg.b])}</span><button class="x" data-x="${i}">✕</button></div>`;}).join("");
+  card.querySelectorAll(".rc-seg").forEach(r=>r.onclick=e=>{if(e.target.matches("input,button"))return;const sg=list[+r.dataset.i];RCSEL=[sg.a,sg.b];RCVIEW=null;drawCourseProfile(c,sim,null);renderSelection(c,sim);});
+  card.querySelectorAll("[data-n]").forEach(inp=>inp.onchange=()=>{list[+inp.dataset.n].n=inp.value.trim()||list[+inp.dataset.n].n;saveProfile();});
+  card.querySelectorAll("[data-w]").forEach(inp=>inp.onchange=()=>{const v=+inp.value;if(v>0){list[+inp.dataset.w].w=v;saveProfile();buildRecon();}});
+  card.querySelectorAll("[data-x]").forEach(b=>b.onclick=e=>{e.stopPropagation();list.splice(+b.dataset.x,1);saveProfile();buildRecon();});
+}
+const _brc3=buildReconCourse;buildReconCourse=function(ev,c){_brc3(ev,c);renderSegments(ev,c,RCSIM);};
+/* segment bands on the profile */
+const _dcp3=drawCourseProfile;
+drawCourseProfile=function(c,sim,view){
+  _dcp3(c,sim,view);
+  const ev=EVENTS.find(e=>e.id===rcEv);if(!ev)return;const list=(ev.recon&&ev.recon.segs&&ev.recon.segs[c.id])||[];if(!list.length)return;
+  const P=c.points,svg=rcEl("rc-prof"),Wd=1200;const i0=view?view[0]:0,i1=view?view[1]:P.length-1,d0=P[i0].d,d1=P[i1].d;
+  const ns="http://www.w3.org/2000/svg";
+  list.forEach(sg=>{if(sg.b<i0||sg.a>i1)return;const x0=(P[Math.max(sg.a,i0)].d-d0)/(d1-d0)*Wd,x1=(P[Math.min(sg.b,i1)].d-d0)/(d1-d0)*Wd;
+    const r=document.createElementNS(ns,"rect");r.setAttribute("x",x0);r.setAttribute("y","50");r.setAttribute("width",Math.max(2,x1-x0));r.setAttribute("height","246");r.setAttribute("fill","none");r.setAttribute("stroke","#FFD100");r.setAttribute("stroke-dasharray","5 4");r.setAttribute("stroke-width","1.2");r.setAttribute("opacity",".8");r.setAttribute("pointer-events","none");svg.appendChild(r);
+    const t=document.createElementNS(ns,"text");t.setAttribute("x",x0+6);t.setAttribute("y","64");t.setAttribute("font-family","Space Grotesk");t.setAttribute("font-size","9");t.setAttribute("font-weight","700");t.setAttribute("fill","#FFD100");t.textContent=`${sg.n.toUpperCase()} · ${sg.w} W`;svg.appendChild(t);});
+};
+
 </script>
 <script>
 /* ═══ VeloX course pipeline: GPX → resampled profile → climbs → physics ═══ */
@@ -3133,7 +3200,9 @@ function simulate(course,r){
   for(let i=0;i<P.length-1;i++){
     const p=P[i],dd=(P[i+1].d-p.d)||50;
     const ci=inClimb[i];let power;
-    if(ci!=null)power=(r.climbW&&r.climbW[ci])?+r.climbW[ci]:r.ftp*pacePct(course.climbs[ci].len)*fresh;
+    const sg=r.segW&&r.segW.find(x=>i>=x.a&&i<x.b);
+    if(sg)power=+sg.w;
+    else if(ci!=null)power=(r.climbW&&r.climbW[ci])?+r.climbW[ci]:r.ftp*pacePct(course.climbs[ci].len)*fresh;
     else if(p.g<-2)power=30;else if(p.g<-0.5)power=r.ftp*0.5;else if(p.g>3)power=r.ftp*0.9*fresh;else power=r.ftp*0.72*fresh;
     const rho=1.225*Math.exp(-p.alt/8500);
     const v=solveV(power*k,p.g,mass,cda,rho,crr);
