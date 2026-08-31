@@ -1784,7 +1784,7 @@ enterFX(document.getElementById("s-season"));
 /* ═══════════ LIVE LAYER — Strava · Mapbox · Claude ═══════════ */
 let LIVE=false,MAPTOKEN=null,COACH=false,GL=null,GLACTIVE=false,GLMARK=null,SAVET=null;
 const api=(p,opt)=>fetch(p,opt).then(r=>{if(!r.ok)throw new Error(p+" → "+r.status);return r.json();});
-const md=t=>(t||"").split("**").map((x,i)=>i%2?`<strong>${x}</strong>`:x).join("");
+let md=t=>(t||"").split("**").map((x,i)=>i%2?`<strong>${x}</strong>`:x).join("");
 
 /* ── boot ── */
 (async function boot(){
