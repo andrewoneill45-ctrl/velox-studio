@@ -496,6 +496,46 @@ svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshai
 .bwk input{border:1px solid var(--line);border-radius:6px;padding:4px 7px;width:64px;font-family:'Space Grotesk';font-weight:700;font-size:12px}
 .bwk.trip{background:#FFF8DC}
 .bact{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
+/* ── DAY CARDS: infographic + flip that keeps its buttons ── */
+.stg .wmini{margin-top:10px;width:100%;height:58px;display:block}
+.stg .typechip{display:inline-block;font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.12em;color:#fff;padding:3px 7px;border-radius:5px;margin-top:8px}
+.stg .stx{bottom:62px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:9;-webkit-box-orient:vertical;font-size:12px;line-height:1.6}
+.stg .foot{position:relative;z-index:4;background:inherit}
+.stg .foot .acts{display:flex;gap:6px;align-items:center}
+.stg .foot .acts button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:5px 8px;font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.1em;cursor:pointer;color:var(--ink)}
+.stg .foot .acts button.open{background:var(--ink);color:#fff;border-color:var(--ink)}
+.stg .foot .acts button.dl{color:var(--bleu)}
+.stg .foot .acts button.x{color:var(--polka)}
+.stg .pchip{display:none}
+/* ── THE SESSION SHEET ── */
+.sheet{position:fixed;inset:0;z-index:150;background:rgba(20,30,40,.55);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:3vh 3vw}
+.sheetin{width:min(1500px,94vw);height:92vh;background:var(--paper,#F7F8F7);border-radius:26px;box-shadow:0 40px 120px rgba(0,0,0,.45);overflow:auto;position:relative;padding:44px 56px 40px;animation:sheetin .5s var(--ease)}
+@keyframes sheetin{from{opacity:0;transform:translateY(24px) scale(.985)}to{opacity:1;transform:none}}
+.sheetin .sx{position:absolute;top:22px;right:26px;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:16px;cursor:pointer}
+.sh-kick{font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.2em;color:var(--mist)}
+.sh-title{font-family:'Fraunces',serif;font-size:56px;line-height:1.02;letter-spacing:-.02em;color:var(--ink);margin:12px 0 10px;max-width:1000px}
+.sh-sub{font-family:'Fraunces',serif;font-style:italic;font-size:19px;color:var(--ink2);line-height:1.45;max-width:900px}
+.sh-art{margin:30px 0 8px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px 22px 14px;position:relative}
+.sh-art svg{width:100%;height:300px;display:block}
+.sh-legend{display:flex;gap:16px;margin-top:10px;font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.14em;color:var(--mist);flex-wrap:wrap}
+.sh-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.sh-grid{display:grid;grid-template-columns:.9fr 1.1fr 1fr;gap:34px;margin-top:26px}
+.sh-nums{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.sh-num .l{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.18em;color:var(--mist)}
+.sh-num .v{font-family:'Archivo';font-weight:900;font-size:40px;letter-spacing:-.03em;line-height:1;margin-top:6px;color:var(--ink)}
+.sh-num .v small{font-size:11px;font-family:'Space Grotesk';letter-spacing:.08em;color:var(--mist);margin-left:4px}
+.sh-h{font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.18em;color:var(--mist);margin-bottom:12px}
+.sh-why{font-size:14.5px;line-height:1.7;color:var(--ink2)}
+.sh-why b{color:var(--ink)}
+.sh-steps{display:flex;flex-direction:column;gap:0}
+.sh-step{display:grid;grid-template-columns:14px 1fr auto auto;gap:12px;align-items:center;padding:9px 0;border-bottom:1px dashed var(--hair);font-size:13px}
+.sh-step i{display:block;width:10px;height:10px;border-radius:3px}
+.sh-step .w{font-family:'Archivo';font-weight:900;font-size:15px;color:var(--ink);white-space:nowrap}
+.sh-step .t{font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--mist);white-space:nowrap}
+.sh-acts{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:30px;padding-top:22px;border-top:1px solid var(--line)}
+.sh-acts .inp{max-width:none;flex:1;min-width:280px}
+#sh-ai{margin-top:16px}
+@media(max-width:980px){.sh-grid{grid-template-columns:1fr}.sh-title{font-size:34px}.sheetin{padding:28px 20px}}
 /* ── TIMELINE ── */
 .tlwrap{border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:var(--sh);overflow:hidden}
 .tltop{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--hair)}
@@ -1071,6 +1111,7 @@ svg#rc-prof{display:block;width:100%;height:340px}
       <div class="rc-card" id="rc-mapcard" style="display:none;overflow:hidden"><div id="rc-map" style="height:300px"></div></div>
       <div class="rc-card" id="rc-trip" style="display:none"></div>
       <div class="rc-card" id="rc-lib" style="display:none;padding:18px 22px"></div>
+      <div id="sheet" class="sheet" style="display:none"><div class="sheetin" id="sheetin"></div></div>
       <input type="file" id="gpxfile" accept=".gpx,application/gpx+xml" style="display:none" multiple/>
       <div id="rc-drop" class="rc-drop"><div>DROP YOUR GPX</div></div>
       <div class="rc-card">
@@ -3819,6 +3860,110 @@ function commitBuild(announce){
 }
 /* profile carries the build */
 const _ap5=applyProfile;applyProfile=function(p){_ap5(p);S.build=(p&&p.build)||S.build||{};};
+
+
+/* ═══ v4.2 — the workout as a picture: day cards, flip, and the session sheet ═══ */
+const WZ=[[55,"#93A0AB","Z1 RECOVERY"],[75,"#189B69","Z2 ENDURANCE"],[90,"#D99000","Z3 TEMPO"],[105,"#E8611F","Z4 THRESHOLD"],[120,"#E23A2E","Z5 VO2"],[999,"#7B3FB5","Z6 ANAEROBIC"]];
+const wzOf=pct=>WZ.find(z=>pct<z[0])||WZ[WZ.length-1];
+function stepsOf(p){return (p.steps&&p.steps.length)?p.steps:defaultSteps(p.type,p.mins);}
+function segmentsOf(steps){const out=[];
+  for(const st of steps){const m=+st.mins||0;
+    if(st.kind==="warmup")out.push({sec:m*60,a:+st.pctFrom||45,b:+st.pctTo||70,kind:"warmup"});
+    else if(st.kind==="cooldown")out.push({sec:m*60,a:+st.pctFrom||65,b:+st.pctTo||45,kind:"cooldown"});
+    else if(st.kind==="intervals"){for(let r=0;r<Math.max(1,+st.reps||1);r++){out.push({sec:(+st.onMins||5)*60,a:+st.onPct||95,b:+st.onPct||95,kind:"on"});out.push({sec:(+st.offMins||3)*60,a:+st.offPct||50,b:+st.offPct||50,kind:"off"});}}
+    else out.push({sec:m*60,a:+st.pct||65,b:+st.pct||65,kind:"steady"});}
+  return out;}
+function sessionStats(p){const segs=segmentsOf(stepsOf(p));const T=segs.reduce((s,x)=>s+x.sec,0)||1;
+  const ifv=Math.sqrt(segs.reduce((s,x)=>s+x.sec*Math.pow(((x.a+x.b)/2)/100,2),0)/T);
+  return {secs:T,IF:+ifv.toFixed(2),tss:Math.round(T/3600*ifv*ifv*100),peak:Math.max(...segs.map(x=>Math.max(x.a,x.b)))};}
+function workoutSvg(p,W,H,big){
+  const segs=segmentsOf(stepsOf(p));const T=segs.reduce((s,x)=>s+x.sec,0)||1;
+  const mx=Math.max(120,...segs.map(x=>Math.max(x.a,x.b)))*1.08,pb=big?26:2,pt=big?18:2;
+  const px=t=>t/T*W,py=v=>H-pb-(v/mx)*(H-pt-pb);
+  let x=0,out="";
+  for(const sg of segs){const w=px(sg.sec),c=wzOf((sg.a+sg.b)/2)[1];
+    out+=`<path d="M${x},${H-pb} L${x},${py(sg.a)} L${x+w},${py(sg.b)} L${x+w},${H-pb} Z" fill="${c}" opacity="${sg.kind==="off"?.55:.92}"/>`;
+    if(big&&sg.sec>=240&&sg.kind!=="off"&&w>34)out+=`<text x="${x+w/2}" y="${py(Math.max(sg.a,sg.b))-6}" text-anchor="middle" font-family="Space Grotesk" font-size="10" font-weight="700" fill="#141E28">${Math.round((sg.a+sg.b)/2*S.ftp/100)} W</text>`;
+    x+=w;}
+  if(big){const ftpY=py(100);out+=`<line x1="0" y1="${ftpY}" x2="${W}" y2="${ftpY}" stroke="#141E28" stroke-opacity=".35" stroke-dasharray="4 5"/><text x="${W-4}" y="${ftpY-5}" text-anchor="end" font-family="Space Grotesk" font-size="9" font-weight="700" fill="#44515D">FTP ${S.ftp} W</text>`;
+    const step=T>5400?1800:T>2400?900:600;for(let t=0;t<=T;t+=step)out+=`<text x="${px(t)}" y="${H-8}" text-anchor="${t===0?"start":t>=T-1?"end":"middle"}" font-family="Space Grotesk" font-size="8.5" font-weight="700" letter-spacing="1" fill="#93A0AB">${Math.round(t/60)}′</text>`;}
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${out}</svg>`;}
+function routeMini(c,W,H){const P=c.points,mn=Math.min(...P.map(p=>p.alt)),mx=Math.max(...P.map(p=>p.alt)),r=Math.max(50,mx-mn),n=80,pts=[];
+  for(let i=0;i<=n;i++){const p=P[Math.floor(i/n*(P.length-1))];pts.push([i/n*W,H-3-((p.alt-mn)/(r*1.05))*(H-8)]);}
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><path d="M0,${H} L${pts.map(q=>q.map(v=>v.toFixed(1)).join(",")).join("L")} L${W},${H} Z" fill="rgba(38,73,110,.14)"/><path d="M${pts.map(q=>q.map(v=>v.toFixed(1)).join(",")).join("L")}" fill="none" stroke="#26496E" stroke-width="1.8"/></svg>`;}
+function planRouteId(p){if(!p.trip)return null;const ev=EVENTS.find(e=>e.id===p.trip);return ev&&ev.stageRoute&&ev.stageRoute[p.stage]||null;}
+/* day cards get the picture, the flip keeps its buttons */
+const _rwd6=renderWeekDetail;
+renderWeekDetail=function(k){
+  _rwd6(k);
+  const mon=new Date(k+"T12:00:00"),cards=[...document.querySelectorAll("#days .stg")];
+  const tagc={Recovery:"#93A0AB",Endurance:"#189B69",Tempo:"#26496E",Threshold:"#D99000","VO2 Max":"#E8611F",Race:"#E23A2E",Strength:"#141E28"};
+  cards.forEach((card,i)=>{const di=isoDay(addD(mon,i)),plans=(S.plan&&S.plan[di])||[];
+    if(card.dataset.ride||!plans.length)return;
+    const p=plans[0],rid=planRouteId(p),c=rid&&ROUTES[rid];
+    const nm=card.querySelector(".nm"),ds=card.querySelector(".ds");
+    if(nm)nm.innerHTML=`${p.nm}<br/><span class="typechip" style="background:${tagc[p.type]||"#93A0AB"}">${(p.type||"SESSION").toUpperCase()}${p.trip?" · STAGE "+p.stage:""}</span>`;
+    if(ds){const st=sessionStats(p);ds.innerHTML=`${p.mins?p.mins+" min":hms(st.secs)} · ${p.tss||st.tss} TSS · IF ${st.IF}`;
+      ds.insertAdjacentHTML("afterend",p.type==="Strength"?"":(c?routeMini(c,300,58):workoutSvg(p,300,58,false)).replace("<svg","<svg class=\"wmini\""));}
+    const stx=card.querySelector(".stx")||card.appendChild(Object.assign(document.createElement("div"),{className:"stx"}));
+    stx.innerHTML=`<b>${p.nm}</b><br/>${(p.detail||"").slice(0,220)}${(p.detail||"").length>220?"…":""}<br/><span style="opacity:.7">OPEN FOR THE FULL SESSION →</span>`;
+    const foot=card.querySelector(".foot");
+    if(foot){foot.insertAdjacentHTML("beforeend",`<span class="acts"><button class="open" data-so="${di}">OPEN</button>${p.type!=="Strength"?`<button class="dl" data-sz="${di}" title=".zwo for MyWhoosh / Zwift">⬇ ZWO</button>`:""}<button class="x" data-sxx="${di}" title="Remove">✕</button></span>`);
+      foot.querySelector("[data-so]").onclick=e=>{e.stopPropagation();openSession(di,0);};
+      const dl=foot.querySelector("[data-sz]");if(dl)dl.onclick=e=>{e.stopPropagation();downloadZwo(p,di);};
+      foot.querySelector("[data-sxx]").onclick=e=>{e.stopPropagation();S.plan[di].shift();if(!S.plan[di].length)delete S.plan[di];saveProfile();tlRender(true);drawMassif();drawTraj();};}
+    card.style.cursor="pointer";
+    card.onclick=e=>{if(e.target.closest("button,input,.pform,[data-add]"))return;openSession(di,0);};
+    if(rid&&!c)loadRoute(rid).then(()=>renderWeekDetail(k));});
+};
+/* the session sheet */
+function openSession(di,idx){
+  const p=(S.plan&&S.plan[di]||[])[idx||0];if(!p)return;
+  const sh=v4El("sheet"),el=v4El("sheetin");sh.style.display="flex";
+  const d=new Date(di+"T12:00:00"),st=sessionStats(p),ev=p.trip?EVENTS.find(e=>e.id===p.trip):null,rid=planRouteId(p),c=rid&&ROUTES[rid];
+  const goal=fut().find(e=>e.pr==="A")||fut()[0];
+  const wk=S.build&&Object.values(S.build).map(b=>(b.weeks||[]).find(w=>w.monday===isoDay(mondayOf(d)))).find(Boolean);
+  const steps=stepsOf(p);
+  const stepRows=p.type==="Strength"?"":steps.map(x=>{
+    if(x.kind==="intervals")return `<div class="sh-step"><i style="background:${wzOf(x.onPct)[1]}"></i><span>${x.reps} × ${x.onMins} min at <b>${Math.round(x.onPct*S.ftp/100)} W</b>, ${x.offMins} min easy at ${Math.round(x.offPct*S.ftp/100)} W</span><span class="w">${x.onPct}%</span><span class="t">${Math.round(x.reps*(x.onMins+x.offMins))} MIN</span></div>`;
+    if(x.kind==="warmup"||x.kind==="cooldown")return `<div class="sh-step"><i style="background:${wzOf((x.pctFrom+x.pctTo)/2)[1]}"></i><span>${x.kind==="warmup"?"Warm up":"Cool down"} ${Math.round((x.pctFrom||45)*S.ftp/100)} → ${Math.round((x.pctTo||70)*S.ftp/100)} W</span><span class="w">${x.pctFrom}–${x.pctTo}%</span><span class="t">${x.mins} MIN</span></div>`;
+    return `<div class="sh-step"><i style="background:${wzOf(x.pct)[1]}"></i><span>Steady at <b>${Math.round(x.pct*S.ftp/100)} W</b> · ${wzOf(x.pct)[2].split(" ")[1]}</span><span class="w">${x.pct}%</span><span class="t">${x.mins} MIN</span></div>`;}).join("");
+  const dom=wzOf(st.peak);
+  el.innerHTML=`<button class="sx" id="sh-x">✕</button>
+    <div class="sh-kick">${d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"}).toUpperCase()} · ${(p.type||"SESSION").toUpperCase()}${wk?` · ${(wk.phase||"").toUpperCase()} WEEK — ${wk.focus||""}`:""}${goal?` · J-${J(goal)} TO ${goal.short.toUpperCase()}`:""}</div>
+    <div class="sh-title">${p.nm}</div>
+    <div class="sh-sub">${p.detail||(ev?`Stage ${p.stage} of ${ev.name}. ${ev.purpose||""}`:"")}</div>
+    <div class="sh-art">${c?routeMini(c,1200,300).replace("preserveAspectRatio=\"none\"",""):p.type==="Strength"?`<div style="height:120px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces';font-style:italic;font-size:22px;color:var(--mist)">Off the bike today. Strong legs are built here.</div>`:workoutSvg(p,1200,300,true)}
+      ${c?`<div class="sh-legend"><span>${c.name.toUpperCase()} · ${c.km} KM · ${fmtInt(c.m)} M · ${c.climbs.length} CLIMBS</span></div>`:p.type==="Strength"?"":`<div class="sh-legend">${WZ.slice(0,5).map(z=>`<span><i style="background:${z[1]}"></i>${z[2]}</span>`).join("")}</div>`}</div>
+    <div class="sh-grid">
+      <div><div class="sh-h">THE NUMBERS</div><div class="sh-nums">
+        <div class="sh-num"><div class="l">DURATION</div><div class="v">${p.mins||Math.round(st.secs/60)}<small>MIN</small></div></div>
+        <div class="sh-num"><div class="l">LOAD</div><div class="v">${p.tss||st.tss}<small>TSS</small></div></div>
+        <div class="sh-num"><div class="l">INTENSITY</div><div class="v">${st.IF}<small>IF</small></div></div>
+        <div class="sh-num"><div class="l">PEAK</div><div class="v" style="color:${dom[1]}">${Math.round(st.peak*S.ftp/100)}<small>W</small></div></div></div></div>
+      <div><div class="sh-h">WHY THIS, WHY TODAY</div><div class="sh-why">${wk?`This is a <b>${wk.phase}</b> week in the build${goal?` to <b>${goal.name}</b>`:""}: ${wk.focus}. The week's key session: ${wk.key||"—"}.<br/><br/>`:""}${ev?`Part of <b>${ev.name}</b>, ${ev.days} days: "${ev.purpose||""}"<br/><br/>`:""}${p.ai?"Prescribed by <b>The DS</b> from your form, readiness and the evidence base.":"Planned by you."}${window.WELL&&WELL.readiness?` This morning's readiness is <b>${WELL.readiness.score}</b> (${WELL.readiness.state}).`:""}</div></div>
+      <div><div class="sh-h">THE SESSION, STEP BY STEP</div><div class="sh-steps">${stepRows||"<div class='sh-why'>Strength work: follow your programme.</div>"}</div></div></div>
+    <div class="sh-acts">
+      ${p.type!=="Strength"?`<button class="aibtn" style="background:var(--vert);padding:12px 18px" id="sh-zwo">DOWNLOAD .ZWO FOR MYWHOOSH</button>`:""}
+      ${c&&ev?`<button class="aibtn" style="background:var(--jaune);color:var(--ink)" id="sh-recon">OPEN IN THE RECON ROOM</button>`:""}
+      <input class="inp" id="sh-adj" placeholder="Ask The DS to adjust: make it 45 minutes, swap to 30/15s, easier today…"/><button class="aibtn" style="background:var(--ember)" id="sh-adjb">ADJUST</button>
+      <button class="aibtn" style="background:#fff;color:var(--polka);border:1px solid var(--line)" id="sh-del">REMOVE</button></div>
+    <div id="sh-ai"></div>`;
+  const close=()=>{sh.style.display="none";};
+  v4El("sh-x").onclick=close;sh.onclick=e=>{if(e.target===sh)close();};
+  document.onkeydown=e=>{if(e.key==="Escape")close();};
+  const z=v4El("sh-zwo");if(z)z.onclick=()=>downloadZwo(p,di);
+  const r=v4El("sh-recon");if(r)r.onclick=()=>{close();rcStage=p.stage||1;openRecon(ev.id);};
+  v4El("sh-del").onclick=()=>{S.plan[di].splice(idx||0,1);if(!S.plan[di].length)delete S.plan[di];saveProfile();close();if(window.TL&&TL.built){tlRender(true);}drawMassif();drawTraj();renderV4();};
+  v4El("sh-adjb").onclick=async()=>{const v=v4El("sh-adj").value.trim();if(!v)return;const out=v4El("sh-ai");out.innerHTML='<div class="ds">The DS is reworking the session…</div>';
+    try{const d=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"ask",q:`Adjust this planned session on ${di}: "${p.nm}" (${p.type}, ${p.mins} min, ${p.tss} TSS; steps ${JSON.stringify(steps)}). Instruction: ${v}. Return the replacement as one session in "sessions" with full steps, dated ${di}.`})});
+      dsRender(out,d);const b=out.querySelector("[data-dsall]");
+      if(b&&d.card&&d.card.sessions&&d.card.sessions[0]){b.textContent="REPLACE THIS SESSION";b.onclick=()=>{const x=d.card.sessions[0];S.plan[di][idx||0]={nm:x.name,tss:+x.tss||0,type:x.type||p.type,mins:+x.mins||0,detail:x.detail||"",steps:x.steps||null,ai:true};saveProfile();openSession(di,idx);if(window.TL&&TL.built)tlRender(true);drawMassif();drawTraj();};}}
+    catch(e){out.innerHTML=`<div class="ds">Coach offline — ${e.message||e}</div>`;}};
+  v4El("sheetin").scrollTop=0;
+}
+/* the Season week band opens the sheet on planned days */
+const _rwb6=renderWeekBand;renderWeekBand=function(){_rwb6();document.querySelectorAll("#weekband .wbd").forEach(b=>{const di=b.dataset.di;if((S.plan&&S.plan[di]||[]).length&&!(window.TL&&TL.built&&TL.weeks.get(isoDay(mondayOf(new Date(di+"T12:00:00"))))?.rides.some(r=>r.d===di)))b.onclick=()=>openSession(di,0);});};
 
 </script>
 <script>
