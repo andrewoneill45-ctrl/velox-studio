@@ -1,4 +1,4 @@
-# VeloX Studio — Live Build
+# Massif Studio — Live Build
 
 Single-file front end (`site/index.html`), Netlify Functions back end, Netlify Blobs storage.
 Data persists across deploys: push code as often as you like, nothing you have synced or set is lost.
@@ -9,7 +9,7 @@ Data persists across deploys: push code as often as you like, nothing you have s
 cd ~/Documents/velox-live        # keep it out of iCloud paths (spaces break npm)
 git init
 git add -A
-git commit -m "VeloX Studio v1"
+git commit -m "Massif Studio v1"
 # create an empty repo named velox-studio on github.com/andrewoneill45-ctrl, then:
 git remote add origin git@github.com:andrewoneill45-ctrl/velox-studio.git
 git push -u origin main
@@ -79,7 +79,7 @@ and Garmin APIs — a later phase; the panels state their source honestly).
 ## 7 · Apple Health (readiness) via Health Auto Export
 
 Both the Garmin band and the Ultrahuman ring already sync into Apple Health. The iPhone app
-**Health Auto Export** (Premium tier for background automations) pushes the numbers to VeloX each morning.
+**Health Auto Export** (Premium tier for background automations) pushes the numbers to Massif each morning.
 
 1. Set `HEALTH_INGEST_KEY` in Netlify (any long random string) and redeploy.
 2. In Health Auto Export → Automations → **REST API**:

@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>VeloX Studio</title>
+<title>Massif Studio</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23FFD100'/%3E%3Cpath d='M14,48 L32,18 L50,48' fill='none' stroke='%23141E28' stroke-width='6' stroke-linejoin='round' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='18' r='6' fill='%23141E28'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#FFD100">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Massif">
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800;900&family=Fraunces:ital,opsz,wght@0,9..144,540;0,9..144,620;1,9..144,460&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -932,14 +938,14 @@ svg#rc-prof{display:block;width:100%;height:340px}
 <body>
 
 <aside class="rail">
-  <span class="logo"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.4" fill="none" stroke="#141E28" stroke-width="2"/><path d="M7.4 7.4 L16.6 16.6 M16.6 7.4 L7.4 16.6" stroke="#141E28" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="12" r="2.2" fill="#FFD100" stroke="#141E28" stroke-width="1.1"/></svg></span>
+  <span class="logo" id="brandmark" title="Massif — back to the Season" style="cursor:pointer;color:#141E28"><svg viewBox="0 0 22 22"><path d="M4,17.5 L11,5.5 L18,17.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/><path d="M7.4,17.5 L11,11.5 L14.6,17.5" fill="none" stroke="currentColor" stroke-opacity=".28" stroke-width="1.5" stroke-linejoin="round"/><circle cx="11" cy="5.5" r="2.4" fill="#FFD100"/></svg></span>
   <button class="on" data-s="season"><svg viewBox="0 0 24 24"><path d="M3 19 L9 8 L13 14 L17 6 L21 19 Z"/></svg><span class="tip">SEASON · 1</span></button>
   <button data-s="plan"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10 h16 M8 3 v4 M16 3 v4"/></svg><span class="tip">PLAN · 2</span></button>
   <button data-s="analyse"><svg viewBox="0 0 24 24"><path d="M3 12 h4 l2 -6 4 12 2 -6 h6"/></svg><span class="tip">ANALYSE · 3</span></button>
   <button data-s="jerseys"><svg viewBox="0 0 24 24"><path d="M7 4 h10 v3 c0 4 -2 6 -5 6 s-5 -2 -5 -6 Z M12 13 v4 M8 20 h8"/></svg><span class="tip">JERSEYS · 4</span></button>
   <button data-s="sync"><svg viewBox="0 0 24 24"><path d="M8 12 a4 4 0 0 1 4 -4 h5 M17 8 l-2.5 -2.5 M17 8 l-2.5 2.5 M16 12 a4 4 0 0 1 -4 4 H7 M7 16 l2.5 -2.5 M7 16 l2.5 2.5"/></svg><span class="tip">SYNC · 5</span></button>
   <span class="spacer"></span>
-  <span class="key">VELOX STUDIO</span>
+  <span class="key">MASSIF STUDIO</span>
 </aside>
 
 <div class="main">
@@ -3878,11 +3884,11 @@ function zwoXml(sess,dateIso){
     return `    <SteadyState Duration="${sec||60}" Power="${f(st.pct??65)}"/>`;}).join("\n");
   return `<?xml version="1.0" encoding="UTF-8"?>
 <workout_file>
-  <author>The DS · VeloX Studio</author>
+  <author>The DS · Massif Studio</author>
   <name>${esc(sess.nm||sess.type||"Session")}</name>
   <description>${esc((dateIso?dateIso+" · ":"")+(sess.detail||"")+(sess.tss?` · ~${sess.tss} TSS`:"")+` · FTP ${S.ftp} W at export`)}</description>
   <sportType>bike</sportType>
-  <tags><tag name="VeloX"/><tag name="${esc(sess.type||"Ride")}"/></tags>
+  <tags><tag name="Massif"/><tag name="${esc(sess.type||"Ride")}"/></tags>
   <workout>
 ${body}
   </workout>
@@ -3891,7 +3897,7 @@ ${body}
 function downloadZwo(sess,dateIso){
   if((sess.type||"")==="Strength"){alert("Strength sessions aren't turbo workouts, so there's no .zwo for this one.");return;}
   const xml=zwoXml(sess,dateIso),safe=(sess.nm||"session").replace(/[^a-z0-9]+/gi,"-").replace(/^-|-$/g,"").slice(0,40);
-  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([xml],{type:"application/xml"}));a.download=`VeloX_${dateIso||"session"}_${safe}.zwo`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([xml],{type:"application/xml"}));a.download=`Massif_${dateIso||"session"}_${safe}.zwo`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
   sysMsg&&sysMsg("ZWO SAVED — UPLOAD AT MYWHOOSHINFO.COM → WORKOUTS, THEN RESTART MYWHOOSH");
 }
 /* ── trips become training: a stage with a route is a planned session with its simulated load ── */
@@ -4112,8 +4118,9 @@ function jerseySvg(kind,name,num,sub){
     <path d="M64,84 L64,178 M156,84 L156,178" stroke="#141E28" stroke-opacity=".10" stroke-width="1"/>
     <path d="M90,22 Q110,44 130,22" fill="#F7F8F7" stroke="#141E28" stroke-opacity=".3" stroke-width="1.6"/>
     <path d="M110,44 L110,74" stroke="#141E28" stroke-opacity=".18" stroke-width="1.2" stroke-dasharray="2 2"/>
-    <text x="110" y="62" text-anchor="middle" font-family="Space Grotesk" font-weight="700" font-size="8.5" letter-spacing="2.5" fill="${k.ink}" opacity=".8">VELOX</text>
-    <text x="110" y="90" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="13" letter-spacing="1.2" fill="${k.ink}">${(name||"").toUpperCase()}</text>
+    <g transform="translate(101,46) scale(0.82)"><path d="M4,17.5 L11,5.5 L18,17.5" fill="none" stroke="${k.ink}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" opacity=".85"/><circle cx="11" cy="5.5" r="2.4" fill="${kind==="yellow"?k.ink:"#FFD100"}" stroke="${k.ink}" stroke-width="1"/></g>
+    <text x="110" y="72" text-anchor="middle" font-family="Space Grotesk" font-weight="700" font-size="7.5" letter-spacing="2.5" fill="${k.ink}" opacity=".8">MASSIF</text>
+    <text x="110" y="92" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="13" letter-spacing="1.2" fill="${k.ink}">${(name||"").toUpperCase()}</text>
     ${numBlock}
   </svg>`;
 }
@@ -4170,7 +4177,7 @@ function renderJerseysV4(){
     ${c.gap!=null?`<div class="jg" style="color:${c.gap>=0?"var(--vert)":"var(--polka)"}">${c.gap>=0?"+":""}${c.gap} ${c.gapL}</div>`:`<div class="jg" style="color:var(--mist)">${c.gapL||"—"}</div>`}${spark2(c.series,c.seriesLY,100,26)}</div>`).join("");
   pod.querySelectorAll(".pj").forEach(b=>b.onclick=()=>openJersey(b.dataset.j));
   const P=R.passport,st=[["RIDES THIS SEASON",P.seasonRides,"",`${P.rides} all time`],["KILOMETRES",fmtInt(P.km),"KM","since the season began"],["EVERESTS",P.everests,"","of 8,849 m each"],["LONGEST RIDE",P.longest?P.longest.km:"—","KM",P.longest?P.longest.nm:""],["BIGGEST DAY",P.biggest?fmtInt(P.biggest.m):"—","M",P.biggest?P.biggest.nm:""],["MOST RIDDEN",P.fav?P.fav[1]:"—","×",P.fav?P.fav[0]:""]];
-  pas.innerHTML=`<div class="ph">THE PASSPORT — STAMPS FROM THE ROAD</div><div class="stamps">${st.map((x,i)=>`<div class="stamp" style="--r:${[-1.2,.8,-.6,1.1,-.9,.7][i]}deg"><span class="ink">VELOX<br/>${new Date().getFullYear()}</span><div class="sl">${x[0]}</div><div class="sv">${x[1]}<small>${x[2]}</small></div><div class="sd">${x[3]}</div></div>`).join("")}</div>`;
+  pas.innerHTML=`<div class="ph">THE PASSPORT — STAMPS FROM THE ROAD</div><div class="stamps">${st.map((x,i)=>`<div class="stamp" style="--r:${[-1.2,.8,-.6,1.1,-.9,.7][i]}deg"><span class="ink">MASSIF<br/>${new Date().getFullYear()}</span><div class="sl">${x[0]}</div><div class="sv">${x[1]}<small>${x[2]}</small></div><div class="sd">${x[3]}</div></div>`).join("")}</div>`;
 }
 async function openJersey(id){
   const R=classify(),c=R.C[id],k=JK[id],sh=v4El("sheet"),el=v4El("sheetin");sh.style.display="flex";
@@ -4199,6 +4206,10 @@ async function openJersey(id){
 }
 const _ss8=showScene;showScene=function(id){_ss8(id);if(id==="jerseys"){renderJerseysV4();if(LIVE&&!window.RB&&typeof loadRadar==="function")loadRadar().then(()=>renderJerseysV4());}};
 const _tb8=tlBuild;tlBuild=function(a){_tb8(a);if(document.getElementById("s-jerseys").classList.contains("on"))renderJerseysV4();};
+
+
+/* ═══ v4.4 — Massif ═══ */
+(function(){const b=document.getElementById("brandmark");if(b)b.onclick=()=>{showScene("season");window.scrollTo({top:0,behavior:"smooth"});};})();
 
 </script>
 <div id="sheet" class="sheet" style="display:none"><div class="sheetin" id="sheetin"></div></div>
