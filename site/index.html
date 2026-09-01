@@ -4704,6 +4704,14 @@ openRaceCard=function(){
   v4El("sheetin").scrollTop=0;
 };
 
+
+/* ═══ v4.7.1 — live repaint while open ═══ */
+(function(){let lastC=null;
+  async function tick(){if(!LIVE||document.visibilityState!=="visible")return;
+    try{const st=await api("/api/status");const prev=lastC;lastC=st.lastCompute;STATUS=st;renderStatus();
+      if(prev&&st.lastCompute&&st.lastCompute!==prev){const dd=await api("/api/data");if(dd.metrics)applyLive(dd.metrics);sysMsg&&sysMsg("A NEW RIDE IS IN — REPAINTED");}}catch(e){}}
+  setInterval(tick,3*60e3);setTimeout(tick,20e3);})();
+
 </script>
 <div id="sheet" class="sheet" style="display:none"><div class="sheetin" id="sheetin"></div></div>
 <script>

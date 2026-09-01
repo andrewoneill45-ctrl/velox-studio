@@ -27,6 +27,7 @@ export default async (req) => {
         const keys = Object.keys(cards.debriefs).sort(); while (keys.length > 40) delete cards.debriefs[keys.shift()]; await writeJSON("cards.json", cards); } } catch {}
     st.lastIngest = new Date().toISOString(); st.lastIngestId = id; delete st.pending; st.lastError = null;
   } catch (e) { st.lastError = String(e.message || e); st.lastErrorAt = new Date().toISOString(); }
-  await writeJSON("state.json", st);
+  const fresh = await readJSON("state.json", {});
+  await writeJSON("state.json", { ...fresh, ...st, lastWebhook: fresh.lastWebhook || st.lastWebhook || null });
   return new Response("ok");
 };
