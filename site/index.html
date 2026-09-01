@@ -658,6 +658,20 @@ svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshai
 .rcard .big div b{display:block;font-family:'Archivo';font-weight:900;font-size:28px;color:#141E28;margin-top:3px;letter-spacing:-.02em}
 @media print{body>*:not(#sheet){display:none!important}#sheet{position:static!important;background:#fff!important;padding:0!important;display:block!important}.sheetin{box-shadow:none!important;height:auto!important;width:100%!important;border-radius:0!important;padding:0!important;overflow:visible!important}.sheetin .sx,.sh-acts,.noprint{display:none!important}}
 /* ── THE RACE CARD v2 · colour from the jerseys ── */
+.sheetin.race{display:block;overflow:auto;padding:26px 40px 34px}
+.sheetin.race .sx{position:sticky;top:0;float:right;margin:-6px -14px 0 0;z-index:5}
+.rc2 .bib{padding:16px 22px}
+.rc2 .bib .t{font-size:30px}
+.rc2 .bib .num .n{font-size:44px}
+.rc2 .facts{margin-top:10px}
+.rc2 .facts div{padding:8px 12px}
+.rc2 .facts .v{font-size:19px}
+.rc2 .prof{margin-top:10px;padding:10px 12px 6px}
+.rc2 .prof svg{height:150px}
+.rc2 .cols{margin-top:10px}
+.rc2 .krow{padding:8px 12px}
+.rc2 .fin{margin-top:10px;padding:14px 20px}
+.rc2 .fin .fv .n{font-size:30px}
 .rc2{font-family:Inter,sans-serif;color:#141E28;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .rc2 .bib{background:#FFD100;border-radius:18px;padding:22px 26px;display:grid;grid-template-columns:auto 1fr auto;gap:22px;align-items:center;position:relative;overflow:hidden}
 .rc2 .bib::after{content:"";position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.35)}
@@ -3464,8 +3478,9 @@ function buildReconCourse(ev,c){
   drawCourseProfile(c,sim,RCVIEW);
   rcEl("rc-splits").innerHTML=sim.splits.map((sp,ci)=>`<div class="rc-split"><span><input class="cn" data-ci="${ci}" value="${sp.n.replace(/"/g,"&quot;")}" title="Rename this climb"/><span class="dim" style="font-size:9px">CAT ${sp.cat} · FROM KM ${sp.startKm}</span></span><span class="dim">${sp.len}</span><span class="dim">${sp.avg}%</span><span><input class="cw" type="number" data-cw="${ci}" value="${sp.w}" title="Target watts for this climb"/></span><span>${sp.wkg}</span><span class="dim">${sp.vam}</span><span>${hms(sp.secs)} <span class="dim">· ETA ${hms(sp.eta)}</span></span></div>`).join("")||`<div class="rc-split"><span class="cn">No categorised climbs on this course</span></div>`;
   rcEl("rc-splits").querySelectorAll("input.cw").forEach(inp=>inp.onchange=()=>{const ci=+inp.dataset.cw,v=+inp.value;ev.recon=ev.recon||{};ev.recon.climbW=ev.recon.climbW||{};ev.recon.climbW[c.id]=ev.recon.climbW[c.id]||{};if(v>0)ev.recon.climbW[c.id][ci]=v;else delete ev.recon.climbW[c.id][ci];saveProfile();buildRecon();});
-  rcEl("rc-splits").querySelectorAll("input.cn").forEach(inp=>inp.onchange=async()=>{const ci=+inp.dataset.cn,n=inp.value.trim();if(!n)return;c.climbs[ci].n=n;if(ev.cols&&ev.cols[ci])ev.cols[ci].n=n;saveProfile();
-    if(LIVE)await api("/api/routes?id="+c.id,{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({climbs:[{i:ci,n}]})}).catch(()=>{});buildRecon();});
+  rcEl("rc-splits").querySelectorAll("input.cn").forEach(inp=>inp.onchange=async()=>{const ci=+inp.dataset.ci,n=inp.value.trim();if(!n||!c.climbs[ci])return;c.climbs[ci].n=n;if(ev.cols&&ev.cols[ci])ev.cols[ci].n=n;saveProfile();
+    if(LIVE){try{await api("/api/routes?id="+c.id,{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({climbs:[{i:ci,n}]})});busy(`SAVED — ${n.toUpperCase()}`);setTimeout(()=>busy(""),1800);}catch(e){busy("NAME NOT SAVED — "+String(e.message||e));}}
+    buildRecon();});
   rcEl("rc-fin").textContent=hms(sim.total);
   rcEl("rc-finband").textContent=`PROJECTED FINISH · ${sim.finishKmh} KM/H · BAND ${hms(sim.total*.97)} – ${hms(sim.total*1.045)} · PHYSICS ON THE REAL ROAD`;
   const hard=sim.splits.reduce((a,b)=>(!a||b.fiets>a.fiets)?b:a,null);
@@ -4301,7 +4316,7 @@ renderWeekDetail=function(k){
 /* the session sheet */
 function openSession(di,idx){
   const p=(S.plan&&S.plan[di]||[])[idx||0];if(!p)return;
-  const sh=v4El("sheet"),el=v4El("sheetin");sh.style.display="flex";
+  const sh=v4El("sheet"),el=v4El("sheetin");sh.style.display="flex";el.classList.remove("race");
   const d=new Date(di+"T12:00:00"),st=sessionStats(p),ev=p.trip?EVENTS.find(e=>e.id===p.trip):null,rid=planRouteId(p),c=rid&&ROUTES[rid];
   const goal=fut().find(e=>e.pr==="A")||fut()[0];
   const wk=S.build&&Object.values(S.build).map(b=>(b.weeks||[]).find(w=>w.monday===isoDay(mondayOf(d)))).find(Boolean);
@@ -4459,7 +4474,7 @@ function renderJerseysV4(){
   pas.innerHTML=`<div class="ph">THE PASSPORT — STAMPS FROM THE ROAD</div><div class="stamps">${st.map((x,i)=>`<div class="stamp" style="--r:${[-1.2,.8,-.6,1.1,-.9,.7][i]}deg"><span class="ink">MASSIF<br/>${new Date().getFullYear()}</span><div class="sl">${x[0]}</div><div class="sv">${x[1]}<small>${x[2]}</small></div><div class="sd">${x[3]}</div></div>`).join("")}</div>`;
 }
 async function openJersey(id){
-  const R=classify(),c=R.C[id],k=JK[id],sh=v4El("sheet"),el=v4El("sheetin");sh.style.display="flex";
+  const R=classify(),c=R.C[id],k=JK[id],sh=v4El("sheet"),el=v4El("sheetin");sh.style.display="flex";el.classList.remove("race");
   const W=600,H=150,series=c.series,ly=c.seriesLY;
   let chart="";
   if(series&&series.length>1){const mx=Math.max(...series,...(ly||[]),1);const P=arr=>arr.map((v,i)=>[10+(i/(arr.length-1))*(W-20),H-16-(v/mx)*(H-30)]);
@@ -4674,7 +4689,7 @@ function raceProfile(c,sim,st){
 }
 openRaceCard=function(){
   const ev=EVENTS.find(e=>e.id===rcEv),c=RCX,sim=RCSIM;if(!ev||!c||!sim)return;
-  const sh=v4El("sheet"),el=v4El("sheetin");sh.style.display="flex";
+  const sh=v4El("sheet"),el=v4El("sheetin");sh.style.display="flex";el.classList.add("race");
   const st=(ev.recon&&ev.recon.startMin)||480;
   const days=ev.days||1,stage=days>1?rcStage:1,d=addD(new Date(ev.date+"T12:00:00"),stage-1);
   const ftp=(ev.recon&&ev.recon.ftpDay)||ftpOnDay(ev);
@@ -4698,7 +4713,7 @@ openRaceCard=function(){
     </div></div>
     <div class="fin"><div class="kite"></div><div class="ft">Flamme rouge at km ${(c.km-1).toFixed(1)}. Empty the tank on the last rise, then roll in with the friends you came with.</div><div class="fv"><div class="n">${clock(st,sim.total)}</div><div class="l">PROJECTED FINISH</div></div></div>
     <div class="sh-acts noprint"><button class="aibtn" style="background:var(--ink)" id="rc-print">PRINT / SAVE AS PDF</button><span class="ds" style="margin:0">A6 for the top tube, or screenshot it to the phone.</span></div></div>`;
-  const close=()=>{sh.style.display="none";};v4El("rcx").onclick=close;sh.onclick=e=>{if(e.target===sh)close();};document.onkeydown=e=>{if(e.key==="Escape")close();};
+  const close=()=>{sh.style.display="none";el.classList.remove("race");};v4El("rcx").onclick=close;sh.onclick=e=>{if(e.target===sh)close();};document.onkeydown=e=>{if(e.key==="Escape")close();};
   v4El("rc-print").onclick=()=>window.print();
   v4El("rc-start").onchange=e=>{const [h,m]=e.target.value.split(":").map(Number);ev.recon=ev.recon||{};ev.recon.startMin=h*60+m;saveProfile();openRaceCard();};
   v4El("sheetin").scrollTop=0;
