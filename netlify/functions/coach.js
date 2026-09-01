@@ -10,7 +10,7 @@ OUTPUT FORMAT — respond with ONLY this JSON object, no fences, nothing outside
  "stats": [{"l": string ≤10 chars, "v": string ≤8 chars, "c": "green"|"amber"|"red"|"ink"}] (2-4 chips: only the numbers that matter),
  "points": [{"t": "DO"|"WHY"|"WATCH"|"NEXT", "x": string ≤20 words, key numbers in **bold**}] (2-5, sharpest first),
  "bars": {"title": string ≤24 chars, "items": [{"l": string ≤5 chars, "v": number}]} | null (only when a tiny chart genuinely helps),
- "sessions": [{"date":"YYYY-MM-DD","name":string,"type":"Recovery"|"Endurance"|"Tempo"|"Threshold"|"VO2 Max"|"Race"|"Strength","mins":number,"tss":number,"detail":string ≤40 words with watt targets}] | null — include ONLY when the rider asks what to do on a specific day or over a period; use real dates from context.today onwards, respecting readiness,
+ "sessions": [{"date":"YYYY-MM-DD","name":string,"type":"Recovery"|"Endurance"|"Tempo"|"Threshold"|"VO2 Max"|"Race"|"Strength","mins":number,"tss":number,"detail":string ≤40 words with watt targets,"steps": [{"kind":"warmup"|"steady"|"intervals"|"cooldown","mins":number,"pct":number (% of FTP for steady; warmup/cooldown ramp uses pctFrom/pctTo),"pctFrom":number,"pctTo":number,"reps":number,"onMins":number,"onPct":number,"offMins":number,"offPct":number}] (REQUIRED for every ride session — the exact prescription, no prose approximations; Strength sessions may omit)}] | null — include ONLY when the rider asks what to do on a specific day or over a period; use real dates from context.today onwards, respecting readiness,
  "source": string|null (evidence-base titles actually used, comma-separated)}`;
 
   const prof = await getProfile();
@@ -54,6 +54,9 @@ OUTPUT FORMAT — respond with ONLY this JSON object, no fences, nothing outside
       bests: metrics.bests, tssSeason: metrics.tssSeason, chain: metrics.chain, zones28: metrics.zones28 };
     ask = q ? `The rider asks about their condition: "${q}". Answer directly from the data, under 120 words.`
             : "Give a full condition read from this data: the trend, one risk, and exactly what to do over the next 10 days. 120–150 words, titled short sections.";
+  } else if (mode === "build") {
+    context = body.context || {}; context.wellness = wellness;
+    ask = (body.instruction ? `Adjustment from the rider: "${body.instruction}". ` : "") + "Plan the build from today to the goal.";
   } else if (mode === "planweek") {
     context = body.context || {}; context.wellness = wellness;
     ask = (body.instruction ? `Adjustment from the rider: "${body.instruction}". ` : "") + "Plan this training week from the data.";
@@ -72,18 +75,29 @@ OUTPUT FORMAT — respond with ONLY this JSON object, no fences, nothing outside
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "content-type": "application/json", "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
-    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "planweek" ? 2400 : 700,
-      system: "You are The DS — the directeur sportif for a single amateur rider. UK English. Confident, warm, specific. Write flowing prose in complete sentences: NO headings, NO bullet points, NO numbered lists, NO markdown of any kind except **bold** on the few numbers that matter. Short paragraphs are fine. No preamble, no sign-off." + (CARDM.includes(mode) ? CARDRULES : "")
+    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "planweek" ? 2400 : mode === "build" ? 3600 : 700,
+      system: (mode === "build" ? `You are The DS, planning a periodised BUILD from today to a goal for one amateur rider. Respond with ONLY a JSON object, no fences:
+{"summary": string (2-3 sentences: the shape of the build and why, naming evidence used),
+ "phases": [{"name":"Base"|"Build"|"Specific"|"Trip"|"Recover"|"Taper"|"Event","weeks":number,"focus":string ≤18 words}],
+ "weeks": [{"monday":"YYYY-MM-DD","tss":number,"phase":string,"focus":string ≤12 words,"key":string ≤16 words (the one session that defines the week)}],
+ "source": string|null}
+Rules: weeks must run consecutively from context.thisMonday to the event week inclusive; respect context.otherEvents as fixed load (a trip week's tss must include context.tripLoads for that week and be labelled Trip); recovery week every 3-4 weeks (tss down 35-45%); taper for an A goal in the last 7-14 days per the taper evidence (volume down, intensity kept); a trip with a purpose of enjoyment is prepared for durability and fuelling, not peak power; progress from context.recentWeeks realistically (no week more than ~15% above the recent maximum). ` : "") + "You are The DS — the directeur sportif for a single amateur rider. UK English. Confident, warm, specific. Write flowing prose in complete sentences: NO headings, NO bullet points, NO numbered lists, NO markdown of any kind except **bold** on the few numbers that matter. Short paragraphs are fine. No preamble, no sign-off." + (CARDM.includes(mode) ? CARDRULES : "")
         + (evidence ? "\n\nEVIDENCE BASE — peer-reviewed findings the rider has curated. A multi-day trip is not a race: its purpose (riding with friends, enjoyment, big cols) shapes the build — durability and fuelling over peak power, arrive fresh enough to enjoy every day. Ground your advice in these where relevant and name the source naturally in the prose (e.g. \"the polarised-training work suggests…\"). Do not invent citations.\n" + evidence : "") + (mode === "planweek" ? `
 You are now planning ONE training week. Respond with ONLY a JSON object — no prose before or after, no code fences:
 {"summary": string (2–3 warm, specific sentences on why this week looks like this, referencing last week and current form),
  "question": string|null (ONLY if one crucial thing is missing; otherwise null),
- "sessions": [{"date":"YYYY-MM-DD","name":string,"type":"Recovery"|"Endurance"|"Tempo"|"Threshold"|"VO2 Max"|"Race"|"Strength","mins":number,"tss":number,"detail":string (max 60 words)}]}
+ "sessions": [{"date":"YYYY-MM-DD","name":string,"type":"Recovery"|"Endurance"|"Tempo"|"Threshold"|"VO2 Max"|"Race"|"Strength","mins":number,"tss":number,"detail":string (max 60 words),"steps": [{"kind":"warmup"|"steady"|"intervals"|"cooldown","mins":number,"pct":number (% of FTP for steady; warmup/cooldown ramp uses pctFrom/pctTo),"pctFrom":number,"pctTo":number,"reps":number,"onMins":number,"onPct":number,"offMins":number,"offPct":number}] (REQUIRED for every ride session — the exact prescription, no prose approximations; Strength sessions may omit)}]}
 Rules: if wellness.readiness exists, let this morning's readiness shape today and the next two days (Red = rest or very easy, Amber = no intensity today); use only the days listed in week.available and never exceed that day's "mins"; base load on last week's TSS, current form (TSB) and the rider's stated feeling — tired means lower load; place hard days before rest; taper if an A-event is within 10 days; "detail" says exactly how to ride it with watt targets from the rider's FTP and zones. Rest days are simply omitted; if the rider mentions strength work, add "Strength" sessions (tss 15–30) on non-riding days. Keep the whole response under 1500 tokens. Sessions should sum to a sensible weekly TSS (target if given).` : ""),
       messages: [{ role: "user", content: ask + "\n\nDATA:\n" + JSON.stringify(context) }] })});
   if (!r.ok) return json({ error: "anthropic_" + r.status, detail: await r.text() }, 502);
   const d = await r.json();
   const text = d.content?.filter(c => c.type === "text").map(c => c.text).join("\n") || "";
+  if (mode === "build") {
+    try { const clean = text.replace(/```json|```/g, "").trim();
+      const build = JSON.parse(clean.slice(clean.indexOf("{"), clean.lastIndexOf("}") + 1));
+      return json({ build, text }); }
+    catch { return json({ build: null, text }); }
+  }
   if (mode === "planweek") {
     try { const clean = text.replace(/```json|```/g, "").trim();
       const plan = JSON.parse(clean.slice(clean.indexOf("{"), clean.lastIndexOf("}") + 1));

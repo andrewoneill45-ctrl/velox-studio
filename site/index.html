@@ -483,6 +483,19 @@ svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshai
 #ribbon>.ribbon .stg2{width:150px}#ribbon>.ribbon .stg2 svg{width:150px;height:48px}
 #ribbon>.ribbon .stg2 .sl{white-space:normal;line-height:1.5;overflow:visible}
 #ribbon>.ribbon+.ribbon{border-top:1px solid var(--hair)}
+.buildpanel{padding:26px 0;border-bottom:1px solid var(--line)}
+.bh{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.bh .bt{font-family:'Fraunces',serif;font-size:22px;color:var(--ink)}
+.bsum{font-family:'Fraunces',serif;font-style:italic;font-size:16px;line-height:1.5;color:var(--ink2);margin:12px 0 16px;max-width:1000px}
+.phases{display:flex;height:34px;border-radius:9px;overflow:hidden;margin-bottom:14px}
+.phases span{display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.14em;color:#fff;white-space:nowrap;overflow:hidden}
+.bwk{display:grid;grid-template-columns:120px 90px 70px 1fr 1.4fr;gap:10px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--hair);font-size:12px}
+.bwk.h{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.16em;color:var(--mist);border-bottom:1px solid var(--line)}
+.bwk .bm{font-family:'Space Grotesk';font-size:9.5px;font-weight:700;letter-spacing:.08em;color:var(--ink2)}
+.bwk .bp{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.1em;color:#fff;padding:3px 7px;border-radius:5px;text-align:center}
+.bwk input{border:1px solid var(--line);border-radius:6px;padding:4px 7px;width:64px;font-family:'Space Grotesk';font-weight:700;font-size:12px}
+.bwk.trip{background:#FFF8DC}
+.bact{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
 /* ── TIMELINE ── */
 .tlwrap{border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:var(--sh);overflow:hidden}
 .tltop{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--hair)}
@@ -832,6 +845,7 @@ svg#rc-prof{display:block;width:100%;height:340px}
       <section class="dispatch cascade" id="dispatch" style="--i:2"></section>
       <section class="instrail cascade" id="instrail" style="--i:3"></section>
       <section class="ribbon cascade" id="ribbon" style="--i:4"></section>
+      <section class="buildpanel" id="buildpanel" style="display:none"></section>
       <section class="weekband cascade" id="weekband" style="--i:5"></section>
       <section class="palmares cascade" id="palmares" style="--i:6"></section>
     </div>
@@ -2189,7 +2203,7 @@ function saveProfile(){
   SAVET=setTimeout(()=>{
     fetch("/api/profile",{method:"PUT",headers:{"content-type":"application/json"},
       body:JSON.stringify({ftp:S.ftp,weight:S.weight,maxhr:S.maxhr,rhr:S.rhr,lthr:S.lthr,
-        tgt:S.tgt,weekTargets:S.weekTargets||{},plan:S.plan||{},seasonStart:S.seasonStart,startFtp,startWeight,events:EVENTS,ftpLog:FTPLOG})}).catch(()=>{});
+        tgt:S.tgt,weekTargets:S.weekTargets||{},plan:S.plan||{},build:S.build||{},seasonStart:S.seasonStart,startFtp,startWeight,events:EVENTS,ftpLog:FTPLOG})}).catch(()=>{});
   },800);
 }
 const _updateAllL=updateAll;
@@ -2556,7 +2570,7 @@ function renderWeekDetail(k){
       ${dev.map(e=>`<span class="chip" style="background:var(--jaune);color:var(--ink);margin-top:8px;align-self:flex-start">${e.pr} · ${e.short}${(e.days||1)>1?` · DAY ${Math.round((new Date(di+"T12:00:00")-new Date(e.date+"T12:00:00"))/864e5)+1}/${e.days}`:""}</span>`).join("")}
       <div class="nm" style="margin-top:12px">${main?main.nm:(past?"Rest day":plans.length?"Planned":"—")}</div>
       <div class="ds">${main?`${main.km} km · ${fmtInt(main.m)} m · ${hh(main.secs)}${rides.length>1?` · +${rides.length-1} more`:""}`:(past?"No ride logged":"")}</div>
-      <div>${plans.map((p,j)=>`<span class="pchip">${p.nm} · ${p.tss} TSS <button data-del="${di}|${j}">✕</button></span>`).join("")}</div>
+      <div>${plans.map((p,j)=>`<span class="pchip">${p.nm} · ${p.tss} TSS <button data-zwo="${di}|${j}" title="Download .zwo for MyWhoosh / Zwift" style="color:var(--bleu)">⬇</button><button data-del="${di}|${j}">✕</button></span>`).join("")}</div>
       ${!past||today?`<div class="padd" data-add="${di}">+ PLAN A RIDE</div><div class="pform" id="pf-${di}" style="display:none"><input placeholder="Session name" id="pn-${di}"/><input type="number" placeholder="Target TSS" id="pt-${di}"/><button class="aibtn" data-save="${di}" style="padding:7px">ADD</button></div>`:""}
       <div class="foot"><span class="tss">${tot||(plans.length?plans.reduce((s,p)=>s+(+p.tss||0),0):"")||"—"}<small> TSS</small></span>${tot>0?'<div class="tick">✓</div>':past?'<div class="miss"></div>':"<span></span>"}</div>
       ${stx?`<div class="stx">${stx}</div>`:""}
@@ -2567,6 +2581,7 @@ function renderWeekDetail(k){
   days.querySelectorAll("[data-save]").forEach(b=>b.onclick=e=>{e.stopPropagation();const di=b.dataset.save;
     const nm=document.getElementById("pn-"+di).value.trim()||"Ride",t=+document.getElementById("pt-"+di).value||0;
     S.plan=S.plan||{};(S.plan[di]=S.plan[di]||[]).push({nm,tss:t});saveProfile();tlRender(true);drawMassif();drawTraj();});
+  days.querySelectorAll("[data-zwo]").forEach(b=>b.onclick=e=>{e.stopPropagation();const [di,j]=b.dataset.zwo.split("|");downloadZwo(S.plan[di][+j],di);});
   days.querySelectorAll("[data-del]").forEach(b=>b.onclick=e=>{e.stopPropagation();const [di,j]=b.dataset.del.split("|");
     S.plan[di].splice(+j,1);if(!S.plan[di].length)delete S.plan[di];saveProfile();tlRender(true);drawMassif();drawTraj();});
   days.querySelectorAll(".pform").forEach(f=>f.onclick=e=>e.stopPropagation());
@@ -2813,7 +2828,7 @@ renderProposal=function(k){
         <div class="wn">${x.name}</div>
         <div class="wnum"><span><b>${x.mins}</b><small>MIN</small></span><span style="color:${c}"><b>${x.tss}</b><small>TSS</small></span></div>
         <div class="wx">${x.detail||""}</div>
-        <div class="wc"><label style="display:flex;gap:5px;align-items:center;cursor:pointer"><input type="checkbox" data-on="${x.i}" ${x.on?"checked":""}/> ADD</label><select data-mv="${x.i}">${opts(x.date)}</select><button class="rm" data-rm="${x.i}" title="Remove">✕</button></div></div>`;}).join("");}).join("")}</div>
+        <div class="wc"><label style="display:flex;gap:5px;align-items:center;cursor:pointer"><input type="checkbox" data-on="${x.i}" ${x.on?"checked":""}/> ADD</label>${x.type!=="Strength"?`<button class="rm" data-zwo2="${x.i}" title=".zwo" style="color:var(--bleu);font-size:11px;margin-left:0">⬇ ZWO</button>`:""}<select data-mv="${x.i}">${opts(x.date)}</select><button class="rm" data-rm="${x.i}" title="Remove">✕</button></div></div>`;}).join("");}).join("")}</div>
     <div class="wktot">
       <span class="k">PLANNED<b>${tot} TSS</b></span><span class="k">LAST WEEK<b>${Math.round(lastW)}</b></span>${tgt?`<span class="k">TARGET<b>${tgt}</b></span>`:""}
       <div class="bar"><i style="width:${Math.min(100,lastW/mx*100)}%;background:var(--hair);filter:brightness(.9)"></i><i style="width:${Math.min(100,tot/mx*100)}%;background:var(--bleu);opacity:.9"></i>${tgt?`<i style="width:2px;left:${Math.min(100,tgt/mx*100)}%;background:var(--jaune-ink)"></i>`:""}</div>
@@ -2822,6 +2837,7 @@ renderProposal=function(k){
     </div>
     <div style="display:flex;gap:10px;margin-top:12px"><input class="inp" id="ai-adj" placeholder="Adjust in plain English: make Thursday easier, swap the long ride to Sunday, add a strength day…" style="max-width:none;flex:1"/><button class="aibtn" id="ai-adjb">RE-PLAN</button></div>`;
   out.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{P.sessions.splice(+b.dataset.rm,1);renderProposal(k);});
+  out.querySelectorAll("[data-zwo2]").forEach(b=>b.onclick=()=>{const x=P.sessions[+b.dataset.zwo2];downloadZwo({nm:x.name,type:x.type,mins:x.mins,tss:x.tss,detail:x.detail,steps:x.steps},x.date);});
   out.querySelectorAll("[data-on]").forEach(c=>c.onchange=()=>{P.sessions[+c.dataset.on].on=c.checked;renderProposal(k);});
   out.querySelectorAll("[data-mv]").forEach(sl=>sl.onchange=()=>{P.sessions[+sl.dataset.mv].date=sl.value;renderProposal(k);});
   document.getElementById("ai-adjb").onclick=()=>{const v=document.getElementById("ai-adj").value.trim();if(v)aiBuild(k,v);};
@@ -2829,7 +2845,7 @@ renderProposal=function(k){
   document.getElementById("ai-accept").onclick=()=>{
     S.plan=S.plan||{};
     if(document.getElementById("ai-replace").checked){for(let i=0;i<7;i++)delete S.plan[isoDay(addD(mon,i))];}
-    P.sessions.filter(x=>x.on).forEach(x=>{(S.plan[x.date]=S.plan[x.date]||[]).push({nm:x.name,tss:+x.tss||0,type:x.type,mins:+x.mins||0,detail:x.detail||"",ai:true});});
+    P.sessions.filter(x=>x.on).forEach(x=>{(S.plan[x.date]=S.plan[x.date]||[]).push({nm:x.name,tss:+x.tss||0,type:x.type,mins:+x.mins||0,detail:x.detail||"",steps:x.steps||null,ai:true});});
     saveProfile();tlRender(true);drawMassif();drawTraj();
     document.getElementById("planner").style.display="none";};
 };
@@ -3455,7 +3471,7 @@ dsCard=function(c,dark){
 function dsCommit(list){
   S.plan=S.plan||{};
   list.forEach(x=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(x.date||""))return;
-    (S.plan[x.date]=S.plan[x.date]||[]).push({nm:x.name||x.type||"Session",tss:+x.tss||0,type:x.type||"Endurance",mins:+x.mins||0,detail:x.detail||"",ai:true});});
+    (S.plan[x.date]=S.plan[x.date]||[]).push({nm:x.name||x.type||"Session",tss:+x.tss||0,type:x.type||"Endurance",mins:+x.mins||0,detail:x.detail||"",steps:x.steps||null,ai:true});});
   saveProfile();if(window.TL&&TL.built)tlRender(true);drawMassif();drawTraj();
 }
 const _dsRender=dsRender;
@@ -3673,7 +3689,7 @@ function ribbonHTML(ev,compact){
       <div class="rd">${evDate(ev).toUpperCase()}${days>1?` → ${addD(new Date(ev.date+"T12:00:00"),days-1).toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}).toUpperCase()}`:""}</div>
       ${ev.purpose?`<div class="rp">"${ev.purpose}"</div>`:""}
       <div class="stages">${stages}</div></div>
-    <div class="rright"><div class="pf">PROJECTED FORM ON THE DAY</div><div class="pv" style="color:${pf==null?"var(--mist)":pf>=0?"var(--vert)":"#D99000"}">${pf==null?"—":(pf>=0?"+":"")+pf}</div><button class="aibtn rib-recon" style="background:var(--jaune);color:var(--ink)" data-recon="${ev.id}">RECON ROOM →</button></div></div>`;
+    <div class="rright"><div class="pf">PROJECTED FORM ON THE DAY</div><div class="pv" style="color:${pf==null?"var(--mist)":pf>=0?"var(--vert)":"#D99000"}">${pf==null?"—":(pf>=0?"+":"")+pf}</div><button class="aibtn rib-recon" style="background:var(--jaune);color:var(--ink)" data-recon="${ev.id}">RECON ROOM →</button><br/><button class="aibtn" style="background:var(--ember);margin-top:8px" data-build="${ev.id}">${S.build&&S.build[ev.id]?"THE BUILD · REVIEW":"PLAN THE BUILD · THE DS"}</button></div></div>`;
 }
 renderRibbon=function(){
   const el=v4El("ribbon");if(!el)return;
@@ -3682,6 +3698,7 @@ renderRibbon=function(){
   const missing=new Set();evs.forEach(ev=>stageIds(ev).forEach(id=>{if(id&&!ROUTES[id])missing.add(id);}));
   el.innerHTML=`<div class="roadlab">THE ROAD AHEAD — ${evs.length} ${evs.length===1?"GOAL":"TRIPS & GOALS"}, NEAREST FIRST</div>`+evs.map(ev=>ribbonHTML(ev,false)).join("");
   el.querySelectorAll("[data-recon]").forEach(b=>b.onclick=()=>openRecon(b.dataset.recon));
+  el.querySelectorAll("[data-build]").forEach(b=>b.onclick=()=>openBuild(b.dataset.build));
   missing.forEach(id=>loadRoute(id).then(()=>renderRibbon()));
 };
 /* any profile change (routes attached in the room, events edited) reaches the front page */
@@ -3698,6 +3715,110 @@ renderPalmares=function(){
     ${rows.map(([k,l])=>`<span class="pi"><b>${B[k].v} W</b>${l} · ${(B[k].nm||"").toUpperCase().slice(0,18)}${(B[k].nm||"").length>18?"…":""}, ${B[k].d||""}</span>`).join("")}`;
 };
 renderV4();
+
+
+/* ═══ v4.1 — .zwo export · the build · trips as training ═══ */
+/* ── ZWO ── */
+function defaultSteps(type,mins){
+  const m=Math.max(20,+mins||60),wu=Math.min(15,Math.round(m*.2)),cd=Math.min(10,Math.round(m*.12)),core=m-wu-cd;
+  const W=[{kind:"warmup",mins:wu,pctFrom:45,pctTo:70}],C=[{kind:"cooldown",mins:cd,pctFrom:65,pctTo:45}];
+  switch(type){
+    case "Recovery":return [{kind:"steady",mins:m,pct:52}];
+    case "Tempo":return [...W,{kind:"steady",mins:core,pct:82},...C];
+    case "Threshold":{const on=core>=45?12:core>=30?10:8,reps=Math.max(2,Math.floor(core/(on+5)));return [...W,{kind:"intervals",reps,onMins:on,onPct:97,offMins:5,offPct:55},...C];}
+    case "VO2 Max":{const reps=Math.max(3,Math.floor(core/7));return [...W,{kind:"intervals",reps,onMins:4,onPct:115,offMins:3,offPct:50},...C];}
+    case "Race":return [...W,{kind:"steady",mins:core,pct:90},...C];
+    default:return [...W,{kind:"steady",mins:core,pct:66},...C];}
+}
+function zwoXml(sess,dateIso){
+  const steps=(sess.steps&&sess.steps.length)?sess.steps:defaultSteps(sess.type,sess.mins);
+  const f=v=>(Math.max(20,Math.min(200,+v||60))/100).toFixed(3),esc=t=>String(t||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+  const body=steps.map(st=>{const sec=Math.round((+st.mins||0)*60);
+    if(st.kind==="warmup")return `    <Warmup Duration="${sec}" PowerLow="${f(st.pctFrom??45)}" PowerHigh="${f(st.pctTo??70)}"/>`;
+    if(st.kind==="cooldown")return `    <Cooldown Duration="${sec}" PowerLow="${f(st.pctFrom??65)}" PowerHigh="${f(st.pctTo??45)}"/>`;
+    if(st.kind==="intervals")return `    <IntervalsT Repeat="${Math.max(1,+st.reps||1)}" OnDuration="${Math.round((+st.onMins||5)*60)}" OffDuration="${Math.round((+st.offMins||3)*60)}" OnPower="${f(st.onPct??95)}" OffPower="${f(st.offPct??50)}"/>`;
+    return `    <SteadyState Duration="${sec||60}" Power="${f(st.pct??65)}"/>`;}).join("\n");
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<workout_file>
+  <author>The DS · VeloX Studio</author>
+  <name>${esc(sess.nm||sess.type||"Session")}</name>
+  <description>${esc((dateIso?dateIso+" · ":"")+(sess.detail||"")+(sess.tss?` · ~${sess.tss} TSS`:"")+` · FTP ${S.ftp} W at export`)}</description>
+  <sportType>bike</sportType>
+  <tags><tag name="VeloX"/><tag name="${esc(sess.type||"Ride")}"/></tags>
+  <workout>
+${body}
+  </workout>
+</workout_file>`;
+}
+function downloadZwo(sess,dateIso){
+  if((sess.type||"")==="Strength"){alert("Strength sessions aren't turbo workouts, so there's no .zwo for this one.");return;}
+  const xml=zwoXml(sess,dateIso),safe=(sess.nm||"session").replace(/[^a-z0-9]+/gi,"-").replace(/^-|-$/g,"").slice(0,40);
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([xml],{type:"application/xml"}));a.download=`VeloX_${dateIso||"session"}_${safe}.zwo`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
+  sysMsg&&sysMsg("ZWO SAVED — UPLOAD AT MYWHOOSHINFO.COM → WORKOUTS, THEN RESTART MYWHOOSH");
+}
+/* ── trips become training: a stage with a route is a planned session with its simulated load ── */
+function tripToPlan(ev){
+  if(!ev||(ev.days||1)<2)return;S.plan=S.plan||{};
+  const ftp=(ev.recon&&ev.recon.ftpDay)||ftpOnDay(ev);
+  for(let n=1;n<=ev.days;n++){const di=isoDay(addD(new Date(ev.date+"T12:00:00"),n-1));
+    S.plan[di]=(S.plan[di]||[]).filter(p=>!(p.trip===ev.id&&p.stage===n));
+    const id=ev.stageRoute&&ev.stageRoute[n],c=id&&ROUTES[id];if(!c)continue;
+    const fresh=Math.max(.85,1-.03*(n-1)),sim=simulate(c,{ftp,weight:S.weight,cda:(ev.recon&&ev.recon.cda)||0.32,fresh,segW:(ev.recon&&ev.recon.segs&&ev.recon.segs[id])||null});
+    S.plan[di].push({nm:`${ev.short} · Stage ${n} · ${c.name}`,tss:tripTss(sim,ftp),type:"Endurance",mins:Math.round(sim.total/60),detail:`${c.km} km · ${fmtInt(c.m)} m · projected ${hms(sim.total)} · ride the road, not the numbers`,trip:ev.id,stage:n});}
+}
+const _sync5=syncStage;syncStage=function(ev){_sync5(ev);tripToPlan(ev);};
+const _rt5=renderTrip;renderTrip=function(ev){_rt5(ev);tripToPlan(ev);};
+/* ── the build ── */
+S.build=S.build||{};
+let BUILD={ev:null,plan:null};
+function buildContext(ev){
+  const pm=pmcFromActs(),last=pm[pm.length-1]||{},thisMon=isoDay(mondayOf(new Date()));
+  const recent=[];for(let i=8;i>=1;i--){const k=isoDay(addD(new Date(thisMon+"T12:00:00"),-7*i));recent.push({monday:k,tss:Math.round(TL.weeks.get(k)?.tss||0)});}
+  const others=fut().filter(e=>e.id!==ev.id&&e.date<=ev.date).map(e=>({name:e.name,date:e.date,days:e.days||1,priority:e.pr,purpose:e.purpose||null}));
+  const tripLoads={};for(const e of fut()){if((e.days||1)<2)continue;for(let n=1;n<=e.days;n++){const di=isoDay(addD(new Date(e.date+"T12:00:00"),n-1));const p=(S.plan[di]||[]).find(x=>x.trip===e.id);if(p){const k=isoDay(mondayOf(new Date(di+"T12:00:00")));tripLoads[k]=(tripLoads[k]||0)+p.tss;}}}
+  return {today:isoDay(new Date()),thisMonday:thisMon,goal:{name:ev.name,date:ev.date,days:ev.days||1,priority:ev.pr,purpose:ev.purpose||null,km:ev.km,m:ev.m,daysAway:J(ev)},
+    otherEvents:others,tripLoads,recentWeeks:recent,form:{fitness:Math.round(last.ctl||0),fatigue:Math.round(last.atl||0),tsb:Math.round(last.tsb||0)},
+    rider:{ftp:S.ftp,weight:S.weight,wkg:+(S.ftp/S.weight).toFixed(2)},existingTargets:S.weekTargets||{}};
+}
+async function openBuild(evId,instruction){
+  const ev=EVENTS.find(e=>e.id===evId);if(!ev)return;BUILD.ev=ev;
+  const el=v4El("buildpanel");el.style.display="block";el.scrollIntoView({behavior:"smooth",block:"start"});
+  if(!(LIVE&&COACH)){el.innerHTML=`<div class="bh"><span class="bt">The build to ${ev.name}</span></div><div class="bsum">Connect Strava and the DS to plan a build.</div>`;return;}
+  if(S.build[evId]&&!instruction){BUILD.plan=S.build[evId];renderBuild();return;}
+  el.innerHTML=`<div class="bh"><span class="bt">The build to ${ev.name}</span><span class="ds" style="margin:0">The DS is reading eight weeks of history, your form, the other goals on the road and the library…</span></div>`;
+  try{const d=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"build",context:buildContext(ev),instruction:instruction||null})});
+    if(!d.build||!d.build.weeks){el.innerHTML=`<div class="bh"><span class="bt">The build to ${ev.name}</span></div><div class="bsum">The plan came back incomplete.</div><button class="aibtn" onclick="openBuild('${evId}','')">TRY AGAIN</button>`;return;}
+    BUILD.plan=d.build;renderBuild();}
+  catch(e){el.innerHTML=`<div class="bsum">Coach offline — ${String(e.message||e)}</div>`;}
+}
+const PHC={Base:"#26496E",Build:"#189B69",Specific:"#D99000",Trip:"#E8611F",Recover:"#93A0AB",Taper:"#8A6D00",Event:"#141E28"};
+function renderBuild(){
+  const el=v4El("buildpanel"),ev=BUILD.ev,P=BUILD.plan;if(!el||!P)return;
+  const committed=S.build[ev.id]===P;
+  const tot=P.weeks.reduce((a,w)=>a+(+w.tss||0),0),n=P.weeks.length;
+  el.innerHTML=`<div class="bh"><span class="bt">The build to ${ev.name}</span><span class="ds" style="margin:0">${n} weeks · ${fmtInt(tot)} TSS planned · ${committed?"COMMITTED — the massif's ridge is this plan":"PROPOSED"}</span>
+      <span class="grow"></span>${committed?`<button class="aibtn" style="background:#fff;color:var(--ink);border:1px solid var(--line)" id="bd-clear">CLEAR THE BUILD</button>`:""}<button class="aibtn" style="background:#fff;color:var(--ink);border:1px solid var(--line)" id="bd-close">CLOSE</button></div>
+    <div class="bsum">${P.summary||""}</div>
+    <div class="phases">${(P.phases||[]).map(ph=>`<span style="flex:${ph.weeks||1};background:${PHC[ph.name]||"#93A0AB"}" title="${ph.focus||""}">${(ph.name||"").toUpperCase()} · ${ph.weeks}W</span>`).join("")}</div>
+    <div class="bwk h"><span>WEEK OF</span><span>PHASE</span><span>TSS</span><span>FOCUS</span><span>KEY SESSION</span></div>
+    ${P.weeks.map((w,i)=>`<div class="bwk ${w.phase==="Trip"?"trip":""}"><span class="bm">${new Date(w.monday+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"}).toUpperCase()}</span><span class="bp" style="background:${PHC[w.phase]||"#93A0AB"}">${(w.phase||"").toUpperCase()}</span><span><input type="number" value="${Math.round(w.tss||0)}" data-bw="${i}"/></span><span>${w.focus||""}</span><span style="color:var(--ink2)">${w.key||""}</span></div>`).join("")}
+    <div class="bact">${committed?"":`<button class="aibtn" style="background:var(--vert);padding:12px 18px" id="bd-commit">COMMIT THE BUILD — SET ${n} WEEKLY TARGETS</button>`}
+      <input class="inp" id="bd-adj" placeholder="Adjust: more recovery in October, I'm away the week of the 19th…" style="max-width:none;flex:1;min-width:260px"/><button class="aibtn" id="bd-adjb">RE-PLAN</button>
+      <span class="ds" style="margin:0">Targets shape the massif and the projection; each week is then detailed with PLAN MY WEEK as it arrives.</span></div>`;
+  el.querySelectorAll("[data-bw]").forEach(inp=>inp.onchange=()=>{P.weeks[+inp.dataset.bw].tss=+inp.value||0;if(committed)commitBuild(false);});
+  v4El("bd-close").onclick=()=>{el.style.display="none";};
+  const c=v4El("bd-commit");if(c)c.onclick=()=>commitBuild(true);
+  const cl=v4El("bd-clear");if(cl)cl.onclick=()=>{P.weeks.forEach(w=>{delete S.weekTargets[w.monday];});delete S.build[ev.id];saveProfile();drawMassif();drawTraj();renderV4();el.style.display="none";};
+  v4El("bd-adjb").onclick=()=>{const v=v4El("bd-adj").value.trim();if(v)openBuild(ev.id,v);};
+}
+function commitBuild(announce){
+  const ev=BUILD.ev,P=BUILD.plan;S.weekTargets=S.weekTargets||{};
+  P.weeks.forEach(w=>{if(w.tss>0)S.weekTargets[w.monday]=Math.round(w.tss);});
+  S.build[ev.id]=P;saveProfile();drawMassif();drawTraj();renderV4();
+  if(announce){renderBuild();sysMsg&&sysMsg(`THE BUILD TO ${ev.short.toUpperCase()} IS ON THE MASSIF — ${P.weeks.length} WEEKS OF TARGETS SET`);}
+}
+/* profile carries the build */
+const _ap5=applyProfile;applyProfile=function(p){_ap5(p);S.build=(p&&p.build)||S.build||{};};
 
 </script>
 <script>
