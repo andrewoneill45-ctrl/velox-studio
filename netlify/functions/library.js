@@ -1,6 +1,6 @@
-import { json, readJSON, writeJSON, store } from "./_lib.js";
+import { json, readJSON, writeJSON, store, gated } from "./_lib.js";
 const slug = t => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "doc";
-export default async (req) => {
+export default gated(async (req) => {
   const u = new URL(req.url), id = u.searchParams.get("id");
   if (req.method === "GET") {
     if (id) { const d = await readJSON(`library/${id}.json`); return d ? json(d) : json({ error: "not_found" }, 404); }
@@ -40,4 +40,4 @@ export default async (req) => {
   idx.unshift({ id: docId, title, tags: dig.tags || [], quality: dig.quality || "medium" });
   await writeJSON("library-index.json", idx.slice(0, 100));
   return json({ ok: true, id: docId, tags: dig.tags, quality: dig.quality });
-};
+}, { allow: r => r.method !== "GET" });

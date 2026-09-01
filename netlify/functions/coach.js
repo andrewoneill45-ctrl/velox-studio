@@ -1,5 +1,5 @@
-import { json, readJSON, getProfile, wellnessSummary } from "./_lib.js";
-export default async (req) => {
+import { json, readJSON, getProfile, wellnessSummary, gated } from "./_lib.js";
+export default gated(async (req) => {
   if (!process.env.ANTHROPIC_API_KEY) return json({ error: "no_key" }, 501);
   const body = req.method === "POST" ? await req.json() : {};
   const { mode = "weekly", id = null, event = null, q = null } = body;
@@ -111,4 +111,4 @@ Rules: if wellness.readiness exists, let this morning's readiness shape today an
     } catch {}
   }
   return json({ text });
-};
+});

@@ -1,11 +1,11 @@
-import { json, readJSON, writeJSON, stravaToken, strava, getProfile } from "./_lib.js";
+import { json, readJSON, writeJSON, stravaToken, strava, getProfile, gated } from "./_lib.js";
 const ds = (a, n) => { if (!a || a.length <= n) return a || [];
   const o = []; for (let i = 0; i < n; i++) o.push(a[Math.round(i * (a.length - 1) / (n - 1))]); return o; };
 const np = (w, t) => { if (!w?.length) return null; const r = []; let j = 0;
   for (let i = 0; i < w.length; i++) { while (t[i] - t[j] > 30) j++;
     let s = 0; for (let k = j; k <= i; k++) s += w[k] || 0; r.push(s / (i - j + 1)); }
   return Math.round((r.reduce((a, v) => a + v ** 4, 0) / r.length) ** 0.25); };
-export default async (req) => {
+export default gated(async (req) => {
   const id = new URL(req.url).searchParams.get("id");
   if (!id) return json({ error: "id required" }, 400);
   let st = await readJSON(`streams/${id}.json`);
@@ -45,4 +45,4 @@ export default async (req) => {
     }
   }
   return json({ id, meta, streams: st });
-};
+});

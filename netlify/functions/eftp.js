@@ -1,4 +1,4 @@
-import { json, readJSON, writeJSON, store, getProfile } from "./_lib.js";
+import { json, readJSON, writeJSON, store, getProfile, gated } from "./_lib.js";
 const DUR = [5, 15, 30, 60, 120, 180, 240, 300, 360, 480, 600, 720, 960, 1200, 1500, 1800, 2400, 3600];
 const CACHE_V = 2;
 const bestAvg = (w, t, dur) => { if (!w?.length) return 0; let best = 0, j = 0, sum = 0;
@@ -19,7 +19,7 @@ function cpFit(pts) { // pts: [{t,p}] — asymmetric robust fit: submaximal poin
   }
   return fit;
 }
-export default async () => {
+export default gated(async (req) => {
   const prof = await getProfile();
   const { blobs } = await store().list({ prefix: "streams/" });
   const keys = (blobs || []).map(b => b.key);
@@ -88,4 +88,4 @@ export default async () => {
     cp: fit && spanOK ? Math.round(fit.cp) : null, wprime: fit && spanOK ? Math.round(fit.wp / 100) / 10 : null,
     evidence, streams: keys.length,
     method: `Best efforts from ${rides.length} rides with power, ${windowDays}-day window, asymmetric CP fit + duration cross-checks, median of ${cands.length} candidates.` });
-};
+});

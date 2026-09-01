@@ -1,4 +1,4 @@
-import { json, readJSON, writeJSON, stravaToken, strava, getProfile, store } from "./_lib.js";
+import { json, readJSON, writeJSON, stravaToken, strava, getProfile, store, gated, ftpAtFactory } from "./_lib.js";
 
 const ds = (a, n) => { if (!a || a.length <= n) return a || [];
   const o = []; for (let i = 0; i < n; i++) o.push(a[Math.round(i * (a.length - 1) / (n - 1))]); return o; };
@@ -16,13 +16,13 @@ const trim = a => ({ id: a.id, name: a.name, start_date: a.start_date, distance:
   average_heartrate: a.average_heartrate, type: a.sport_type || a.type, trainer: !!a.trainer });
 const isRide = a => /ride/i.test(a.type || "");
 
-export default async (req) => {
+export default gated(async (req) => {
   const u = new URL(req.url);
   const phase = u.searchParams.get("phase") || "list";
   const prof = await getProfile();
-  const FTP = prof.ftp || 180;
-  const estTss = a => { const NP = a.weighted_average_watts;
-    return NP ? Math.round((a.moving_time / 3600) * NP * (NP / FTP) / FTP * 100)
+  const FTP = prof.ftp || 180, ftpAt = ftpAtFactory(prof);
+  const estTss = a => { const NP = a.weighted_average_watts, F = ftpAt(a.start_date);
+    return NP ? Math.round((a.moving_time / 3600) * NP * (NP / F) / F * 100)
               : Math.round((a.moving_time / 3600) * 55); };
 
   if (phase === "list") {
@@ -81,7 +81,7 @@ export default async (req) => {
     const st = await readJSON(`streams/${a.id}.json`);
     const t = st?.time || [], w = st?.watts || [];
     const NP = w.length ? np(w, t) : (a.weighted_average_watts || null);
-    const hrs = (a.moving_time || 0) / 3600;
+    const hrs = (a.moving_time || 0) / 3600, F = ftpAt(a.start_date);
     let dec = null;
     if (w.length && st.hr?.length) { const h = Math.floor(w.length / 2);
       const eff = (ws, hs) => { const mw = ws.reduce((x, y) => x + y, 0) / ws.length, mh = hs.reduce((x, y) => x + y, 0) / hs.length; return mh ? mw / mh : 0; };
@@ -90,8 +90,8 @@ export default async (req) => {
     rides.push({ id: a.id, nm: a.name, date: a.start_date,
       dt: new Date(a.start_date).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" }).toUpperCase(),
       km: +(a.distance / 1000).toFixed(1), m: Math.round(a.total_elevation_gain || 0),
-      secs: a.moving_time, np: NP, iff: NP ? +(NP / FTP).toFixed(2) : null,
-      tss: NP ? Math.round(hrs * NP * (NP / FTP) / FTP * 100) : estTss(a),
+      secs: a.moving_time, np: NP, iff: NP ? +(NP / F).toFixed(2) : null, ftpAt: F,
+      tss: NP ? Math.round(hrs * NP * (NP / F) / F * 100) : estTss(a),
       hr: Math.round(a.average_heartrate || 0) || null,
       vi: NP && a.average_watts ? +(NP / a.average_watts).toFixed(2) : null,
       dec, gps: !!(st?.latlng?.length), trainer: a.trainer,
@@ -178,4 +178,4 @@ export default async (req) => {
     rideIndex: rides.map(({ b5, b60, b300, b1200, ...r }) => r) };
   await writeJSON("metrics.json", metrics);
   return json({ ok: true, rides: rides.length, activities: acts.length, total: all.length, weeks: NW, syncedAt: metrics.syncedAt });
-};
+});

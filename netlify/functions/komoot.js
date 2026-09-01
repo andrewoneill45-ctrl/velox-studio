@@ -1,6 +1,6 @@
-import { json } from "./_lib.js";
+import { json, gated } from "./_lib.js";
 const UA = { "user-agent": "Mozilla/5.0 (Macintosh) VeloX/2.6", "accept": "application/json,text/html" };
-export default async (req) => {
+export default gated(async (req) => {
   const url = new URL(req.url).searchParams.get("url") || "";
   const idm = url.match(/tour\/(\d+)/); if (!idm) return json({ error: "Not a Komoot tour link" }, 400);
   const id = idm[1], tok = (url.match(/share_token=([\w-]+)/) || [])[1];
@@ -21,4 +21,4 @@ export default async (req) => {
   }
   if (!pts.length) return json({ error: "Couldn't read that tour. Make it public or shared by link in Komoot, or export the GPX and drop it here." }, 422);
   return json({ name, pts, source: "komoot", tourId: id });
-};
+});

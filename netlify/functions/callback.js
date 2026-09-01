@@ -1,5 +1,5 @@
-import { writeJSON } from "./_lib.js";
-export default async (req) => {
+import { writeJSON, gated } from "./_lib.js";
+export default gated(async (req) => {
   const u = new URL(req.url);
   const code = u.searchParams.get("code");
   if (!code) return new Response("Missing code", { status: 400 });
@@ -11,4 +11,4 @@ export default async (req) => {
   const t = await r.json();
   await writeJSON("tokens.json", t);
   return new Response(null, { status: 302, headers: { Location: "/?connected=1" } });
-};
+});

@@ -1,9 +1,10 @@
-import { readJSON, writeJSON, stravaToken, strava } from "./_lib.js";
+import { readJSON, writeJSON, stravaToken, strava, gateOK, INTERNAL } from "./_lib.js";
 const ds = (a, n) => { if (!a || a.length <= n) return a || []; const o = []; for (let i = 0; i < n; i++) o.push(a[Math.round(i * (a.length - 1) / (n - 1))]); return o; };
 const trim = a => ({ id: a.id, name: a.name, start_date: a.start_date, distance: a.distance, moving_time: a.moving_time,
   total_elevation_gain: a.total_elevation_gain, weighted_average_watts: a.weighted_average_watts, average_watts: a.average_watts,
   average_heartrate: a.average_heartrate, type: a.sport_type || a.type, trainer: !!a.trainer });
 export default async (req) => {
+  if (!gateOK(req)) return new Response("locked", { status: 401 });
   const { id } = await req.json().catch(() => ({}));
   const st = await readJSON("state.json", {});
   try {
@@ -20,9 +21,9 @@ export default async (req) => {
           cad: ds(raw.cadence?.data, N), vel: ds(raw.velocity_smooth?.data, N), alt: ds(raw.altitude?.data, N), latlng: ds(raw.latlng?.data, N) }); }
     }
     const base = process.env.URL;
-    await fetch(`${base}/api/sync?phase=compute`);
+    await fetch(`${base}/api/sync?phase=compute`, { headers: INTERNAL() });
     // the debrief is ready before the rider looks
-    try { const c = await fetch(`${base}/api/coach`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ mode: "debrief", id: String(id) }) });
+    try { const c = await fetch(`${base}/api/coach`, { method: "POST", headers: { "content-type": "application/json", ...INTERNAL() }, body: JSON.stringify({ mode: "debrief", id: String(id) }) });
       if (c.ok) { const d = await c.json(); const cards = await readJSON("cards.json", {}); cards.debriefs = cards.debriefs || {}; cards.debriefs[String(id)] = { at: new Date().toISOString(), card: d.card || null, text: d.text || "" };
         const keys = Object.keys(cards.debriefs).sort(); while (keys.length > 40) delete cards.debriefs[keys.shift()]; await writeJSON("cards.json", cards); } } catch {}
     st.lastIngest = new Date().toISOString(); st.lastIngestId = id; delete st.pending; st.lastError = null;

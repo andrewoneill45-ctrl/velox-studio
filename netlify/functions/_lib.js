@@ -1,3 +1,4 @@
+import { createHmac } from "node:crypto";
 import { getStore } from "@netlify/blobs";
 export const store = () => getStore("velox");
 export const json = (body, status = 200, headers = {}) =>
@@ -80,4 +81,30 @@ export async function wellnessSummary() {
   const W = await readJSON("wellness.json", {});
   const days = Object.values(W).sort((a, b) => a.d < b.d ? -1 : 1);
   return { days, latest: days[days.length - 1] || null, readiness: computeReadiness(days) };
+}
+
+
+/* ── the gate: one passcode, one signed cookie, internal calls carry the key ── */
+export function gateToken() {
+  return createHmac("sha256", (process.env.HEALTH_INGEST_KEY || "massif") + ":" + (process.env.SITE_PASSCODE || "")).update("massif-session").digest("hex");
+}
+export function gateOK(req) {
+  if (!process.env.SITE_PASSCODE) return true;
+  const k = req.headers.get("x-massif-key"); if (k && process.env.HEALTH_INGEST_KEY && k === process.env.HEALTH_INGEST_KEY) return true;
+  const m = (req.headers.get("cookie") || "").match(/massif_session=([a-f0-9]{64})/);
+  return !!m && m[1] === gateToken();
+}
+export const gated = (fn, opts = {}) => async (req) => {
+  if (opts.allow && opts.allow(req)) return fn(req);
+  if (!gateOK(req)) return json({ error: "locked" }, 401);
+  return fn(req);
+};
+export const INTERNAL = () => ({ "x-massif-key": process.env.HEALTH_INGEST_KEY || "" });
+/* FTP in force on a given date, from the rider's log; falls back to the season baseline, then current */
+export function ftpAtFactory(prof) {
+  const log = (prof.ftpLog || []).filter(e => /^\d{4}-\d{2}-\d{2}/.test(e.date || "") && +(e.ftp ?? e.v) > 0)
+    .map(e => ({ d: e.date.slice(0, 10), ftp: +(e.ftp ?? e.v) })).sort((a, b) => a.d < b.d ? -1 : 1);
+  return d => { const day = String(d).slice(0, 10); let f = null;
+    for (const e of log) { if (e.d <= day) f = e.ftp; else break; }
+    return f || prof.startFtp || prof.ftp || 180; };
 }

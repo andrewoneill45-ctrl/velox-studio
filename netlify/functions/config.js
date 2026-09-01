@@ -1,5 +1,5 @@
-import { json, readJSON } from "./_lib.js";
-export default async () => {
+import { json, readJSON, gated } from "./_lib.js";
+export default gated(async (req) => {
   const tokens = await readJSON("tokens.json");
   return json({
     connected: !!tokens,
@@ -8,4 +8,4 @@ export default async () => {
     coach: !!process.env.ANTHROPIC_API_KEY,
     health: !!process.env.HEALTH_INGEST_KEY
   });
-};
+});

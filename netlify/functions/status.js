@@ -1,5 +1,5 @@
-import { json, readJSON, store } from "./_lib.js";
-export default async () => {
+import { json, readJSON, store, gated } from "./_lib.js";
+export default gated(async (req) => {
   const [acts, m, wl, st, cards] = await Promise.all([readJSON("activities.json", []), readJSON("metrics.json", {}), readJSON("wellness.json", {}), readJSON("state.json", {}), readJSON("cards.json", {})]);
   const { blobs } = await store().list({ prefix: "streams/" });
   const wk = Object.keys(wl).sort();
@@ -11,4 +11,4 @@ export default async () => {
     lastError: st.lastError || null, lastErrorAt: st.lastErrorAt || null,
     lastMorning: st.lastMorning || null, morningCards: cards.morning || null,
     streams: (blobs || []).length, rides: rides.length });
-};
+});

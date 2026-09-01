@@ -1,5 +1,5 @@
-import { json, readJSON, writeJSON, store } from "./_lib.js";
-export default async (req) => {
+import { json, readJSON, writeJSON, store, gated } from "./_lib.js";
+export default gated(async (req) => {
   const u = new URL(req.url), id = u.searchParams.get("id");
   if (req.method === "GET") {
     if (id) { const c = await readJSON(`routes/${id}.json`); return c ? json(c) : json({ error: "not_found" }, 404); }
@@ -31,4 +31,4 @@ export default async (req) => {
     return json({ ok: true, id: c.id });
   }
   return json({ error: "method" }, 405);
-};
+});

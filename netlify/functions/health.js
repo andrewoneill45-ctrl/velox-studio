@@ -1,5 +1,5 @@
-import { json, readJSON, store, stravaToken } from "./_lib.js";
-export default async (req) => {
+import { json, readJSON, store, stravaToken, gated } from "./_lib.js";
+export default gated(async (req) => {
   const deep = new URL(req.url).searchParams.get("deep") === "1";
   const checks = [];
   const add = (name, ok, info = "") => checks.push({ name, ok, info });
@@ -32,4 +32,4 @@ export default async (req) => {
     } catch (e) { add("Claude API live call", false, String(e.message || e)); }
   }
   return json({ ok: checks.every(c => c.ok || c.name === "Strava connection" || c.name === "Synced data present" || c.name === "Apple Health data received"), checks });
-};
+});
