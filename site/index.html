@@ -580,6 +580,55 @@ svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshai
 .wbc .art.ghost{border:1.5px dashed var(--line)}
 .wbc .ln{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.1em;color:var(--mist);margin-top:8px}
 .wbc .ln b{color:var(--ink);font-size:12px}
+/* ── JERSEYS v4.3 ── */
+#s-jerseys .legacyj{display:none!important}
+.ceremony{display:grid;grid-template-columns:340px 1fr;gap:44px;align-items:center;padding:30px 0 34px;border-bottom:1px solid var(--line)}
+.ceremony .jbig{width:340px;height:360px;filter:drop-shadow(0 30px 40px rgba(20,30,40,.18))}
+.ceremony .ck{font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.2em;color:var(--mist)}
+.ceremony .ct{font-family:'Fraunces',serif;font-size:clamp(30px,3.2vw,46px);line-height:1.08;letter-spacing:-.015em;color:var(--ink);margin:12px 0 14px}
+.ceremony .ct i{font-style:italic}
+.ceremony .cs{font-family:'Fraunces',serif;font-style:italic;font-size:18px;color:var(--ink2);line-height:1.5;max-width:760px}
+.ceremony .cstats{display:flex;gap:26px;margin-top:22px;flex-wrap:wrap}
+.ceremony .cst .l{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.18em;color:var(--mist)}
+.ceremony .cst .v{font-family:'Archivo';font-weight:900;font-size:30px;letter-spacing:-.03em;color:var(--ink);margin-top:4px}
+.ceremony .cst .v small{font-size:10px;font-family:'Space Grotesk';color:var(--mist);letter-spacing:.08em;margin-left:3px}
+.podium{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;padding:26px 0;border-bottom:1px solid var(--line)}
+.pj{border:1px solid var(--line);border-radius:16px;background:#fff;padding:16px 16px 14px;cursor:pointer;display:flex;flex-direction:column;min-height:250px;position:relative;transition:transform .25s var(--ease),box-shadow .3s}
+.pj:hover{transform:translateY(-4px);box-shadow:var(--sh)}
+.pj.worn{border-color:var(--jaune);box-shadow:inset 0 0 0 1px var(--jaune)}
+.pj .jsm{width:74px;height:78px;margin:0 auto 10px}
+.pj .jn{font-family:'Fraunces',serif;font-size:15px;color:var(--ink);text-align:center}
+.pj .jc{font-family:'Space Grotesk';font-size:7px;font-weight:700;letter-spacing:.16em;color:var(--mist);text-align:center;margin-top:3px}
+.pj .jv{font-family:'Archivo';font-weight:900;font-size:26px;letter-spacing:-.03em;text-align:center;margin-top:12px;color:var(--ink)}
+.pj .jv small{font-size:9px;font-family:'Space Grotesk';color:var(--mist);letter-spacing:.08em;margin-left:3px}
+.pj .jg{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.08em;text-align:center;margin-top:4px}
+.pj svg.sp2{margin-top:auto;height:26px;width:100%}
+.pj .worntag{position:absolute;top:10px;right:12px;font-family:'Space Grotesk';font-size:6.5px;font-weight:700;letter-spacing:.16em;background:var(--jaune);color:var(--ink);padding:3px 6px;border-radius:5px}
+.passport2{padding:26px 0 34px}
+.passport2 .ph{font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.18em;color:var(--mist);margin-bottom:14px}
+.stamps{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.stamp{border:1.5px dashed var(--line);border-radius:14px;padding:16px 14px;min-height:96px;position:relative;transform:rotate(var(--r,0deg))}
+.stamp .sl{font-family:'Space Grotesk';font-size:7px;font-weight:700;letter-spacing:.18em;color:var(--mist)}
+.stamp .sv{font-family:'Archivo';font-weight:900;font-size:24px;letter-spacing:-.03em;color:var(--ink);margin-top:8px;line-height:1}
+.stamp .sv small{font-size:9px;font-family:'Space Grotesk';color:var(--mist);letter-spacing:.08em;margin-left:2px}
+.stamp .sd{font-size:11px;color:var(--ink2);margin-top:6px;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stamp .ink{position:absolute;right:10px;top:10px;width:34px;height:34px;border:2px solid var(--polka);border-radius:50%;opacity:.55;font-family:'Space Grotesk';font-size:6px;font-weight:700;color:var(--polka);display:flex;align-items:center;justify-content:center;letter-spacing:.06em;transform:rotate(-14deg)}
+/* jersey sheet */
+.jsh{display:grid;grid-template-columns:300px 1fr;gap:40px;align-items:start}
+.jsh .jbig{width:300px;height:320px}
+.jsh .jtitle{font-family:'Fraunces',serif;font-size:clamp(28px,3vw,44px);line-height:1.05;color:var(--ink);margin:6px 0 10px}
+.jsh .jsub{font-family:'Fraunces',serif;font-style:italic;font-size:17px;color:var(--ink2);line-height:1.5}
+.jsh .jchart{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px 8px}
+.jsh .jchart svg{width:100%;height:150px}
+.jsh .jcl{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.16em;color:var(--mist);margin-bottom:8px;display:flex;gap:16px}
+.jsh .jcl i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:2px}
+.jrides{margin-top:16px}
+.jride{display:grid;grid-template-columns:90px 1fr auto;gap:12px;padding:8px 0;border-bottom:1px dashed var(--hair);font-size:12.5px;align-items:center}
+.jride .d{font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--mist)}
+.jride .v{font-family:'Archivo';font-weight:900;font-size:15px;color:var(--ink)}
+.jds{margin-top:16px;padding:14px 16px;border-left:3px solid var(--jaune);background:#FFFBE6;border-radius:0 12px 12px 0;font-size:13.5px;line-height:1.6;color:var(--ink2)}
+.jds b{color:var(--ink)}
+@media(max-width:980px){.ceremony{grid-template-columns:1fr}.podium{grid-template-columns:1fr 1fr 1fr}.stamps{grid-template-columns:1fr 1fr 1fr}.jsh{grid-template-columns:1fr}}
 /* ── TIMELINE ── */
 .tlwrap{border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:var(--sh);overflow:hidden}
 .tltop{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--hair)}
@@ -1038,7 +1087,12 @@ svg#rc-prof{display:block;width:100%;height:340px}
 
   <!-- JERSEYS -->
   <section class="scene" id="s-jerseys">
-    <div class="wrap" style="position:relative"><div class="wm">Jerseys</div>
+    <div class="wrap" id="jv4" style="position:relative"><div class="wm">Jerseys</div>
+      <section class="ceremony cascade" id="ceremony" style="--i:0"></section>
+      <section class="podium cascade" id="podium" style="--i:1"></section>
+      <section class="passport2 cascade" id="passport2" style="--i:2"></section>
+    </div>
+    <div class="wrap legacyj" style="position:relative">
       <div class="slab cascade" style="--i:0">FOUR JERSEYS — <b>ONE SEASON</b></div>
       <div class="jgrid" id="jwrap"></div>
       <div class="slab cascade" style="--i:5">CLIMBING PASSPORT</div>
@@ -4038,6 +4092,107 @@ renderWeekBand=function(){
 const _os7=openSession;openSession=function(di,idx){_os7(di,idx);
   const g=fut().filter(e=>e.pr==="A").sort((a,b)=>a.date<b.date?-1:1)[0]||fut().sort((a,b)=>a.date<b.date?-1:1)[0];
   const kick=document.querySelector("#sheetin .sh-kick");if(kick&&g)kick.innerHTML=kick.innerHTML.replace(/· J-\d+ TO [^<]+$/,`· J-${J(g)} TO ${g.short.toUpperCase()}`);};
+
+
+/* ═══ v4.3 — the classifications ═══ */
+const JK={yellow:{n:"Maillot jaune",c:"GENERAL CLASSIFICATION",fill:"#FFD100",ink:"#141E28"},polka:{n:"Polka dot",c:"KING OF THE MOUNTAINS",fill:"#FFFFFF",ink:"#141E28"},green:{n:"Maillot vert",c:"POINTS",fill:"#189B69",ink:"#fff"},white:{n:"Maillot blanc",c:"BEST PROGRESSION",fill:"#F6F7F6",ink:"#141E28"},red:{n:"Red number",c:"COMBATIVITY",fill:"#141E28",ink:"#fff"},rainbow:{n:"Rainbow stripes",c:"THE CHAMPION",fill:"#FFFFFF",ink:"#141E28"}};
+function jerseySvg(kind,name,num){
+  const k=JK[kind]||JK.yellow,id="jp"+kind;
+  const body="M60,38 L88,26 Q100,20 112,26 L140,38 L172,60 L154,84 L140,74 L140,190 Q100,200 60,190 L60,74 L46,84 L28,60 Z";
+  let defs="",fill=k.fill,over="";
+  if(kind==="polka"){defs=`<pattern id="${id}" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="11" cy="11" r="6" fill="#E23A2E"/></pattern>`;over=`<path d="${body}" fill="url(#${id})"/>`;}
+  if(kind==="rainbow"){over=["#1F5FB8","#E23A2E","#141E28","#D99000","#189B69"].map((c,i)=>`<rect x="46" y="${100+i*10}" width="108" height="10" fill="${c}"/>`).join("");}
+  if(kind==="red"){over=`<rect x="120" y="120" width="30" height="34" rx="4" fill="#E23A2E"/><text x="135" y="145" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="20" fill="#fff">${num||1}</text>`;}
+  const shade=`<linearGradient id="${id}s" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".16"/></linearGradient>`;
+  return `<svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg"><defs>${defs}${shade}</defs>
+    <path d="${body}" fill="${fill}" stroke="#141E28" stroke-opacity=".18" stroke-width="1.5"/>${over}<path d="${body}" fill="url(#${id}s)"/>
+    <path d="M88,26 Q100,40 112,26" fill="none" stroke="#141E28" stroke-opacity=".35" stroke-width="2"/>
+    <text x="100" y="66" text-anchor="middle" font-family="Space Grotesk" font-weight="700" font-size="9" letter-spacing="2" fill="${k.ink}" opacity=".85">VELOX</text>
+    <text x="100" y="92" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="13" letter-spacing="1" fill="${k.ink}">${(name||"").toUpperCase()}</text>
+    ${kind!=="red"&&kind!=="rainbow"?`<text x="100" y="150" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="44" fill="${k.ink}" opacity=".9">${num||""}</text>`:""}
+  </svg>`;
+}
+function weekKey(d){return isoDay(mondayOf(d));}
+function classify(){
+  const acts=(window.TL&&TL.built)?TL.acts:[],pm=pmcFromActs(),today=new Date(),todayIso=isoDay(today);
+  const s0=new Date(SEASON0),ly=x=>{const d=new Date(x);d.setFullYear(d.getFullYear()-1);return d;};
+  const inR=(a,from,to)=>a.d>=isoDay(from)&&a.d<=isoDay(to);
+  const season=acts.filter(a=>inR(a,s0,today)),last=acts.filter(a=>inR(a,ly(s0),ly(today)));
+  const sum=(arr,k)=>arr.reduce((x,a)=>x+(a[k]||0),0);
+  const wkSeries=(arr,from,n,k)=>{const out=[];for(let i=0;i<n;i++){const wk=isoDay(addD(mondayOf(from),i*7));out.push(arr.filter(a=>weekKey(new Date(a.d+"T12:00:00"))===wk).reduce((x,a)=>x+(a[k]||0),0));}return out;};
+  const nW=Math.max(4,CURWK+1);
+  const pmAt=iso=>pm.find(x=>x.d===iso)||null;
+  const ctlNow=(pm[pm.length-1]||{}).ctl||0,ctlLY=(pmAt(isoDay(ly(today)))||{}).ctl||0;
+  const ctlWeeks=[],ctlWeeksLY=[];for(let i=0;i<nW;i++){const d=addD(mondayOf(s0),i*7+6);ctlWeeks.push((pmAt(isoDay(d))||{}).ctl||0);ctlWeeksLY.push((pmAt(isoDay(ly(d)))||{}).ctl||0);}
+  const climbPts=a=>a.m>=1500?20:a.m>=1000?10:a.m>=600?5:a.m>=300?2:0;
+  const komPts=season.reduce((x,a)=>x+climbPts(a),0),komLY=last.reduce((x,a)=>x+climbPts(a),0);
+  const topClimbs=season.slice().sort((a,b)=>b.m-a.m).slice(0,6);
+  const RBr=(window.RB&&RB.rides)||[];
+  const sprintRides=RBr.filter(r=>r.d>=isoDay(s0)).map(r=>({...r,pts:(r.s5>=500?5:r.s5>=400?3:r.s5>=300?1:0)+(r.m1>=350?5:r.m1>=300?3:r.m1>=250?1:0)+(r.m5>=230?5:r.m5>=200?3:r.m5>=170?1:0)})).filter(r=>r.pts>0).sort((a,b)=>b.pts-a.pts);
+  const greenPts=sprintRides.reduce((x,r)=>x+r.pts,0);
+  const ftpDelta=S.ftp-(startFtp||S.ftp),ctl42=(pm[pm.length-43]||{}).ctl||0,slope=+(ctlNow-ctl42).toFixed(1);
+  const wkCount=[];for(let i=0;i<=CURWK;i++){const wk=isoDay(addD(mondayOf(s0),i*7));wkCount.push(season.filter(a=>weekKey(new Date(a.d+"T12:00:00"))===wk));}
+  let streak=0;for(let i=wkCount.length-1;i>=0;i--){const w=wkCount[i];if(w.length>=3||sum(w,"tss")>=250)streak++;else break;}
+  let best=0,run=0;wkCount.forEach(w=>{if(w.length>=3||sum(w,"tss")>=250){run++;best=Math.max(best,run);}else run=0;});
+  const thisWk=wkCount[wkCount.length-1]||[],comb=thisWk.slice().sort((a,b)=>(b.tss/(b.secs||1))-(a.tss/(a.secs||1)))[0];
+  const allB=(window.LIVEM&&LIVEM.bests)||{};
+  const longest=acts.slice().sort((a,b)=>b.km-a.km)[0],biggest=acts.slice().sort((a,b)=>b.m-a.m)[0];
+  const byName={};acts.forEach(a=>{byName[a.nm]=(byName[a.nm]||0)+1;});const fav=Object.entries(byName).sort((a,b)=>b[1]-a[1])[0];
+  const C={
+    yellow:{v:Math.round(ctlNow),u:"FITNESS",gap:ctlLY?+(ctlNow-ctlLY).toFixed(1):null,gapL:"ON LAST YEAR",series:ctlWeeks,seriesLY:ctlWeeksLY,rides:season.slice().sort((a,b)=>b.tss-a.tss).slice(0,6).map(a=>({d:a.d,nm:a.nm,v:a.tss+" TSS"})),score:ctlLY?(ctlNow-ctlLY)/Math.max(10,ctlLY):0.1,line:`Fitness ${Math.round(ctlNow)}${ctlLY?`, ${ctlNow>=ctlLY?"up":"down"} ${Math.abs(ctlNow-ctlLY).toFixed(1)} on last year at this stage`:""}.`},
+    polka:{v:komPts,u:"KOM PTS",gap:komLY?komPts-komLY:null,gapL:"ON LAST YEAR",series:wkSeries(season,s0,nW,"m"),seriesLY:wkSeries(last,ly(s0),nW,"m"),rides:topClimbs.map(a=>({d:a.d,nm:a.nm,v:fmtInt(a.m)+" m · "+climbPts(a)+" pts"})),score:komLY?(komPts-komLY)/Math.max(10,komLY):0.1,line:`${fmtInt(Math.round(sum(season,"m")))} m climbed this season, ${(sum(season,"m")/8849).toFixed(2)} Everests. Points from every ride over 300 m.`},
+    green:{v:greenPts,u:"SPRINT PTS",gap:null,gapL:"",series:null,seriesLY:null,rides:sprintRides.slice(0,6).map(r=>({d:r.d,nm:r.nm,v:`${r.s5} W · ${r.pts} pts`})),score:sprintRides.length?Math.min(1,greenPts/40):0,line:`${sprintRides.length} rides have scored: ${allB.s5?`season best ${allB.s5.v} W for 5 s`:"no sprint bests yet"}.${RBr.length<40?" More rides join as the backfill runs.":""}`},
+    white:{v:(ftpDelta>=0?"+":"")+ftpDelta,u:"W FTP",gap:slope,gapL:"FITNESS · 6 WKS",series:ctlWeeks,seriesLY:null,rides:(FTPLOG||[]).slice(-6).reverse().map(f=>({d:f.date,nm:f.src||"FTP",v:f.ftp+" W"})),score:(ftpDelta>0?0.5:0)+(slope>0?Math.min(.5,slope/20):0),line:`FTP ${S.ftp} W, ${ftpDelta>=0?"up":"down"} ${Math.abs(ftpDelta)} W since March; fitness ${slope>=0?"up":"down"} ${Math.abs(slope)} in six weeks${window.EFTP&&EFTP.suggest?`; eFTP reads ${EFTP.suggest} W`:""}.`},
+    red:{v:streak,u:"WEEK STREAK",gap:best,gapL:"BEST STREAK",series:wkCount.map(w=>sum(w,"tss")),seriesLY:null,rides:comb?[{d:comb.d,nm:comb.nm,v:`${comb.tss} TSS · ${(comb.tss/((comb.secs||3600)/3600)).toFixed(0)}/h`}]:[],score:Math.min(1,streak/8),line:`${streak} consecutive weeks of real training${comb?`; this week's most combative ride: ${comb.nm}`:""}.`},
+    rainbow:{v:allB.m20?allB.m20.v:"—",u:"W 20 MIN",gap:null,gapL:"",series:null,seriesLY:null,rides:[["s5","5 s"],["m1","1 min"],["m5","5 min"],["m20","20 min"]].filter(([k])=>allB[k]).map(([k,l])=>({d:allB[k].d||"",nm:`${l} · ${allB[k].nm||""}`,v:allB[k].v+" W"})),score:0.2,line:`Season bests: ${["s5","m1","m5","m20"].filter(k=>allB[k]).map(k=>allB[k].v+" W").join(" · ")||"none yet"}. Held until you beat them.`}};
+  const worn=Object.entries(C).sort((a,b)=>b[1].score-a[1].score)[0][0];
+  return {C,worn,passport:{rides:acts.length,seasonRides:season.length,km:Math.round(sum(season,"km")),longest,biggest,fav,everests:(sum(season,"m")/8849).toFixed(2)}};
+}
+function spark2(a,b,W,H){const all=[...(a||[]),...(b||[])].filter(v=>v!=null);if(all.length<2)return"";const mx=Math.max(...all,1);
+  const P=arr=>arr.map((v,i)=>[(i/(arr.length-1))*W,H-2-(v/mx)*(H-4)]);
+  const line=(arr,c,dash)=>arr&&arr.length>1?`<path d="M${P(arr).map(p=>p.map(x=>x.toFixed(1)).join(",")).join("L")}" fill="none" stroke="${c}" stroke-width="1.8" ${dash?'stroke-dasharray="3 3"':""} stroke-linecap="round"/>`:"";
+  return `<svg class="sp2" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${line(b,"#C9D1D6",true)}${line(a,"#141E28")}</svg>`;}
+function renderJerseysV4(){
+  const cer=v4El("ceremony"),pod=v4El("podium"),pas=v4El("passport2");if(!cer)return;
+  if(!(window.TL&&TL.built)){cer.innerHTML=`<div class="jbig">${jerseySvg("yellow","O'NEILL","")}</div><div><div class="ck">THE CLASSIFICATIONS</div><div class="ct">The race against <i>yourself</i> starts with a sync.</div></div>`;return;}
+  const R=classify(),C=R.C,w=R.worn,k=JK[w];
+  cer.innerHTML=`<div class="jbig">${jerseySvg(w,"O'NEILL",CURWK+1)}</div><div>
+    <div class="ck">STAGE ${CURWK+1} · THE CEREMONY</div>
+    <div class="ct">Today you wear the <i>${k.n.toLowerCase()}</i>.</div>
+    <div class="cs">${C[w].line}</div>
+    <div class="cstats">${Object.entries(C).map(([id,c])=>`<div class="cst"><div class="l">${JK[id].c}</div><div class="v">${c.v}<small>${c.u}</small></div></div>`).join("")}</div></div>`;
+  pod.innerHTML=Object.entries(C).map(([id,c])=>`<div class="pj ${id===w?"worn":""}" data-j="${id}">${id===w?'<span class="worntag">WORN</span>':""}<div class="jsm">${jerseySvg(id,"",CURWK+1)}</div><div class="jn">${JK[id].n}</div><div class="jc">${JK[id].c}</div><div class="jv">${c.v}<small>${c.u}</small></div>
+    ${c.gap!=null?`<div class="jg" style="color:${c.gap>=0?"var(--vert)":"var(--polka)"}">${c.gap>=0?"+":""}${c.gap} ${c.gapL}</div>`:`<div class="jg" style="color:var(--mist)">${c.gapL||"—"}</div>`}${spark2(c.series,c.seriesLY,100,26)}</div>`).join("");
+  pod.querySelectorAll(".pj").forEach(b=>b.onclick=()=>openJersey(b.dataset.j));
+  const P=R.passport,st=[["RIDES THIS SEASON",P.seasonRides,"",`${P.rides} all time`],["KILOMETRES",fmtInt(P.km),"KM","since the season began"],["EVERESTS",P.everests,"","of 8,849 m each"],["LONGEST RIDE",P.longest?P.longest.km:"—","KM",P.longest?P.longest.nm:""],["BIGGEST DAY",P.biggest?fmtInt(P.biggest.m):"—","M",P.biggest?P.biggest.nm:""],["MOST RIDDEN",P.fav?P.fav[1]:"—","×",P.fav?P.fav[0]:""]];
+  pas.innerHTML=`<div class="ph">THE PASSPORT — STAMPS FROM THE ROAD</div><div class="stamps">${st.map((x,i)=>`<div class="stamp" style="--r:${[-1.2,.8,-.6,1.1,-.9,.7][i]}deg"><span class="ink">VELOX<br/>${new Date().getFullYear()}</span><div class="sl">${x[0]}</div><div class="sv">${x[1]}<small>${x[2]}</small></div><div class="sd">${x[3]}</div></div>`).join("")}</div>`;
+}
+async function openJersey(id){
+  const R=classify(),c=R.C[id],k=JK[id],sh=v4El("sheet"),el=v4El("sheetin");sh.style.display="flex";
+  const W=600,H=150,series=c.series,ly=c.seriesLY;
+  let chart="";
+  if(series&&series.length>1){const mx=Math.max(...series,...(ly||[]),1);const P=arr=>arr.map((v,i)=>[10+(i/(arr.length-1))*(W-20),H-16-(v/mx)*(H-30)]);
+    const ln=(arr,col,dash)=>`<path d="M${P(arr).map(p=>p.map(x=>x.toFixed(1)).join(",")).join("L")}" fill="none" stroke="${col}" stroke-width="2.2" ${dash?'stroke-dasharray="4 4"':""} stroke-linecap="round"/>`;
+    chart=`<svg viewBox="0 0 ${W} ${H}">${ly?ln(ly,"#C9D1D6",true):""}${ln(series,"#141E28")}${P(series).map((p,i)=>i===series.length-1?`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#FFD100" stroke="#141E28" stroke-width="2"/>`:"").join("")}<text x="10" y="${H-2}" font-family="Space Grotesk" font-size="8" font-weight="700" fill="#93A0AB">S1</text><text x="${W-10}" y="${H-2}" text-anchor="end" font-family="Space Grotesk" font-size="8" font-weight="700" fill="#93A0AB">S${series.length}</text></svg>`;}
+  el.innerHTML=`<button class="sx" id="jsx">✕</button><div class="jsh">
+    <div><div class="jbig">${jerseySvg(id,"O'NEILL",CURWK+1)}</div></div>
+    <div><div class="sh-kick">${k.c} · STAGE ${CURWK+1}${R.worn===id?" · CURRENTLY WORN":""}</div>
+      <div class="jtitle">${k.n}</div><div class="jsub">${c.line}</div>
+      <div class="sh-nums" style="margin-top:16px;grid-template-columns:1fr 1fr 1fr"><div class="sh-num"><div class="l">STANDING</div><div class="v">${c.v}<small>${c.u}</small></div></div>${c.gap!=null?`<div class="sh-num"><div class="l">${c.gapL}</div><div class="v" style="color:${c.gap>=0?"var(--vert)":"var(--polka)"}">${c.gap>=0?"+":""}${c.gap}</div></div>`:""}</div>
+      ${chart?`<div class="jchart"><div class="jcl"><span><i style="background:#141E28"></i>THIS SEASON</span>${ly?`<span><i style="background:#C9D1D6"></i>LAST YEAR, SAME STAGE</span>`:""}</div>${chart}</div>`:""}
+      <div class="jrides"><div class="sh-h">THE RIDES THAT EARNED IT</div>${c.rides.length?c.rides.map(r=>`<div class="jride"><span class="d">${r.d?new Date(r.d+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"}).toUpperCase():""}</span><span>${r.nm}</span><span class="v">${r.v}</span></div>`).join(""):`<div class="sh-why">Nothing scored yet.</div>`}</div>
+      <div class="jds" id="jds">The DS is thinking about how you defend it…</div></div></div>`;
+  const close=()=>{sh.style.display="none";};v4El("jsx").onclick=close;sh.onclick=e=>{if(e.target===sh)close();};document.onkeydown=e=>{if(e.key==="Escape")close();};
+  const ck="vx_jersey_"+id+"_"+isoDay(new Date());const cached=localStorage.getItem(ck);
+  const show=t=>{const d=v4El("jds");if(d)d.innerHTML=t;};
+  if(cached){show(cached);return;}
+  if(!(LIVE&&COACH)){show("Connect the DS for advice on this classification.");return;}
+  try{const d=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"ask",q:`The ${k.n} (${k.c.toLowerCase()}) classification: ${c.line} In two sentences, how do I ${R.worn===id?"defend":"win"} it over the next four weeks, grounded in the evidence base? No sessions list.`})});
+    const t=d.card?`<b>${d.card.headline}</b> ${(d.card.points||[]).slice(0,2).map(p=>md(p.x).replace(/<\/?p>/g,"")).join(" ")}`:md(d.text);
+    localStorage.setItem(ck,t);show(t);}catch(e){show("The DS is offline right now.");}
+}
+const _ss8=showScene;showScene=function(id){_ss8(id);if(id==="jerseys"){renderJerseysV4();if(LIVE&&!window.RB&&typeof loadRadar==="function")loadRadar().then(()=>renderJerseysV4());}};
+const _tb8=tlBuild;tlBuild=function(a){_tb8(a);if(document.getElementById("s-jerseys").classList.contains("on"))renderJerseysV4();};
 
 </script>
 <div id="sheet" class="sheet" style="display:none"><div class="sheetin" id="sheetin"></div></div>
