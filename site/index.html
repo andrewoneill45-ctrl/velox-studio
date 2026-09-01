@@ -635,6 +635,28 @@ svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshai
 .jds{margin-top:16px;padding:14px 16px;border-left:3px solid var(--jaune);background:#FFFBE6;border-radius:0 12px 12px 0;font-size:13.5px;line-height:1.6;color:var(--ink2)}
 .jds b{color:var(--ink)}
 @media(max-width:980px){.ceremony{grid-template-columns:1fr}.podium{grid-template-columns:1fr 1fr 1fr}.stamps{grid-template-columns:1fr 1fr 1fr}.jsh{grid-template-columns:1fr}}
+.statusline{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.stc{display:inline-flex;align-items:center;gap:6px;font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.12em;padding:5px 9px;border-radius:7px;background:var(--hair);color:var(--ink2)}
+.stc i{width:7px;height:7px;border-radius:50%;background:var(--vert);display:inline-block}
+.stc.warn{background:#FBF3DC;color:#8A6D00}.stc.warn i{background:#D99000}
+.stc.bad{background:#FBE9E3;color:var(--polka)}.stc.bad i{background:var(--polka)}
+.stc.busy i{background:var(--bleu);animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.rcard{font-family:Inter,sans-serif;color:#141E28}
+.rcard .rh{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #141E28;padding-bottom:10px}
+.rcard .rt{font-family:'Fraunces',serif;font-size:34px;line-height:1}
+.rcard .rk{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.18em;color:#93A0AB}
+.rcard .rrow{display:grid;grid-template-columns:70px 1fr 60px 60px 70px 70px;gap:8px;padding:8px 0;border-bottom:1px dashed #E3E8EB;font-size:12px;align-items:center}
+.rcard .rrow.h{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.16em;color:#93A0AB;border-bottom:1px solid #E3E8EB}
+.rcard .rrow b{font-family:'Archivo';font-weight:900;font-size:14px}
+.rcard .rrow .clk{font-family:'Space Grotesk';font-weight:700;font-size:12px}
+.rcard .rgrid{display:grid;grid-template-columns:1.3fr .7fr;gap:26px;margin-top:16px}
+.rcard .feed{font-size:12px;line-height:1.7}
+.rcard .feed b{font-family:'Space Grotesk';font-weight:700}
+.rcard .big{display:flex;gap:22px;margin:14px 0 6px}
+.rcard .big div{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.16em;color:#93A0AB}
+.rcard .big div b{display:block;font-family:'Archivo';font-weight:900;font-size:28px;color:#141E28;margin-top:3px;letter-spacing:-.02em}
+@media print{body>*:not(#sheet){display:none!important}#sheet{position:static!important;background:#fff!important;padding:0!important;display:block!important}.sheetin{box-shadow:none!important;height:auto!important;width:100%!important;border-radius:0!important;padding:0!important;overflow:visible!important}.sheetin .sx,.sh-acts,.noprint{display:none!important}}
 /* ── TIMELINE ── */
 .tlwrap{border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:var(--sh);overflow:hidden}
 .tltop{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--hair)}
@@ -1250,7 +1272,8 @@ svg#rc-prof{display:block;width:100%;height:340px}
             <svg id="pmc" viewBox="0 0 1200 380" preserveAspectRatio="none" style="height:380px;cursor:crosshair"></svg>
             <div id="pmc-tip" class="pmctip" style="display:none"></div>
           </div>
-          <div class="panel chartpanel cascade" style="grid-column:span 8;--i:6"><h3>POWER BESTS — RADAR · <span id="radar-n" style="color:var(--ink)"></span></h3>
+          <div class="panel chartpanel cascade" style="grid-column:span 12;--i:6;position:relative"><div style="display:flex;align-items:center;gap:14px;margin-bottom:10px"><h3 style="margin:0">THE POWER CURVE · <span id="curve-n" style="color:var(--ink)"></span></h3><span class="grow"></span><div class="rlegend" style="margin:0"><span><i style="background:#FFD100"></i>LAST 42 DAYS</span><span><i style="background:#26496E"></i>SEASON</span><span><i style="background:#141E28"></i>ALL TIME</span></div></div><svg id="curve" viewBox="0 0 1200 320" preserveAspectRatio="none" style="width:100%;height:320px;cursor:crosshair"></svg><div id="curve-tip" class="pmctip" style="display:none"></div></div>
+          <div class="panel chartpanel cascade" style="grid-column:span 8;--i:7"><h3>POWER BESTS — RADAR · <span id="radar-n" style="color:var(--ink)"></span></h3>
             <div class="radarwrap"><svg id="radar" viewBox="0 0 420 400" style="width:100%;height:380px"></svg><div id="radar-tab"></div></div></div>
           <div class="panel chartpanel cascade" style="grid-column:span 4;--i:6"><h3>WHERE THE EFFORT WENT — 28 DAYS</h3><div class="zbig" id="zstack"></div><div id="zrows28"></div></div>
           <div class="panel editorial cascade" style="grid-column:span 12;border-left-color:var(--bleu);--i:7">
@@ -1324,6 +1347,7 @@ svg#rc-prof{display:block;width:100%;height:340px}
         </div>
         <div id="sysout"></div>
       </div>
+      <div class="panel cascade" id="statuspanel" style="--i:1;padding:18px 26px;margin-bottom:16px"></div>
       <div class="panel cascade" id="healthpanel" style="--i:2;padding:22px 26px;margin-bottom:16px;border-left:4px solid var(--vert)"></div>
       <div class="panel cascade" id="backfillpanel" style="--i:3;padding:22px 26px;margin-bottom:16px;border-left:4px solid var(--bleu)"></div>
       <div class="panel cascade" id="librarypanel" style="--i:4;padding:22px 26px;margin-bottom:16px;border-left:4px solid var(--jaune)"></div>
@@ -1422,6 +1446,7 @@ svg#rc-prof{display:block;width:100%;height:340px}
         <div class="rc-splith"><span>COL</span><span>KM</span><span>AVG</span><span>TARGET</span><span>W/KG</span><span>VAM</span><span>TIME</span></div>
         <div id="rc-splits"></div>
         <div class="rc-finish"><span class="fn" id="rc-fin"></span><span class="fb" id="rc-finband"></span></div>
+        <div style="padding:0 22px 18px"><button class="rc-tab on" id="rc-racecard" style="display:none">THE RACE CARD →</button></div>
       </div>
     </div>
     <div class="rc-side">
@@ -4435,6 +4460,129 @@ const _tb8=tlBuild;tlBuild=function(a){_tb8(a);if(document.getElementById("s-jer
     svg.addEventListener("touchend",e=>{const t=e.changedTouches[0];fire("mouseup",t);fire("mouseleave",t);},{passive:true});
   }
 })();
+
+
+/* ═══ v4.6 — rides arrive by themselves · the morning · status · the power curve · the race card ═══ */
+let STATUS=null,_autoT=0;
+const rel=iso=>{if(!iso)return"never";const m=Math.round((Date.now()-new Date(iso))/60000);if(m<2)return"just now";if(m<60)return m+" min ago";const h=Math.round(m/60);if(h<36)return h+" h ago";return Math.round(h/24)+" d ago";};
+async function loadStatus(){try{STATUS=await api("/api/status");}catch(e){STATUS=null;}renderStatus();return STATUS;}
+function statusChips(){
+  const S0=STATUS;if(!S0)return `<span class="stc bad"><i></i>STATUS UNAVAILABLE</span>`;
+  const today=isoDay(new Date()),chips=[];
+  const rideNewer=S0.lastRide&&S0.lastCompute&&new Date(S0.lastRide)>new Date(new Date(S0.lastCompute).getTime()-3600e3)&&new Date(S0.lastRide)>new Date(S0.lastCompute);
+  chips.push(S0.pending?`<span class="stc busy"><i></i>A RIDE IS ARRIVING</span>`:`<span class="stc ${S0.lastError?"warn":""}"><i></i>LAST RIDE ${rel(S0.lastRide).toUpperCase()}</span>`);
+  chips.push(`<span class="stc ${rideNewer?"warn":""}"><i></i>COMPUTED ${rel(S0.lastCompute).toUpperCase()}${rideNewer?" · A RIDE IS WAITING":""}</span>`);
+  const hAge=S0.lastHealth?Math.round((new Date(today)-new Date(S0.lastHealth))/864e5):null;
+  chips.push(`<span class="stc ${hAge==null?"bad":hAge>1?"warn":""}"><i></i>HEALTH ${hAge==null?"NEVER":hAge===0?"TODAY":hAge===1?"YESTERDAY":hAge+" DAYS AGO"}</span>`);
+  chips.push(`<span class="stc ${S0.morningCards===today?"":"warn"}"><i></i>MORNING ${S0.morningCards===today?"READY":"NOT YET RUN"}</span>`);
+  chips.push(`<span class="stc"><i style="background:var(--bleu)"></i>STREAMS ${S0.streams}/${S0.rides}</span>`);
+  if(S0.lastError)chips.push(`<span class="stc bad" title="${S0.lastError}"><i></i>LAST INGEST FAILED · ${rel(S0.lastErrorAt).toUpperCase()}</span>`);
+  return chips.join("");
+}
+function renderStatus(){
+  const sp=document.getElementById("statuspanel");
+  if(sp)sp.innerHTML=`<div class="aihead"><span class="al" style="color:var(--ink)">STATUS — THE TRUTH ABOUT THE APP</span><span class="ds" style="margin:0">Rides arrive by webhook and on every open. Mornings compute at 05:30.</span></div><div class="statusline">${statusChips()}</div>`;
+  const d=document.getElementById("dispatch");if(d){let el=d.querySelector(".statusline");if(!el){el=document.createElement("div");el.className="statusline";d.appendChild(el);}el.innerHTML=statusChips();}
+}
+/* rides arrive by themselves: on every open and every return to the tab, if anything is newer than the last compute */
+async function autoSync(reason){
+  if(!LIVE||Date.now()-_autoT<8*60e3)return;_autoT=Date.now();
+  const st=await loadStatus();if(!st)return;
+  const stale=!st.lastCompute||Date.now()-new Date(st.lastCompute)>6*3600e3;
+  const waiting=st.lastRide&&st.lastCompute&&new Date(st.lastRide)>new Date(st.lastCompute);
+  if(!(stale||waiting||st.pending))return;
+  sysMsg&&sysMsg("CHECKING STRAVA FOR NEW RIDES…");
+  try{const L=await api("/api/sync?phase=list");
+    for(const id of (L.need||[]).slice(0,15)){await api("/api/sync?phase=streams&id="+id).catch(()=>{});}
+    await api("/api/sync?phase=compute");const dd=await api("/api/data");if(dd.metrics)applyLive(dd.metrics);
+    sysMsg&&sysMsg(L.new?`${L.new} NEW RIDE${L.new>1?"S":""} IN — EVERYTHING RECOMPUTED`:"UP TO DATE");
+    loadStatus();}
+  catch(e){sysMsg&&sysMsg("AUTO-SYNC FAILED — "+String(e.message||e));}
+}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")autoSync("visible");});
+/* the morning cards: served from the server when they exist, so the dispatch is instant */
+const _rn9=readinessNote;readinessNote=async function(d){
+  const el=document.getElementById("readytext");
+  try{const c=await api("/api/cards");const today=isoDay(new Date());
+    if(c.readiness&&c.readiness.date===today&&(c.readiness.card||c.readiness.text)){localStorage.setItem("vx_ready_"+d,JSON.stringify(c.readiness));dsRender(el,c.readiness);renderDispatch();return;}}catch(e){}
+  return _rn9(d);};
+const _rcn9=refreshCoachNote;refreshCoachNote=async function(force){
+  try{const c=await api("/api/cards");const today=isoDay(new Date());
+    if(!force&&c.weekly&&c.weekly.date===today&&(c.weekly.card||c.weekly.text)){localStorage.setItem("vx_coach3",JSON.stringify(c.weekly));localStorage.setItem("vx_coach_t",String(Date.now()));
+      dsRender(document.getElementById("coachnote"),c.weekly);if(c.weekly.card)document.getElementById("coachpq").textContent='"'+c.weekly.card.headline+'"';renderDispatch();return;}}catch(e){}
+  return _rcn9(force);};
+/* a debrief written by the webhook shows the moment the ride opens */
+const _lr9=loadRide;loadRide=async function(id){const r=await _lr9(id);
+  try{const d=await api("/api/cards?debrief="+id);const txt=document.getElementById("raitext");if(d&&(d.card||d.text)&&txt){dsRender(txt,d);const b=document.getElementById("raibtn");if(b)b.textContent="RE-ANALYSE";}}catch(e){}
+  return r;};
+/* ── the power curve ── */
+async function loadCurve(){
+  const svg=document.getElementById("curve");if(!svg||!LIVE)return;
+  let d=EFTP;let tries=0;
+  while((!d||d.partial)&&tries<12){try{d=await api("/api/eftp");EFTP=d;}catch(e){break;}tries++;if(d&&!d.partial)break;document.getElementById("curve-n").textContent=`READING ${d.cached||0} RIDES…`;}
+  drawCurve();
+}
+function drawCurve(){
+  const svg=document.getElementById("curve"),tip=document.getElementById("curve-tip");if(!svg||!EFTP||!EFTP.curve)return;
+  const C=EFTP.curve.filter(c=>c.all);if(!C.length){svg.innerHTML="";document.getElementById("curve-n").textContent="NO POWER STREAMS YET";return;}
+  const W=1200,H=320,pl=54,pr=30,pt=20,pb=34;
+  const lx=d=>pl+(Math.log(d)-Math.log(5))/(Math.log(3600)-Math.log(5))*(W-pl-pr);
+  const mx=Math.max(...C.map(c=>c.all.w))*1.08,mn=Math.min(...C.map(c=>(c.all||c.season||c.recent).w))*.85;
+  const y=w=>H-pb-((w-mn)/(mx-mn))*(H-pt-pb);
+  const line=(k,col,wd)=>{const pts=C.filter(c=>c[k]).map(c=>`${lx(c.dur).toFixed(1)},${y(c[k].w).toFixed(1)}`);return pts.length>1?`<path d="M${pts.join("L")}" fill="none" stroke="${col}" stroke-width="${wd}" stroke-linejoin="round" stroke-linecap="round"/>`:"";};
+  const ticks=[5,15,30,60,120,300,600,1200,1800,3600];
+  const tx=ticks.map(t=>`<line x1="${lx(t)}" y1="${pt}" x2="${lx(t)}" y2="${H-pb}" stroke="#EEF2F4"/><text x="${lx(t)}" y="${H-12}" text-anchor="middle" font-family="Space Grotesk" font-size="9" font-weight="700" letter-spacing="1" fill="#93A0AB">${t<60?t+"S":Math.round(t/60)+"M"}</text>`).join("");
+  const yt=[];for(let w=Math.ceil(mn/50)*50;w<=mx;w+=50)yt.push(`<line x1="${pl}" y1="${y(w)}" x2="${W-pr}" y2="${y(w)}" stroke="#F3F5F6"/><text x="${pl-8}" y="${y(w)+3}" text-anchor="end" font-family="Space Grotesk" font-size="9" font-weight="700" fill="#93A0AB">${w}</text>`);
+  const ftpY=y(S.ftp);
+  svg.innerHTML=`${tx}${yt.join("")}<line x1="${pl}" y1="${ftpY}" x2="${W-pr}" y2="${ftpY}" stroke="#141E28" stroke-opacity=".35" stroke-dasharray="4 5"/><text x="${W-pr}" y="${ftpY-5}" text-anchor="end" font-family="Space Grotesk" font-size="9" font-weight="700" fill="#44515D">FTP ${S.ftp} W</text>
+    ${line("all","#141E28",2.4)}${line("season","#26496E",2)}${line("recent","#FFD100",2.6)}
+    ${C.filter(c=>c.recent).map(c=>`<circle cx="${lx(c.dur)}" cy="${y(c.recent.w)}" r="3.5" fill="#FFD100" stroke="#141E28" stroke-width="1.5"/>`).join("")}
+    <g id="cv-x" style="display:none"><line id="cv-xl" y1="${pt}" y2="${H-pb}" stroke="#141E28" stroke-opacity=".4"/></g>`;
+  document.getElementById("curve-n").textContent=`${EFTP.cached||0} RIDES WITH POWER · ${C.length} DURATIONS`;
+  svg.onmousemove=e=>{const r=svg.getBoundingClientRect();const fx=(e.clientX-r.left)/r.width*W;
+    const c=C.reduce((b,x)=>Math.abs(lx(x.dur)-fx)<Math.abs(lx(b.dur)-fx)?x:b,C[0]);
+    document.getElementById("cv-x").style.display="block";const xl=document.getElementById("cv-xl");xl.setAttribute("x1",lx(c.dur));xl.setAttribute("x2",lx(c.dur));
+    tip.style.display="block";tip.style.left=Math.min(r.width-220,Math.max(10,(e.clientX-r.left)+14))+"px";
+    const f=(o,l,col)=>o?`<span style="color:${col}">${l} ${o.w} W</span> <span style="color:#93A0AB;font-weight:500">${o.nm||""}${o.d?" · "+o.d.slice(5).replace("-","/"):""}</span><br/>`:"";
+    tip.innerHTML=`<div class="d">${c.dur<60?c.dur+" SECONDS":Math.round(c.dur/60)+" MINUTES"}</div>${f(c.recent,"42 D","#B08900")}${f(c.season,"SEASON","#26496E")}${f(c.all,"ALL","#141E28")}`;};
+  svg.onmouseleave=()=>{tip.style.display="none";const g=document.getElementById("cv-x");if(g)g.style.display="none";};
+}
+const _lr10=loadRadar;loadRadar=async function(){await _lr10();loadCurve();};
+/* ── the race card ── */
+function clock(startMin,secs){const m=startMin+secs/60;const h=Math.floor(m/60)%24,mm=Math.floor(m%60);return `${String(h).padStart(2,"0")}:${String(mm).padStart(2,"0")}`;}
+function openRaceCard(){
+  const ev=EVENTS.find(e=>e.id===rcEv),c=RCX,sim=RCSIM;if(!ev||!c||!sim)return;
+  const sh=v4El("sheet"),el=v4El("sheetin");sh.style.display="flex";
+  const st=ev.recon&&ev.recon.startMin||480;
+  const stage=(ev.days||1)>1?` · STAGE ${rcStage}`:"";
+  const d=addD(new Date(ev.date+"T12:00:00"),((ev.days||1)>1?rcStage:1)-1);
+  const climbs=sim.splits.map(sp=>`<div class="rrow"><span class="clk">${clock(st,sim.cum[sp.i0])}</span><span>${sp.n}<br/><span style="font-size:10px;color:#93A0AB">KM ${sp.startKm} · ${sp.len} KM @ ${sp.avg}% · CAT ${sp.cat}</span></span><b>${sp.w}<small style="font-size:8px"> W</small></b><span>${sp.wkg} W/kg</span><span>${hms(sp.secs)}</span><span class="clk">${clock(st,sp.eta)}</span></div>`).join("");
+  const segs=((ev.recon&&ev.recon.segs&&ev.recon.segs[c.id])||[]).map(sg=>`<div class="rrow"><span class="clk">${clock(st,sim.cum[sg.a])}</span><span>${sg.n}<br/><span style="font-size:10px;color:#93A0AB">KM ${(c.points[sg.a].d/1000).toFixed(1)}–${(c.points[sg.b].d/1000).toFixed(1)}</span></span><b>${sg.w}<small style="font-size:8px"> W</small></b><span>${(sg.w/WF.weight).toFixed(2)} W/kg</span><span>${hms(sim.cum[sg.b]-sim.cum[sg.a])}</span><span class="clk">${clock(st,sim.cum[sg.b])}</span></div>`).join("");
+  const feeds=[];for(let t=30*60;t<sim.total;t+=30*60)feeds.push(`<b>${clock(st,t)}</b> ${Math.round(t/60)}′ · ${t%3600===0?"bottle + gel or bar (60 g carbs this hour)":"gel or half a bar"}`);
+  const hours=sim.total/3600,bottles=Math.ceil(hours*(1+(new Date(ev.date).getMonth()>=5&&new Date(ev.date).getMonth()<=8?.3:0)));
+  el.innerHTML=`<button class="sx" id="rcx">✕</button><div class="rcard">
+    <div class="rh"><div><div class="rk">THE RACE CARD · ${ev.name.toUpperCase()}${stage} · ${d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}).toUpperCase()}</div><div class="rt">${c.name}</div></div>
+      <div style="text-align:right"><div class="rk">START</div><div style="display:flex;gap:6px;align-items:center;justify-content:flex-end"><input class="inp noprint" id="rc-start" type="time" value="${clock(st,0)}" style="width:100px"/><span class="rt" style="font-size:22px">${clock(st,0)}</span></div></div></div>
+    <div class="big"><div>DISTANCE<b>${c.km} KM</b></div><div>CLIMBING<b>${fmtInt(c.m)} M</b></div><div>RIDE TIME<b>${hms(sim.total)}</b></div><div>FINISH<b>${clock(st,sim.total)}</b></div><div>FTP ON THE DAY<b>${(ev.recon&&ev.recon.ftpDay)||ftpOnDay(ev)} W</b></div></div>
+    <div class="rgrid"><div>
+      <div class="rrow h"><span>ARRIVE</span><span>CLIMB</span><span>TARGET</span><span>W/KG</span><span>TIME</span><span>SUMMIT</span></div>${climbs||`<div class="rrow"><span></span><span>No categorised climbs</span></div>`}
+      ${segs?`<div class="rk" style="margin-top:16px">YOUR PACING SEGMENTS</div><div class="rrow h"><span>ARRIVE</span><span>SEGMENT</span><span>TARGET</span><span>W/KG</span><span>TIME</span><span>END</span></div>${segs}`:""}
+    </div><div>
+      <div class="rk">FUELLING</div><div class="feed">${feeds.join("<br/>")||"Under 30 minutes: water only."}</div>
+      <div class="rk" style="margin-top:14px">BOTTLES</div><div class="feed">${bottles} × 750 ml for ${hms(sim.total)} — one an hour${bottles>Math.ceil(hours)?", more for a warm day":""}. Refill at the first café after km ${Math.round(c.km/2)}.</div>
+      <div class="rk" style="margin-top:14px">THE DAY IN ONE LINE</div><div class="feed">${ev.purpose?`"${ev.purpose}"`:"Ride the road, not the numbers."}</div>
+    </div></div>
+    <div class="sh-acts noprint"><button class="aibtn" style="background:var(--ink)" id="rc-print">PRINT / SAVE AS PDF</button><span class="ds" style="margin:0">Phone-sized when printed to A6, or screenshot it for the top tube.</span></div></div>`;
+  const close=()=>{sh.style.display="none";};v4El("rcx").onclick=close;sh.onclick=e=>{if(e.target===sh)close();};document.onkeydown=e=>{if(e.key==="Escape")close();};
+  v4El("rc-print").onclick=()=>window.print();
+  v4El("rc-start").onchange=e=>{const [h,m]=e.target.value.split(":").map(Number);ev.recon=ev.recon||{};ev.recon.startMin=h*60+m;saveProfile();openRaceCard();};
+}
+const _brc9=buildReconCourse;buildReconCourse=function(ev,c){_brc9(ev,c);const b=rcEl("rc-racecard");if(b){b.style.display="inline-block";b.onclick=openRaceCard;}};
+/* the Timeline lands on this week */
+const _ss9=showScene;showScene=function(id){_ss9(id);if(id==="plan"&&window.TL&&TL.built){setTimeout(()=>{const k=TL.sel||isoDay(mondayOf(new Date()));const sc=document.getElementById("tlscroll"),i=tlWeeks().indexOf(k);if(sc&&i>=0)sc.scrollLeft=Math.max(0,i*86-sc.clientWidth/2+43);tlWin();},60);}};
+/* boot hooks */
+const _al9=applyLive;applyLive=function(m){_al9(m);setTimeout(()=>{loadStatus();autoSync("open");},900);};
+setTimeout(()=>{if(LIVE&&!STATUS){loadStatus();autoSync("late");}},4000);
 
 </script>
 <div id="sheet" class="sheet" style="display:none"><div class="sheetin" id="sheetin"></div></div>

@@ -1,0 +1,14 @@
+import { json, readJSON, store } from "./_lib.js";
+export default async () => {
+  const [acts, m, wl, st, cards] = await Promise.all([readJSON("activities.json", []), readJSON("metrics.json", {}), readJSON("wellness.json", {}), readJSON("state.json", {}), readJSON("cards.json", {})]);
+  const { blobs } = await store().list({ prefix: "streams/" });
+  const wk = Object.keys(wl).sort();
+  const rides = acts.filter(a => /ride/i.test(a.type || ""));
+  return json({ now: new Date().toISOString(),
+    lastRide: acts[0]?.start_date || null, lastRideName: acts[0]?.name || null,
+    lastCompute: m.syncedAt || null, lastHealth: wk[wk.length - 1] || null,
+    lastWebhook: st.lastWebhook || null, lastIngest: st.lastIngest || null, pending: st.pending || null,
+    lastError: st.lastError || null, lastErrorAt: st.lastErrorAt || null,
+    lastMorning: st.lastMorning || null, morningCards: cards.morning || null,
+    streams: (blobs || []).length, rides: rides.length });
+};

@@ -1,5 +1,6 @@
 import { json, readJSON, writeJSON, store, getProfile } from "./_lib.js";
-const DUR = [180, 240, 300, 360, 480, 600, 720, 960, 1200, 1500, 1800, 2400, 3600];
+const DUR = [5, 15, 30, 60, 120, 180, 240, 300, 360, 480, 600, 720, 960, 1200, 1500, 1800, 2400, 3600];
+const CACHE_V = 2;
 const bestAvg = (w, t, dur) => { if (!w?.length) return 0; let best = 0, j = 0, sum = 0;
   for (let i = 0; i < w.length; i++) { sum += w[i] || 0;
     while (t[i] - t[j] > dur) { sum -= w[j] || 0; j++; }
@@ -23,12 +24,15 @@ export default async () => {
   const { blobs } = await store().list({ prefix: "streams/" });
   const keys = (blobs || []).map(b => b.key);
   let cache = await readJSON("efforts-cache.json", { rides: {} });
+  if (cache.v !== CACHE_V) cache = { v: CACHE_V, rides: {} };
+  let budget = 80, partial = false;
   const acts = await readJSON("activities.json", []);
   const byId = new Map(acts.map(a => [String(a.id), a]));
   let changed = false;
   for (const k of keys) {
     const id = k.replace("streams/", "").replace(".json", "");
-    if (cache.rides[id]) continue;
+    if (cache.rides[id] !== undefined) continue;
+    if (budget-- <= 0) { partial = true; break; }
     const st = await readJSON(k); if (!st?.watts?.length) { cache.rides[id] = null; changed = true; continue; }
     const a = byId.get(id), e = {};
     for (const d of DUR) { const v = bestAvg(st.watts, st.time, d); if (v > 40) e[d] = v; }
@@ -37,6 +41,9 @@ export default async () => {
   }
   if (changed) await writeJSON("efforts-cache.json", cache);
   const rides = Object.values(cache.rides).filter(Boolean);
+  const curveOfSet = set => DUR.map(d => { let b = null; for (const r of set) { const p = r.e?.[d]; if (p && (!b || p > b.w)) b = { w: p, d: r.d, nm: r.nm }; } return b; });
+  const dayMs = 864e5, season0 = prof.seasonStart || "2026-03-16", t42 = new Date(Date.now() - 42 * dayMs).toISOString().slice(0, 10);
+  const curve = DUR.map((d, i) => ({ dur: d, all: curveOfSet(rides)[i], season: curveOfSet(rides.filter(r => r.d >= season0))[i], recent: curveOfSet(rides.filter(r => r.d >= t42))[i] }));
   const today = Date.now(), day = 864e5;
   const windowOf = days => rides.filter(r => r.d && (today - +new Date(r.d)) <= days * day);
   const curveOf = set => { const c = {}; for (const r of set) for (const [d, p] of Object.entries(r.e || {}))
@@ -61,7 +68,7 @@ export default async () => {
     used: usedDurs.includes(d) || [600,1200,1800,3600].includes(d) }));
   const newestEv = evidence.length ? Math.max(...evidence.map(e => +new Date(e.date))) : 0;
   const ageDays = newestEv ? Math.round((today - newestEv) / day) : null;
-  if (!cands.length) return json({ ok: true, suggest: null, reason: "no_evidence", windowDays, ageDays,
+  if (!cands.length) return json({ ok: true, suggest: null, reason: "no_evidence", windowDays, ageDays, curve, partial, cached: rides.length,
     note: "No maximal efforts in the window — nothing here says your FTP has changed. Two hard 4–8 minute efforts plus one strong 15–20 minutes would give eFTP something to read.",
     evidence, streams: keys.length });
   const vs = cands.map(c => c.v).sort((a, b) => a - b);
@@ -72,7 +79,7 @@ export default async () => {
   const lower = eftp < (prof.ftp || 0) - 3;
   const stale = ageDays != null && ageDays > 21;
   const withhold = lower && stale;
-  return json({ ok: true,
+  return json({ ok: true, curve, partial, cached: rides.length,
     suggest: withhold ? null : eftp,
     reason: withhold ? "stale_lower" : null,
     note: withhold ? `The model reads ${eftp} W, but the freshest maximal effort is ${ageDays} days old — an easy block isn't evidence of decline. A fresh 4–8 minute and a 15–20 minute effort would settle it.` : null,
