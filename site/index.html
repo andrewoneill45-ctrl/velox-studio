@@ -459,6 +459,20 @@ svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshai
 .palmares .pi b{font-family:'Archivo';font-weight:900;font-size:18px;letter-spacing:-.02em;color:var(--ink);margin-right:5px}
 .palmares svg{height:34px;width:120px}
 @media(max-width:980px){.instrail{grid-template-columns:repeat(4,1fr)}.dispatch .dpts{grid-template-columns:1fr 1fr}.ribbon{grid-template-columns:1fr}.dispatch .ds1{font-size:22px}}
+/* v4.0.1 */
+.ribbon.compact{grid-template-columns:110px 1fr auto;padding:18px 0;border-bottom:1px solid var(--hair)}
+.ribbon.compact .rj{font-size:40px}
+.ribbon.compact .rmid .rn{font-size:19px}
+.ribbon.compact .stg2{width:110px}.ribbon.compact .stg2 svg{width:110px;height:36px}
+.ribbon.compact .rright .pv{font-size:22px;margin:2px 0 8px}
+.ribbon.compact .rright .aibtn{padding:8px 12px;font-size:8px}
+.ribbon.first{border-bottom:1px solid var(--hair)}
+#ribbon{border-bottom:1px solid var(--line)}
+.roadlab{font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.18em;color:var(--mist);padding:26px 0 0}
+.palmares{display:grid;grid-template-columns:auto 120px repeat(4,1fr);gap:22px;align-items:center;padding:22px 0 30px}
+.palmares .pi{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.palmares .pi b{display:block;font-size:20px;margin:0 0 3px}
+@media(max-width:980px){.palmares{grid-template-columns:1fr 1fr}.ribbon.compact{grid-template-columns:1fr}}
 /* ── TIMELINE ── */
 .tlwrap{border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:var(--sh);overflow:hidden}
 .tltop{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--hair)}
@@ -3541,7 +3555,7 @@ function renderRail(){
   const tsb=last.tsb||0;
   const items=[
     `<div class="ins ready"><svg class="rg" viewBox="0 0 120 120">${R?ring(R.score,col).replace(/<\/?svg[^>]*>/g,""):""}</svg><div><div class="il">READINESS</div><div class="iv" style="font-size:16px;font-family:'Fraunces';font-style:italic;font-weight:400;color:${col}">${R?R.state:"—"}</div><div class="id">${R?R.advice:"WAITING FOR APPLE HEALTH"}</div></div>${R?`<span class="fold" id="rail-fold">HOW IT'S SCORED</span>`:""}</div>`,
-    `<div class="ins"><div class="il">SLEEP</div><div class="iv">${hh(L.sleep)}</div>${L.sleep&&(L.deep||L.rem)?`<div class="id">${Math.round(((L.deep||0)+(L.rem||0))/L.sleep*100)}% DEEP + REM</div>`:`<div class="id">—</div>`}${sparkline(d7.map(x=>x.sleep),"#26496E")}</div>`,
+    `<div class="ins"><div class="il">SLEEP</div><div class="iv">${L.sleep>0?hh(L.sleep):"—"}</div>${L.sleep&&(L.deep||L.rem)?`<div class="id">${Math.round(((L.deep||0)+(L.rem||0))/L.sleep*100)}% DEEP + REM</div>`:`<div class="id">—</div>`}${sparkline(d7.map(x=>x.sleep),"#26496E")}</div>`,
     `<div class="ins"><div class="il">HRV</div><div class="iv">${L.hrv!=null?L.hrv+"<small>MS</small>":"—"}</div>${dl(L.hrv,b.hrv,false,"ms")}${sparkline(d7.map(x=>x.hrv),"#189B69")}</div>`,
     `<div class="ins"><div class="il">RESTING HR</div><div class="iv">${L.rhr!=null?L.rhr+"<small>BPM</small>":"—"}</div>${dl(L.rhr,b.rhr,true,"bpm")}${sparkline(d7.map(x=>x.rhr),"#E23A2E")}</div>`,
     `<div class="ins"><div class="il">FORM</div><div class="iv" style="color:${tsb>=-10?"var(--vert)":tsb>=-25?"#D99000":"var(--polka)"}">${tsb>=0?"+":""}${Math.round(tsb)}</div><div class="id">${tsb>=5?"FRESH":tsb>=-10?"BALANCED":tsb>=-25?"LOADED":"DEEP FATIGUE"}</div>${sparkline(p7.map(x=>x.tsb),"#B08900")}</div>`,
@@ -3628,6 +3642,52 @@ const _ua4=updateAll;updateAll=function(){_ua4();renderV4();};
   const btn=v4El("ev-add");if(!btn)return;
   btn.addEventListener("click",e=>{const v=v4El("ev-date").value;if(v&&v<isoDay(new Date())&&!confirm("That date is in the past — it will be filed as a finished event. Add it anyway?")){e.stopImmediatePropagation();}},true);})();
 setTimeout(renderV4,1200);
+
+
+/* ═══ v4.0.1 — every trip and goal on the road ahead, in order; recon routes flow to the front ═══ */
+function stageIds(ev){const days=ev.days||1,out=[];
+  for(let n=1;n<=days;n++){let id=null;
+    if(days>1){id=(ev.stageRoute&&ev.stageRoute[n])||null;if(!id&&n===1)id=ev.route||null;if(!id&&ev.routes&&ev.routes[n-1]&&!(ev.stageRoute&&Object.values(ev.stageRoute).includes(ev.routes[n-1])))id=ev.routes[n-1];}
+    else id=ev.route||null;
+    out.push(id);}
+  return out;}
+function ribbonHTML(ev,compact){
+  const days=ev.days||1,ids=stageIds(ev);
+  const stages=ids.map((id,i)=>{const c=id&&ROUTES[id];const d=addD(new Date(ev.date+"T12:00:00"),i);
+    const lab=`${days>1?"STAGE "+(i+1)+" · ":""}${d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric"}).toUpperCase()}${c?` · ${c.km} KM · ${fmtInt(c.m)} M`:""}`;
+    return c?`<div class="stg2">${silhouette(c)}<div class="sl">${lab}</div></div>`:`<div class="stg2 empty"><svg viewBox="0 0 150 48"><rect x="1" y="6" width="148" height="41" rx="6"/><text x="75" y="31" text-anchor="middle" font-family="Space Grotesk" font-size="8" font-weight="700" letter-spacing="1.5" fill="#93A0AB">NO ROUTE YET</text></svg><div class="sl">${lab}</div></div>`;}).join("");
+  const pf=projForm(ev);
+  return `<div class="ribbon ${compact?"compact":"first"}" data-ev="${ev.id}">
+    <div class="rj">J-${J(ev)}<small>DAYS TO ${ev.short.toUpperCase()}</small></div>
+    <div class="rmid"><div class="rn">${ev.name}${days>1?` <span style="font-size:13px;color:var(--mist);font-family:'Space Grotesk';font-weight:700;letter-spacing:.12em">· ${days} DAYS</span>`:""} <span style="font-size:11px;color:var(--mist);font-family:'Space Grotesk';font-weight:700;letter-spacing:.14em;margin-left:6px">${ev.pr}-EVENT${(ev.kind||"day")==="trip"?" · TRIP":""}</span></div>
+      <div class="rd">${evDate(ev).toUpperCase()}${days>1?` → ${addD(new Date(ev.date+"T12:00:00"),days-1).toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}).toUpperCase()}`:""}</div>
+      ${ev.purpose?`<div class="rp">"${ev.purpose}"</div>`:""}
+      <div class="stages">${stages}</div></div>
+    <div class="rright"><div class="pf">PROJECTED FORM ON THE DAY</div><div class="pv" style="color:${pf==null?"var(--mist)":pf>=0?"var(--vert)":"#D99000"}">${pf==null?"—":(pf>=0?"+":"")+pf}</div><button class="aibtn rib-recon" style="background:var(--jaune);color:var(--ink)" data-recon="${ev.id}">RECON ROOM →</button></div></div>`;
+}
+renderRibbon=function(){
+  const el=v4El("ribbon");if(!el)return;
+  const evs=fut().slice().sort((a,b)=>a.date<b.date?-1:1);
+  if(!evs.length){el.innerHTML=`<div class="ribbon first"><div class="rj" style="font-size:26px;grid-column:1/-1">Add a trip or a goal from your rider profile — the season aims itself at it.</div></div>`;return;}
+  const missing=new Set();evs.forEach(ev=>stageIds(ev).forEach(id=>{if(id&&!ROUTES[id])missing.add(id);}));
+  el.innerHTML=`<div class="roadlab">THE ROAD AHEAD — ${evs.length} ${evs.length===1?"GOAL":"TRIPS & GOALS"}, NEAREST FIRST</div>`+evs.map((ev,i)=>ribbonHTML(ev,i>0)).join("");
+  el.querySelectorAll("[data-recon]").forEach(b=>b.onclick=()=>openRecon(b.dataset.recon));
+  missing.forEach(id=>loadRoute(id).then(()=>renderRibbon()));
+};
+/* any profile change (routes attached in the room, events edited) reaches the front page */
+let _v4t=null;const _sp4=saveProfile;saveProfile=function(){_sp4();clearTimeout(_v4t);_v4t=setTimeout(renderV4,500);};
+renderPalmares=function(){
+  const el=v4El("palmares");if(!el)return;
+  const B=(window.LIVEM&&LIVEM.bests)||{};
+  const rows=[["s5","5 S"],["m1","1 MIN"],["m5","5 MIN"],["m20","20 MIN"]].filter(([k])=>B[k]&&B[k].v);
+  if(!rows.length){el.innerHTML=`<span class="pl">PALMARÈS</span><span></span><span class="pi" style="color:var(--mist)">Season bests appear after your first sync.</span>`;return;}
+  const vals=rows.map(([k])=>B[k].v),mx=Math.max(...vals),W=120,H=34;
+  const pts=vals.map((v,i)=>[10+i/(vals.length-1)*(W-20),H-4-(v/mx)*(H-10)]);
+  el.innerHTML=`<span class="pl">PALMARÈS<br/>SEASON BESTS</span>
+    <svg viewBox="0 0 ${W} ${H}"><path d="M${pts.map(p=>p.map(x=>x.toFixed(1)).join(",")).join("L")}" fill="none" stroke="#141E28" stroke-width="1.8" stroke-linecap="round"/>${pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="2.6" fill="#FFD100" stroke="#141E28" stroke-width="1.5"/>`).join("")}</svg>
+    ${rows.map(([k,l])=>`<span class="pi"><b>${B[k].v} W</b>${l} · ${(B[k].nm||"").toUpperCase().slice(0,18)}${(B[k].nm||"").length>18?"…":""}, ${B[k].d||""}</span>`).join("")}`;
+};
+renderV4();
 
 </script>
 <script>
