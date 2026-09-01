@@ -500,12 +500,17 @@ svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshai
 .stg .wmini{margin-top:10px;width:100%;height:58px;display:block}
 .stg .typechip{display:inline-block;font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.12em;color:#fff;padding:3px 7px;border-radius:5px;margin-top:8px}
 .stg .stx{bottom:62px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:9;-webkit-box-orient:vertical;font-size:12px;line-height:1.6}
-.stg .foot{position:relative;z-index:4;background:inherit}
-.stg .foot .acts{display:flex;gap:6px;align-items:center}
-.stg .foot .acts button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:5px 8px;font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.1em;cursor:pointer;color:var(--ink)}
-.stg .foot .acts button.open{background:var(--ink);color:#fff;border-color:var(--ink)}
+.stg{position:relative}
+.stg .foot{position:relative;z-index:4;background:#fff;padding-top:8px}
+.stg .foot .acts{display:flex;gap:4px;align-items:center}
+.stg .foot .acts button{border:none;background:transparent;border-radius:7px;padding:6px 7px;font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.1em;cursor:pointer;color:var(--mist)}
+.stg .foot .acts button:hover{background:var(--hair);color:var(--ink)}
 .stg .foot .acts button.dl{color:var(--bleu)}
 .stg .foot .acts button.x{color:var(--polka)}
+.stg .openlink{position:absolute;top:14px;right:16px;z-index:5;font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.16em;color:var(--mist);pointer-events:none}
+.stg:hover .openlink{color:var(--ink)}
+.stg .stx{bottom:74px;-webkit-line-clamp:7}
+.stg.planned .padd,.stg.planned .pform{display:none!important}
 .stg .pchip{display:none}
 /* ── THE SESSION SHEET ── */
 .sheet{position:fixed;inset:0;z-index:150;background:rgba(20,30,40,.55);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:3vh 3vw}
@@ -1111,7 +1116,6 @@ svg#rc-prof{display:block;width:100%;height:340px}
       <div class="rc-card" id="rc-mapcard" style="display:none;overflow:hidden"><div id="rc-map" style="height:300px"></div></div>
       <div class="rc-card" id="rc-trip" style="display:none"></div>
       <div class="rc-card" id="rc-lib" style="display:none;padding:18px 22px"></div>
-      <div id="sheet" class="sheet" style="display:none"><div class="sheetin" id="sheetin"></div></div>
       <input type="file" id="gpxfile" accept=".gpx,application/gpx+xml" style="display:none" multiple/>
       <div id="rc-drop" class="rc-drop"><div>DROP YOUR GPX</div></div>
       <div class="rc-card">
@@ -3903,13 +3907,13 @@ renderWeekDetail=function(k){
     const p=plans[0],rid=planRouteId(p),c=rid&&ROUTES[rid];
     const nm=card.querySelector(".nm"),ds=card.querySelector(".ds");
     if(nm)nm.innerHTML=`${p.nm}<br/><span class="typechip" style="background:${tagc[p.type]||"#93A0AB"}">${(p.type||"SESSION").toUpperCase()}${p.trip?" · STAGE "+p.stage:""}</span>`;
-    if(ds){const st=sessionStats(p);ds.innerHTML=`${p.mins?p.mins+" min":hms(st.secs)} · ${p.tss||st.tss} TSS · IF ${st.IF}`;
+    card.classList.add("planned");card.insertAdjacentHTML("afterbegin",`<span class="openlink">OPEN →</span>`);
+    if(ds){const st=sessionStats(p);ds.innerHTML=`${p.mins?p.mins+" min":hms(st.secs)} · IF ${st.IF}${plans.length>1?` · +${plans.length-1} more`:""}`;
       ds.insertAdjacentHTML("afterend",p.type==="Strength"?"":(c?routeMini(c,300,58):workoutSvg(p,300,58,false)).replace("<svg","<svg class=\"wmini\""));}
     const stx=card.querySelector(".stx")||card.appendChild(Object.assign(document.createElement("div"),{className:"stx"}));
     stx.innerHTML=`<b>${p.nm}</b><br/>${(p.detail||"").slice(0,220)}${(p.detail||"").length>220?"…":""}<br/><span style="opacity:.7">OPEN FOR THE FULL SESSION →</span>`;
     const foot=card.querySelector(".foot");
-    if(foot){foot.insertAdjacentHTML("beforeend",`<span class="acts"><button class="open" data-so="${di}">OPEN</button>${p.type!=="Strength"?`<button class="dl" data-sz="${di}" title=".zwo for MyWhoosh / Zwift">⬇ ZWO</button>`:""}<button class="x" data-sxx="${di}" title="Remove">✕</button></span>`);
-      foot.querySelector("[data-so]").onclick=e=>{e.stopPropagation();openSession(di,0);};
+    if(foot){foot.insertAdjacentHTML("beforeend",`<span class="acts">${p.type!=="Strength"?`<button class="dl" data-sz="${di}" title="Download .zwo for MyWhoosh / Zwift">⬇ ZWO</button>`:""}<button class="x" data-sxx="${di}" title="Remove">✕</button></span>`);
       const dl=foot.querySelector("[data-sz]");if(dl)dl.onclick=e=>{e.stopPropagation();downloadZwo(p,di);};
       foot.querySelector("[data-sxx]").onclick=e=>{e.stopPropagation();S.plan[di].shift();if(!S.plan[di].length)delete S.plan[di];saveProfile();tlRender(true);drawMassif();drawTraj();};}
     card.style.cursor="pointer";
@@ -3966,6 +3970,7 @@ function openSession(di,idx){
 const _rwb6=renderWeekBand;renderWeekBand=function(){_rwb6();document.querySelectorAll("#weekband .wbd").forEach(b=>{const di=b.dataset.di;if((S.plan&&S.plan[di]||[]).length&&!(window.TL&&TL.built&&TL.weeks.get(isoDay(mondayOf(new Date(di+"T12:00:00"))))?.rides.some(r=>r.d===di)))b.onclick=()=>openSession(di,0);});};
 
 </script>
+<div id="sheet" class="sheet" style="display:none"><div class="sheetin" id="sheetin"></div></div>
 <script>
 /* ═══ VeloX course pipeline: GPX → resampled profile → climbs → physics ═══ */
 function parseGPX(text){
