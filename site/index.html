@@ -1595,7 +1595,7 @@ const EVENTS=[
  {id:"ventoux",name:"Ventoux Sportive",short:"VENTOUX",loc:"BÉDOIN",date:"2026-06-14",km:118,m:2900,pr:"B",
   cols:[{n:"Mont Ventoux — Bédoin",len:21.4,g:7.5,top:1909}]}
 ];
-const J=ev=>Math.max(0,Math.ceil((new Date(ev.date)-DNOW)/864e5));
+const J=ev=>Math.max(0,Math.ceil((new Date(ev.date)-(window.LIVE?Date.now():DNOW))/864e5));
 const fut=()=>EVENTS.filter(e=>new Date(e.date)>=DNOW).sort((a,b)=>new Date(a.date)-new Date(b.date));
 const nextA=()=>fut().find(e=>e.pr==="A")||fut()[0]||EVENTS[0];
 const evDate=ev=>new Date(ev.date).toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"long"});
@@ -2731,7 +2731,7 @@ function renderDaysLive(){
 }
 function patchLiveChrome(m){
   const F=(window.TL&&window.TL.built&&window.TL.acts.length)?pmcFromActs():(m.pmc||[]),last=F[F.length-1]||{},prev=F[F.length-29]||last;
-  document.getElementById("heroline").innerHTML=`Week ${Math.min(16,CURWK+1)}. ${J(nextA())<=14?"The sharpening begins.":"The mountains are coming."}`;
+  document.getElementById("heroline").innerHTML=`Week ${(CURWK+1)}. ${J(nextA())<=14?"The sharpening begins.":"The mountains are coming."}`;
   document.getElementById("cd-ftpn").textContent=`+${Math.max(0,S.ftp-startFtp)} W since the March baseline`;
   const ctlEl=document.getElementById("cd-ctl");if(ctlEl)ctlEl.textContent=Math.round(last.ctl||0);
   const ctlN=document.getElementById("cd-ctln");if(ctlN)ctlN.textContent=`${last.ctl>=prev.ctl?"+":""}${Math.round((last.ctl||0)-(prev.ctl||0))} in four weeks`;
@@ -4726,6 +4726,11 @@ openRaceCard=function(){
     try{const st=await api("/api/status");const prev=lastC;lastC=st.lastCompute;STATUS=st;renderStatus();
       if(prev&&st.lastCompute&&st.lastCompute!==prev){const dd=await api("/api/data");if(dd.metrics)applyLive(dd.metrics);sysMsg&&sysMsg("A NEW RIDE IS IN — REPAINTED");}}catch(e){}}
   setInterval(tick,3*60e3);setTimeout(tick,20e3);})();
+
+
+/* ═══ v4.7.3 — the real clock, always, when live ═══ */
+const _al11=applyLive;applyLive=function(m){DNOW=new Date();_al11(m);};
+const _ap11=applyProfile;applyProfile=function(p,c){_ap11(p,c);if(window.LIVE||c)DNOW=new Date();};
 
 </script>
 <div id="sheet" class="sheet" style="display:none"><div class="sheetin" id="sheetin"></div></div>
