@@ -476,6 +476,13 @@ svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshai
 #ribbon{display:block!important;padding:0;gap:0;grid-template-columns:none}
 #ribbon>.ribbon{padding:28px 0}
 #ribbon>.ribbon.compact{padding:20px 0}
+#ribbon>.ribbon{grid-template-columns:210px 1fr 250px;padding:30px 0;align-items:start}
+#ribbon>.ribbon .rj{font-size:72px;padding-top:6px}
+#ribbon>.ribbon .rmid .rn{font-size:26px}
+#ribbon>.ribbon .rright{width:250px;padding-top:6px}
+#ribbon>.ribbon .stg2{width:150px}#ribbon>.ribbon .stg2 svg{width:150px;height:48px}
+#ribbon>.ribbon .stg2 .sl{white-space:normal;line-height:1.5;overflow:visible}
+#ribbon>.ribbon+.ribbon{border-top:1px solid var(--hair)}
 /* ── TIMELINE ── */
 .tlwrap{border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:var(--sh);overflow:hidden}
 .tltop{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--hair)}
@@ -3657,10 +3664,10 @@ function stageIds(ev){const days=ev.days||1,out=[];
 function ribbonHTML(ev,compact){
   const days=ev.days||1,ids=stageIds(ev);
   const stages=ids.map((id,i)=>{const c=id&&ROUTES[id];const d=addD(new Date(ev.date+"T12:00:00"),i);
-    const lab=`${days>1?"STAGE "+(i+1)+" · ":""}${d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric"}).toUpperCase()}${c?` · ${c.km} KM · ${fmtInt(c.m)} M`:""}`;
-    return c?`<div class="stg2">${silhouette(c)}<div class="sl">${lab}</div></div>`:`<div class="stg2 empty"><svg viewBox="0 0 150 48"><rect x="1" y="6" width="148" height="41" rx="6"/><text x="75" y="31" text-anchor="middle" font-family="Space Grotesk" font-size="8" font-weight="700" letter-spacing="1.5" fill="#93A0AB">NO ROUTE YET</text></svg><div class="sl">${lab}</div></div>`;}).join("");
+    const lab=`${days>1?"STAGE "+(i+1)+" · ":""}${d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric"}).toUpperCase()}<br/><span style="color:var(--ink2)">${c?`${c.km} KM · ${fmtInt(c.m)} M`:"NO ROUTE YET"}</span>`;
+    return c?`<div class="stg2">${silhouette(c)}<div class="sl">${lab}</div></div>`:`<div class="stg2 empty"><svg viewBox="0 0 150 48"><rect x="1" y="6" width="148" height="41" rx="6"/><text x="75" y="31" text-anchor="middle" font-family="Space Grotesk" font-size="8" font-weight="700" letter-spacing="1.5" fill="#93A0AB">ATTACH IN RECON</text></svg><div class="sl">${lab}</div></div>`;}).join("");
   const pf=projForm(ev);
-  return `<div class="ribbon ${compact?"compact":"first"}" data-ev="${ev.id}">
+  return `<div class="ribbon first" data-ev="${ev.id}">
     <div class="rj">J-${J(ev)}<small>DAYS TO ${ev.short.toUpperCase()}</small></div>
     <div class="rmid"><div class="rn">${ev.name}${days>1?` <span style="font-size:13px;color:var(--mist);font-family:'Space Grotesk';font-weight:700;letter-spacing:.12em">· ${days} DAYS</span>`:""} <span style="font-size:11px;color:var(--mist);font-family:'Space Grotesk';font-weight:700;letter-spacing:.14em;margin-left:6px">${ev.pr}-EVENT${(ev.kind||"day")==="trip"?" · TRIP":""}</span></div>
       <div class="rd">${evDate(ev).toUpperCase()}${days>1?` → ${addD(new Date(ev.date+"T12:00:00"),days-1).toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}).toUpperCase()}`:""}</div>
@@ -3673,7 +3680,7 @@ renderRibbon=function(){
   const evs=fut().slice().sort((a,b)=>a.date<b.date?-1:1);
   if(!evs.length){el.innerHTML=`<div class="ribbon first"><div class="rj" style="font-size:26px;grid-column:1/-1">Add a trip or a goal from your rider profile — the season aims itself at it.</div></div>`;return;}
   const missing=new Set();evs.forEach(ev=>stageIds(ev).forEach(id=>{if(id&&!ROUTES[id])missing.add(id);}));
-  el.innerHTML=`<div class="roadlab">THE ROAD AHEAD — ${evs.length} ${evs.length===1?"GOAL":"TRIPS & GOALS"}, NEAREST FIRST</div>`+evs.map((ev,i)=>ribbonHTML(ev,i>0)).join("");
+  el.innerHTML=`<div class="roadlab">THE ROAD AHEAD — ${evs.length} ${evs.length===1?"GOAL":"TRIPS & GOALS"}, NEAREST FIRST</div>`+evs.map(ev=>ribbonHTML(ev,false)).join("");
   el.querySelectorAll("[data-recon]").forEach(b=>b.onclick=()=>openRecon(b.dataset.recon));
   missing.forEach(id=>loadRoute(id).then(()=>renderRibbon()));
 };
