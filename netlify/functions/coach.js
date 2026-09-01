@@ -75,7 +75,7 @@ OUTPUT FORMAT — respond with ONLY this JSON object, no fences, nothing outside
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "content-type": "application/json", "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
-    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "planweek" ? 2400 : mode === "build" ? 3600 : 700,
+    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "planweek" ? 2400 : mode === "build" ? 3600 : CARDM.includes(mode) ? 1400 : 700,
       system: (mode === "build" ? `You are The DS, planning a periodised BUILD from today to a goal for one amateur rider. Respond with ONLY a JSON object, no fences:
 {"summary": string (2-3 sentences: the shape of the build and why, naming evidence used),
  "phases": [{"name":"Base"|"Build"|"Specific"|"Trip"|"Recover"|"Taper"|"Event","weeks":number,"focus":string ≤18 words}],
