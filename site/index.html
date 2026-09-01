@@ -657,6 +657,59 @@ svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshai
 .rcard .big div{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.16em;color:#93A0AB}
 .rcard .big div b{display:block;font-family:'Archivo';font-weight:900;font-size:28px;color:#141E28;margin-top:3px;letter-spacing:-.02em}
 @media print{body>*:not(#sheet){display:none!important}#sheet{position:static!important;background:#fff!important;padding:0!important;display:block!important}.sheetin{box-shadow:none!important;height:auto!important;width:100%!important;border-radius:0!important;padding:0!important;overflow:visible!important}.sheetin .sx,.sh-acts,.noprint{display:none!important}}
+/* ── THE RACE CARD v2 · colour from the jerseys ── */
+.rc2{font-family:Inter,sans-serif;color:#141E28;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.rc2 .bib{background:#FFD100;border-radius:18px;padding:22px 26px;display:grid;grid-template-columns:auto 1fr auto;gap:22px;align-items:center;position:relative;overflow:hidden}
+.rc2 .bib::after{content:"";position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.35)}
+.rc2 .bib .mk{width:64px;height:64px;border-radius:16px;background:#141E28;display:flex;align-items:center;justify-content:center;color:#F4F6F5}
+.rc2 .bib .mk svg{width:36px;height:36px}
+.rc2 .bib .k{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.2em;color:#8A6D00}
+.rc2 .bib .t{font-family:'Fraunces',serif;font-size:36px;line-height:1.02;letter-spacing:-.015em;margin-top:4px}
+.rc2 .bib .p{font-family:'Fraunces',serif;font-style:italic;font-size:14px;color:#5C4A00;margin-top:6px}
+.rc2 .bib .num{text-align:right;position:relative;z-index:1}
+.rc2 .bib .num .n{font-family:'Archivo';font-weight:900;font-size:56px;letter-spacing:-.04em;line-height:1}
+.rc2 .bib .num .l{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.18em;color:#8A6D00;margin-top:4px}
+.rc2 .facts{display:grid;grid-template-columns:repeat(5,1fr);margin:14px 0 0;border:1px solid #E3E8EB;border-radius:14px;overflow:hidden;background:#fff}
+.rc2 .facts div{padding:12px 14px;border-right:1px solid #EEF2F4}
+.rc2 .facts div:last-child{border-right:none}
+.rc2 .facts .l{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.18em;color:#93A0AB}
+.rc2 .facts .v{font-family:'Archivo';font-weight:900;font-size:24px;letter-spacing:-.03em;margin-top:4px}
+.rc2 .facts .v small{font-size:9px;font-family:'Space Grotesk';color:#93A0AB;margin-left:3px}
+.rc2 .prof{margin-top:14px;background:#fff;border:1px solid #E3E8EB;border-radius:14px;padding:14px 16px 8px}
+.rc2 .prof svg{width:100%;height:190px;display:block}
+.rc2 .cols{display:grid;grid-template-columns:1.35fr .65fr;gap:16px;margin-top:14px}
+.rc2 .kom{border:2px solid #141E28;border-radius:14px;overflow:hidden;background:#fff}
+.rc2 .kom .kh{background:#fff;background-image:radial-gradient(#E23A2E 2.6px,transparent 2.8px);background-size:16px 16px;padding:10px 16px;display:flex;align-items:center;gap:10px}
+.rc2 .kom .kh span{background:#fff;padding:4px 10px;border-radius:7px;font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.2em}
+.rc2 .krow{display:grid;grid-template-columns:54px 40px 1fr 66px 62px 64px 54px;gap:8px;align-items:center;padding:10px 14px;border-bottom:1px dashed #E3E8EB;font-size:12px}
+.rc2 .krow.h{font-family:'Space Grotesk';font-size:7px;font-weight:700;letter-spacing:.16em;color:#93A0AB;border-bottom:1px solid #E3E8EB}
+.rc2 .krow .clk{font-family:'Space Grotesk';font-weight:700;font-size:12px}
+.rc2 .krow .cat{display:inline-flex;align-items:center;justify-content:center;width:34px;height:22px;border-radius:6px;font-family:'Space Grotesk';font-size:8.5px;font-weight:700;color:#fff}
+.rc2 .krow .cat.hc{background:#fff;color:#141E28;border:1.5px solid #E23A2E;background-image:radial-gradient(#E23A2E 1.4px,transparent 1.6px);background-size:6px 6px}
+.rc2 .krow .w{font-family:'Archivo';font-weight:900;font-size:15px}
+.rc2 .krow .w small{font-size:8px;color:#93A0AB;font-family:'Space Grotesk';margin-left:2px}
+.rc2 .krow .nm{font-weight:600}
+.rc2 .krow .nm small{display:block;font-size:10px;color:#93A0AB;font-weight:500}
+.rc2 .krow .sum{font-family:'Space Grotesk';font-weight:700;font-size:12px;color:#B08900}
+.rc2 .seg{border:2px solid #D99000;border-radius:14px;overflow:hidden;background:#fff;margin-top:12px}
+.rc2 .seg .kh{background:#FFF6D6;padding:10px 16px;font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.2em;color:#8A6D00}
+.rc2 .mus{border:2px solid #189B69;border-radius:14px;overflow:hidden;background:#fff}
+.rc2 .mus .kh{background:#189B69;color:#fff;padding:10px 16px;font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.2em}
+.rc2 .feedline{position:relative;padding:12px 16px 12px 40px}
+.rc2 .feedline::before{content:"";position:absolute;left:22px;top:14px;bottom:14px;width:2px;background:#E3E8EB}
+.rc2 .fd{position:relative;padding:5px 0;font-size:12px;line-height:1.5}
+.rc2 .fd::before{content:"";position:absolute;left:-23px;top:9px;width:9px;height:9px;border-radius:50%;background:#189B69;border:2px solid #fff;box-shadow:0 0 0 1.5px #189B69}
+.rc2 .fd.bot::before{background:#26496E;box-shadow:0 0 0 1.5px #26496E}
+.rc2 .fd b{font-family:'Space Grotesk';font-weight:700;margin-right:6px}
+.rc2 .bot2{border:2px solid #26496E;border-radius:14px;padding:12px 16px;margin-top:12px;background:#fff;font-size:12px;line-height:1.55}
+.rc2 .bot2 .kh{font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.2em;color:#26496E;margin-bottom:6px}
+.rc2 .fin{margin-top:14px;display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;background:#141E28;color:#F4F6F5;border-radius:16px;padding:18px 24px}
+.rc2 .fin .kite{width:0;height:0;border-top:18px solid transparent;border-bottom:18px solid transparent;border-left:30px solid #E23A2E}
+.rc2 .fin .ft{font-family:'Fraunces',serif;font-style:italic;font-size:18px;line-height:1.35}
+.rc2 .fin .fv{text-align:right}
+.rc2 .fin .fv .n{font-family:'Archivo';font-weight:900;font-size:36px;letter-spacing:-.03em;color:#FFD100;line-height:1}
+.rc2 .fin .fv .l{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.18em;color:#93A0AB;margin-top:4px}
+@media(max-width:820px){.rc2 .bib{grid-template-columns:1fr}.rc2 .bib .num{text-align:left}.rc2 .facts{grid-template-columns:1fr 1fr 1fr}.rc2 .cols{grid-template-columns:1fr}.rc2 .krow{grid-template-columns:48px 36px 1fr 56px 54px}.rc2 .krow>*:nth-child(6),.rc2 .krow>*:nth-child(7){display:none}}
 /* ── TIMELINE ── */
 .tlwrap{border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:var(--sh);overflow:hidden}
 .tltop{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--hair)}
@@ -4598,6 +4651,58 @@ setTimeout(()=>{if(LIVE&&!STATUS){loadStatus();autoSync("late");}},4000);
   if(window.ResizeObserver){const sc=document.getElementById("tlscroll");if(sc)new ResizeObserver(()=>{if(sc.clientWidth>0&&TL.pendingScroll)settle();}).observe(sc);}
   window.addEventListener("load",()=>setTimeout(settle,300));
 })();
+
+
+/* ═══ v4.7 — the race card, in colour ═══ */
+const CATC={HC:"hc","1":"#E23A2E","2":"#D99000","3":"#189B69","4":"#26496E","—":"#93A0AB"};
+function raceProfile(c,sim,st){
+  const P=c.points,W=1200,H=190,pb=30,pt=30;
+  const alts=P.map(p=>p.alt),mn=Math.min(...alts),mx=Math.max(...alts),r=Math.max(60,mx-mn);
+  const px=d=>d/P[P.length-1].d*W,py=a=>H-pb-((a-mn)/(r*1.1))*(H-pt-pb);
+  const gcol=g=>g<2?"#C9D1D6":g<5?"#189B69":g<8?"#D99000":g<11?"#E8611F":"#E23A2E";
+  let grad="",bands="",pins="";
+  for(let i=0;i<P.length-1;i+=1){const p=P[i],q=P[i+1];grad+=`<line x1="${px(p.d).toFixed(1)}" y1="${py(p.alt).toFixed(1)}" x2="${px(q.d).toFixed(1)}" y2="${py(q.alt).toFixed(1)}" stroke="${gcol(p.g)}" stroke-width="3" stroke-linecap="round"/>`;}
+  const area="M"+P.map(p=>`${px(p.d).toFixed(1)},${py(p.alt).toFixed(1)}`).join("L")+`L${W},${H-pb}L0,${H-pb}Z`;
+  sim.splits.forEach(sp=>{const x0=px(P[sp.i0].d),x1=px(P[sp.i1].d),col=CATC[sp.cat]==="hc"?"#E23A2E":(CATC[sp.cat]||"#93A0AB");
+    bands+=`<rect x="${x0}" y="${pt-8}" width="${Math.max(2,x1-x0)}" height="${H-pt-pb+8}" fill="${col}" opacity=".09"/>`;
+    const sx=px(P[sp.i1].d),sy=py(P[sp.i1].alt);
+    pins+=`<line x1="${sx}" y1="${sy}" x2="${sx}" y2="${sy-18}" stroke="#141E28" stroke-width="1.4"/><circle cx="${sx}" cy="${sy}" r="3.5" fill="#FFD100" stroke="#141E28" stroke-width="1.5"/>
+      <text x="${Math.min(W-40,Math.max(40,sx))}" y="${sy-24}" text-anchor="middle" font-family="Space Grotesk" font-size="10" font-weight="700" fill="#141E28">${clock(st,sp.eta)}</text>`;});
+  const ticks=[];for(let k=0;k<=c.km;k+=c.km>80?20:10)ticks.push(`<text x="${px(k*1000)}" y="${H-10}" text-anchor="${k===0?"start":"middle"}" font-family="Space Grotesk" font-size="8.5" font-weight="700" letter-spacing="1" fill="#93A0AB">${k} KM</text>`);
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><path d="${area}" fill="rgba(38,73,110,.06)"/>${bands}${grad}${pins}${ticks.join("")}
+    <text x="${W}" y="${H-10}" text-anchor="end" font-family="Space Grotesk" font-size="8.5" font-weight="700" letter-spacing="1" fill="#93A0AB">${c.km} KM · ${clock(st,sim.total)}</text></svg>`;
+}
+openRaceCard=function(){
+  const ev=EVENTS.find(e=>e.id===rcEv),c=RCX,sim=RCSIM;if(!ev||!c||!sim)return;
+  const sh=v4El("sheet"),el=v4El("sheetin");sh.style.display="flex";
+  const st=(ev.recon&&ev.recon.startMin)||480;
+  const days=ev.days||1,stage=days>1?rcStage:1,d=addD(new Date(ev.date+"T12:00:00"),stage-1);
+  const ftp=(ev.recon&&ev.recon.ftpDay)||ftpOnDay(ev);
+  const catBadge=cat=>CATC[cat]==="hc"?`<span class="cat hc">HC</span>`:`<span class="cat" style="background:${CATC[cat]||"#93A0AB"}">${cat==="—"?"·":"CAT "+cat}</span>`;
+  const climbs=sim.splits.map(sp=>`<div class="krow"><span class="clk">${clock(st,sim.cum[sp.i0])}</span>${catBadge(sp.cat)}<span class="nm">${sp.n}<small>KM ${sp.startKm} · ${sp.len} KM @ ${sp.avg}% · TOP ${sp.top} M</small></span><span class="w">${sp.w}<small>W</small></span><span style="font-family:'Space Grotesk';font-weight:700">${sp.wkg}</span><span style="font-family:'Space Grotesk';font-weight:700">${hms(sp.secs)}</span><span class="sum">${clock(st,sp.eta)}</span></div>`).join("");
+  const segs=((ev.recon&&ev.recon.segs&&ev.recon.segs[c.id])||[]).map(sg=>`<div class="krow"><span class="clk">${clock(st,sim.cum[sg.a])}</span><span class="cat" style="background:#D99000">SEG</span><span class="nm">${sg.n}<small>KM ${(c.points[sg.a].d/1000).toFixed(1)} – ${(c.points[sg.b].d/1000).toFixed(1)}</small></span><span class="w">${sg.w}<small>W</small></span><span style="font-family:'Space Grotesk';font-weight:700">${(sg.w/WF.weight).toFixed(2)}</span><span style="font-family:'Space Grotesk';font-weight:700">${hms(sim.cum[sg.b]-sim.cum[sg.a])}</span><span class="sum">${clock(st,sim.cum[sg.b])}</span></div>`).join("");
+  const feeds=[];for(let t=30*60;t<sim.total;t+=30*60){const bottle=t%3600===0;feeds.push(`<div class="fd ${bottle?"bot":""}"><b>${clock(st,t)}</b>${bottle?"Bottle and a bar — 60 g carbs this hour":"Gel — keep the drip going"}</div>`);}
+  const hours=sim.total/3600,warm=new Date(ev.date).getMonth()>=5&&new Date(ev.date).getMonth()<=8,bottles=Math.ceil(hours*(warm?1.3:1));
+  el.innerHTML=`<button class="sx noprint" id="rcx">✕</button><div class="rc2">
+    <div class="bib"><div class="mk"><svg viewBox="0 0 22 22"><path d="M4,17.5 L11,5.5 L18,17.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="11" cy="5.5" r="2.4" fill="#FFD100"/></svg></div>
+      <div><div class="k">THE RACE CARD · ${ev.name.toUpperCase()}${days>1?` · STAGE ${stage} OF ${days}`:""} · ${d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"}).toUpperCase()}</div><div class="t">${c.name}</div>${ev.purpose?`<div class="p">"${ev.purpose}"</div>`:""}</div>
+      <div class="num"><div class="n">${clock(st,0)}</div><div class="l">ROLL OUT <input class="inp noprint" id="rc-start" type="time" value="${clock(st,0)}" style="width:96px;margin-left:8px;padding:4px 8px;font-size:11px"/></div></div></div>
+    <div class="facts"><div><div class="l">DISTANCE</div><div class="v">${c.km}<small>KM</small></div></div><div><div class="l">CLIMBING</div><div class="v">${fmtInt(c.m)}<small>M</small></div></div><div><div class="l">RIDE TIME</div><div class="v">${hms(sim.total)}</div></div><div><div class="l">FTP ON THE DAY</div><div class="v">${ftp}<small>W</small></div></div><div><div class="l">CLIMBS</div><div class="v">${sim.splits.length}<small>${sim.splits.some(x=>x.cat==="HC")?"· HC":""}</small></div></div></div>
+    <div class="prof">${raceProfile(c,sim,st)}</div>
+    <div class="cols"><div>
+      <div class="kom"><div class="kh"><span>KING OF THE MOUNTAINS · THE CLIMBS</span></div><div class="krow h"><span>ARRIVE</span><span>CAT</span><span>CLIMB</span><span>TARGET</span><span>W/KG</span><span>TIME</span><span>SUMMIT</span></div>${climbs||`<div class="krow"><span></span><span></span><span class="nm">A flat day: aero and pacing decide it.</span></div>`}</div>
+      ${segs?`<div class="seg"><div class="kh">YOUR PACING SEGMENTS</div><div class="krow h"><span>ARRIVE</span><span></span><span>SEGMENT</span><span>TARGET</span><span>W/KG</span><span>TIME</span><span>END</span></div>${segs}</div>`:""}
+    </div><div>
+      <div class="mus"><div class="kh">THE MUSETTE · FUELLING BY THE CLOCK</div><div class="feedline">${feeds.join("")||`<div class="fd">Under thirty minutes: water only.</div>`}</div></div>
+      <div class="bot2"><div class="kh">BOTTLES · ${bottles} × 750 ML</div>One an hour${warm?", a third more for a summer day":""}. Refill at the first café past km ${Math.round(c.km/2)}. Salt in the second bottle if it's warm.</div>
+    </div></div>
+    <div class="fin"><div class="kite"></div><div class="ft">Flamme rouge at km ${(c.km-1).toFixed(1)}. Empty the tank on the last rise, then roll in with the friends you came with.</div><div class="fv"><div class="n">${clock(st,sim.total)}</div><div class="l">PROJECTED FINISH</div></div></div>
+    <div class="sh-acts noprint"><button class="aibtn" style="background:var(--ink)" id="rc-print">PRINT / SAVE AS PDF</button><span class="ds" style="margin:0">A6 for the top tube, or screenshot it to the phone.</span></div></div>`;
+  const close=()=>{sh.style.display="none";};v4El("rcx").onclick=close;sh.onclick=e=>{if(e.target===sh)close();};document.onkeydown=e=>{if(e.key==="Escape")close();};
+  v4El("rc-print").onclick=()=>window.print();
+  v4El("rc-start").onchange=e=>{const [h,m]=e.target.value.split(":").map(Number);ev.recon=ev.recon||{};ev.recon.startMin=h*60+m;saveProfile();openRaceCard();};
+  v4El("sheetin").scrollTop=0;
+};
 
 </script>
 <div id="sheet" class="sheet" style="display:none"><div class="sheetin" id="sheetin"></div></div>
