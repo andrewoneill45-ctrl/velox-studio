@@ -4584,6 +4584,21 @@ const _ss9=showScene;showScene=function(id){_ss9(id);if(id==="plan"&&window.TL&&
 const _al9=applyLive;applyLive=function(m){_al9(m);setTimeout(()=>{loadStatus();autoSync("open");},900);};
 setTimeout(()=>{if(LIVE&&!STATUS){loadStatus();autoSync("late");}},4000);
 
+
+/* ═══ v4.6.1 — the Timeline lands on this week, even when built while hidden ═══ */
+(function(){
+  function centre(k,instant){const sc=document.getElementById("tlscroll");if(!sc||!window.TL||!TL.built)return false;
+    const i=tlWeeks().indexOf(k);if(i<0||sc.clientWidth===0)return false;
+    const left=Math.max(0,i*86-sc.clientWidth/2+43);
+    if(instant)sc.scrollLeft=left;else sc.scrollTo({left,behavior:"smooth"});tlWin&&tlWin();return true;}
+  tlScrollTo=function(k){if(!centre(k,false))TL.pendingScroll=k;};
+  const _tr=tlRender;tlRender=function(keep){_tr(keep);if(!keep)TL.pendingScroll=TL.sel;};
+  function settle(){const k=TL.pendingScroll||TL.sel;if(k&&centre(k,true))TL.pendingScroll=null;}
+  const _ss=showScene;showScene=function(id){_ss(id);if(id==="plan"){requestAnimationFrame(()=>requestAnimationFrame(settle));setTimeout(settle,250);}};
+  if(window.ResizeObserver){const sc=document.getElementById("tlscroll");if(sc)new ResizeObserver(()=>{if(sc.clientWidth>0&&TL.pendingScroll)settle();}).observe(sc);}
+  window.addEventListener("load",()=>setTimeout(settle,300));
+})();
+
 </script>
 <div id="sheet" class="sheet" style="display:none"><div class="sheetin" id="sheetin"></div></div>
 <script>

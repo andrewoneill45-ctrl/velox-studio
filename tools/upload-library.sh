@@ -11,7 +11,7 @@ except ImportError:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "--quiet", "--user", "pypdf"])
     from pypdf import PdfReader
 folder, key = sys.argv[1], sys.argv[2]
-base = "https://massif.netlify.app/api/library?key=" + key
+base = "https://velox-coach.netlify.app/api/library?key=" + key
 pdfs = [f for f in sorted(os.listdir(folder)) if f.lower().endswith(".pdf")]
 print(f"{len(pdfs)} PDFs in '{folder}' — extracting and distilling (one Claude call each)…")
 for f in pdfs:
