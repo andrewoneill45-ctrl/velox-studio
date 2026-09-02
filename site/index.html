@@ -2667,12 +2667,16 @@ openRecon=function(id){_openRecon(id);
 };
 
 /* ── persistence: drawer changes save to the server ── */
+let PROFILE_READY=false;
 function saveProfile(){
-  if(!LIVE)return;clearTimeout(SAVET);
+  /* never write back until the rider's own profile has arrived from the server:
+     otherwise a page painted from the device cache can save its empty defaults over real work */
+  if(!LIVE||!PROFILE_READY)return;clearTimeout(SAVET);
   SAVET=setTimeout(()=>{
-    fetch("/api/profile",{method:"PUT",headers:{"content-type":"application/json"},
-      body:JSON.stringify({ftp:S.ftp,weight:S.weight,maxhr:S.maxhr,rhr:S.rhr,lthr:S.lthr,
-        tgt:S.tgt,weekTargets:S.weekTargets||{},plan:S.plan||{},build:S.build||{},seasonStart:S.seasonStart,startFtp,startWeight,events:EVENTS,ftpLog:FTPLOG})}).catch(()=>{});
+    const body={ftp:S.ftp,weight:S.weight,maxhr:S.maxhr,rhr:S.rhr,lthr:S.lthr,tgt:S.tgt,seasonStart:S.seasonStart,startFtp,startWeight};
+    const put=(k,v)=>{if(v&&(Array.isArray(v)?v.length:Object.keys(v).length))body[k]=v;};
+    put("weekTargets",S.weekTargets);put("plan",S.plan);put("build",S.build);put("events",EVENTS);put("ftpLog",FTPLOG);
+    fetch("/api/profile",{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(body)}).catch(()=>{});
   },800);
 }
 const _updateAllL=updateAll;
@@ -4900,6 +4904,26 @@ async function renderBackups(){
   document.getElementById("bk-lock").onclick=async()=>{await fetch("/api/gate",{method:"DELETE"});try{localStorage.removeItem("vx_cache_m");localStorage.removeItem("vx_cache_a");}catch(e){}location.reload();};
 }
 const _al13=applyLive;applyLive=function(m){_al13(m);setTimeout(renderBackups,1200);};
+
+
+/* ═══ v4.8.5 — nothing the rider builds can be overwritten by a page load ═══ */
+const _ap13=applyProfile;applyProfile=function(p,c){_ap13(p,c);if(c)PROFILE_READY=true;};
+/* recover an earlier profile: versions kept on every change */
+async function renderVersions(){
+  const el=document.getElementById("backuppanel");if(!el||!LIVE)return;
+  let v=[];try{v=(await api("/api/profile?history=1")).versions||[];}catch(e){return;}
+  if(!v.length)return;
+  const box=document.createElement("div");box.style.marginTop="14px";
+  box.innerHTML=`<div class="al" style="color:var(--ink)">EARLIER VERSIONS OF YOUR PLANNING</div>
+    <div class="ds" style="margin:4px 0 8px">Every change keeps a copy. Restoring brings back builds, week targets, planned sessions and events — it never removes anything you have since added.</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">${v.slice(-10).reverse().map(x=>`<button class="tlbtn" data-v="${x.i}" title="${new Date(x.at).toLocaleString("en-GB")}">${new Date(x.at).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})} · ${x.build?"BUILD":"—"} · ${x.weeks} WKS · ${x.sessions} SESSIONS</button>`).join("")}</div>`;
+  el.appendChild(box);
+  box.querySelectorAll("[data-v]").forEach(b=>b.onclick=async()=>{
+    if(!confirm("Bring back the build, week targets, planned sessions and events from this version?"))return;
+    try{await api("/api/profile",{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({version:+b.dataset.v})});location.reload();}
+    catch(e){alert("Restore failed: "+(e.message||e));}});
+}
+const _rb13=renderBackups;renderBackups=async function(){await _rb13();renderVersions();};
 
 </script>
 <div id="sheet" class="sheet" style="display:none"><div class="sheetin" id="sheetin"></div></div>
