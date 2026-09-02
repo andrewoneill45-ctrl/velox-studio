@@ -36,7 +36,23 @@ export default gated(async (req) => {
         let v = row.qty ?? row.Avg ?? row.avg; if (typeof v !== "number") continue;
         if (k === "weight" && /lb/i.test(m.units || "")) v = v * 0.45359237;
         if (k === "temp" && /F/.test(m.units || "") && v > 60) v = (v - 32) * 5 / 9;
-        rec[k] = +v.toFixed(k === "weight" || k === "temp" ? 2 : 1);
+        /* HRV and respiratory rate are measured many times a day; what matters is the overnight reading.
+           Keep running sums for the night window and for the rest of the day, so repeated posts accumulate
+           instead of the last sample of the day winning. */
+        if (k === "hrv" || k === "rr") {
+          const ts = String(row.date || ""), hh = /\d{4}-\d{2}-\d{2}[T ](\d{2})/.exec(ts);
+          const hour = hh ? +hh[1] : null;
+          const night = hour === null ? true : (hour >= 22 || hour < 10);   // undated rows are treated as the day's own value
+          const slot = night ? (k + "N") : (k + "D");
+          const acc = rec[slot] || (rec[slot] = { n: 0, s: 0 });
+          acc.n++; acc.s += v;
+          const N = rec[k + "N"], D = rec[k + "D"];
+          rec[k] = +((N && N.n ? N.s / N.n : D.s / D.n)).toFixed(1);
+          rec[k + "Src"] = (N && N.n) ? "overnight" : "daytime";
+          if (N && N.n) rec[k + "Samples"] = N.n;
+        } else {
+          rec[k] = +v.toFixed(k === "weight" || k === "temp" ? 2 : 1);
+        }
         if (k === "weight") latestWeight = { d, v: rec[k] };
       }
       touched++;

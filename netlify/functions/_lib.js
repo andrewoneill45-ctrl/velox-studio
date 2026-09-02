@@ -52,9 +52,10 @@ export function computeReadiness(days) {
   const stat = k => { const v = hist.map(x => x[k]).filter(x => typeof x === "number"); if (v.length < 3) return null;
     const m = v.reduce((a, b) => a + b, 0) / v.length; const sd = Math.sqrt(v.reduce((a, b) => a + (b - m) ** 2, 0) / v.length) || 1; return { m, sd, n: v.length }; };
   const H = stat("hrv"), R = stat("rhr"), T = stat("temp");
+  const hrvSrc = today.hrvSrc || null;
   const parts = {}, why = [];
   if (typeof today.hrv === "number" && H) { parts.hrv = clamp(50 + ((today.hrv - H.m) / H.sd) * 20, 0, 100);
-    why.push(`HRV ${today.hrv} ms against a ${H.m.toFixed(0)} ms baseline (${H.n} days) → ${Math.round(parts.hrv)}`); }
+    why.push(`HRV ${today.hrv} ms${hrvSrc === "overnight" ? ` (overnight mean of ${today.hrvSamples || 0} readings)` : hrvSrc === "daytime" ? " (daytime only — no overnight reading yet)" : ""} against a ${H.m.toFixed(0)} ms baseline (${H.n} days) → ${Math.round(parts.hrv)}`); }
   else if (typeof today.hrv === "number") why.push("HRV recorded, baseline not yet long enough to score");
   if (typeof today.rhr === "number" && R) { parts.rhr = clamp(50 + ((R.m - today.rhr) / R.sd) * 20, 0, 100);
     why.push(`Resting HR ${today.rhr} against ${R.m.toFixed(0)} baseline → ${Math.round(parts.rhr)}`); }
