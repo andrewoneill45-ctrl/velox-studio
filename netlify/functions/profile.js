@@ -2,7 +2,7 @@ import { json, getProfile, readJSON, writeJSON, gated } from "./_lib.js";
 /* Keys that represent real work by the rider. An incoming save may never blank them:
    if the body omits them, or sends them empty while the store holds something, the store wins.
    Deliberate clearing is possible with ?force=1. */
-const PRECIOUS = ["build", "plan", "weekTargets", "events", "ftpLog", "cols"];
+const PRECIOUS = ["build", "plan", "weekTargets", "events", "ftpLog", "cols", "scen"];
 const empty = v => v == null || (Array.isArray(v) ? !v.length : (typeof v === "object" ? !Object.keys(v).length : false));
 export default gated(async (req) => {
   const u = new URL(req.url);

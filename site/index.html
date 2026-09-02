@@ -1244,6 +1244,78 @@ svg#rc-prof{display:block;width:100%;height:340px}
   .sheetin{padding:14px 20px}
   .sh-art svg{height:120px!important}
 }
+/* ═══ THE MODEL — Condition workbench (v4.9) ═══ */
+.labhide{display:none!important}
+.mdock{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.mscen{display:flex;gap:7px;flex-wrap:wrap}
+.mscen button{font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.14em;padding:9px 13px;border-radius:11px;border:1px solid var(--line);background:#fff;color:var(--ink2);cursor:pointer}
+.mscen button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.mscen button.new{border-style:dashed;color:var(--mist)}
+.mask{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.mask input{width:min(340px,42vw);background:#fff;border:1px solid var(--line);border-radius:11px;padding:10px 13px;font-size:12.5px;outline:none;font-family:Inter,sans-serif}
+.mask button{padding:10px 14px;border:none;border-radius:11px;font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.14em;cursor:pointer;background:var(--ink);color:#fff}
+.mask button.g{background:var(--jaune);color:var(--ink)}
+.mtop{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;align-items:start}
+.mlevers{background:var(--ink);color:#F4F6F5;border-radius:20px;padding:20px 22px}
+.mlevers h3{font-family:'Fraunces',serif;font-style:italic;font-weight:400;font-size:19px;margin:0 0 3px;line-height:1.25}
+.mlevers .mkk{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.2em;color:#93A0AB}
+.mlv{margin-top:15px}
+.mlv .mrow{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.mlv .mnm{font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.14em;color:#AEBBC6}
+.mlv .mval{font-family:'Archivo';font-weight:900;font-size:19px;letter-spacing:-.02em}
+.mlv .mval small{font-size:9px;color:#93A0AB;font-family:'Space Grotesk';margin-left:2px;font-weight:700}
+.mlv input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:4px;margin-top:10px;background:rgba(255,255,255,.15);outline:none}
+.mlv input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--ink);box-shadow:0 2px 6px rgba(0,0,0,.4);cursor:pointer}
+.mlv input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--ink);cursor:pointer}
+.mlv .mhint{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.1em;color:#93A0AB;margin-top:5px}
+.mshape{display:flex;gap:5px;margin-top:9px}
+.mshape button{flex:1;font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.08em;padding:7px 0;border-radius:8px;background:rgba(255,255,255,.08);color:#AEBBC6;border:none;cursor:pointer}
+.mshape button.on{background:var(--jaune);color:var(--ink)}
+.mbuys{margin-top:18px;border-top:1px solid rgba(255,255,255,.12);padding-top:13px}
+.mbuys .r{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;padding:5px 0;color:#DCE3E7}
+.mbuys .r b{font-family:'Space Grotesk';font-weight:700;color:var(--jaune);white-space:nowrap}
+.mbuys .r b.n{color:#FF9E8F}
+.mroad{padding:20px 24px 16px}
+.mroad h2,.mpanel h2{font-family:'Fraunces',serif;font-weight:400;font-size:24px;margin:0;letter-spacing:-.01em}
+.mroad h2 i,.mpanel h2 i{font-style:italic}
+.msub{font-family:'Fraunces',serif;font-style:italic;font-size:13.5px;color:var(--ink2);margin-top:4px;line-height:1.45}
+#mroadsvg{width:100%;height:300px;display:block;margin-top:10px;overflow:visible}
+.mgates{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:16px}
+.mgate{border:1px solid var(--line);border-radius:15px;padding:13px 15px;cursor:pointer;background:#fff;transition:border-color .2s,box-shadow .2s;min-width:0}
+.mgate:hover{border-color:var(--mist)}
+.mgate.sel{border-color:var(--ink);box-shadow:0 0 0 2px rgba(20,30,40,.07)}
+.mgate .mj{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.14em;color:var(--mist);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mgate .n{font-family:'Fraunces',serif;font-size:17px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mgate .mrowr{display:flex;align-items:center;gap:11px;margin-top:9px}
+.mgate .mring{width:50px;height:50px;flex:none}
+.mgate .mpc{font-family:'Archivo';font-weight:900;font-size:21px;letter-spacing:-.02em;line-height:1}
+.mgate .mdl{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.08em;margin-top:3px}
+.mgate .mbars{display:flex;gap:3px;margin-top:10px}
+.mgate .mbars i{height:4px;border-radius:3px;flex:1;background:var(--hair);position:relative;overflow:hidden}
+.mgate .mbars i b{position:absolute;left:0;top:0;bottom:0;border-radius:3px}
+.mtwo{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:16px;margin-top:16px}
+.mpanel{padding:20px 24px}
+.mdm{display:grid;grid-template-columns:minmax(120px,1.1fr) minmax(90px,2fr) 92px 74px;gap:12px;align-items:center;padding:11px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+.mdm.h{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.14em;color:var(--mist);border-bottom:1px solid var(--line);padding-bottom:8px}
+.mdm .mnm{min-width:0}
+.mdm .mnm b{display:block;font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.1em;color:var(--mist);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mbar{height:22px;border-radius:7px;background:var(--hair);position:relative;overflow:hidden;min-width:0}
+.mbar .maskh{position:absolute;inset:0;background:repeating-linear-gradient(-45deg,rgba(20,30,40,.09) 0 5px,transparent 5px 10px)}
+.mbar .mhave{position:absolute;left:0;top:0;bottom:0;border-radius:7px 0 0 7px}
+.mbar .mproj{position:absolute;top:0;bottom:0;width:0;border-left:2px dashed #B08900}
+.mdm .v{font-family:'Archivo';font-weight:900;font-size:14px;text-align:right;white-space:nowrap}
+.mdm .v small{font-family:'Space Grotesk';font-size:8px;color:var(--mist);font-weight:700}
+.mdm .mst{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.08em;text-align:right;line-height:1.35}
+.mfoot{font-family:'Fraunces',serif;font-style:italic;font-size:13px;color:var(--ink2);margin-top:14px;line-height:1.55}
+.mledger2 .r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:12.5px;align-items:center}
+.mledger2 .r b{font-family:'Space Grotesk';font-weight:700}
+.mledger2 .r .d{font-family:'Archivo';font-weight:900;font-size:14px;color:var(--vert);text-align:right;white-space:nowrap}
+.mledger2 .r .d.n{color:var(--polka)}
+.mledger2 .r button{margin-left:8px;font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.1em;padding:5px 9px;border-radius:7px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--ink2)}
+@media(max-width:1100px){.mtop{grid-template-columns:1fr}.mtwo{grid-template-columns:1fr}}
+@media(max-width:820px){.mroad{padding:16px 16px 12px}.mpanel{padding:16px 16px}#mroadsvg{height:230px}
+  .mdm{grid-template-columns:minmax(90px,1fr) minmax(70px,1.4fr) 76px;gap:8px;font-size:11.5px}
+  .mdm>*:nth-child(4){display:none}.mask input{width:100%;order:3}.mask{width:100%}}
 </style>
 </head>
 <body>
@@ -1360,7 +1432,8 @@ svg#rc-prof{display:block;width:100%;height:340px}
         <button data-v="rides">RIDE ANALYSIS</button>
       </div>
       <div id="v-cond">
-        <div class="g12">
+        <div id="model-room"></div>
+        <div class="g12" id="cond-legacy">
           <div class="panel hov stt cascade" style="grid-column:span 3;--i:1"><div class="sl">FTP ESTIMATE</div><div class="sv" id="cd-ftp">280<small> W</small></div><div class="tr" id="cd-ftpn">+6 W over eight weeks</div><svg id="sp-ftp" data-spark="266,268,270,271,273,274,276,280" data-c="#26496E"></svg></div>
           <div class="panel hov stt cascade" style="grid-column:span 3;--i:2"><div class="sl">FITNESS · CTL</div><div class="sv" id="cd-ctl">58</div><div class="tr" id="cd-ctln">+14 in four weeks</div><svg id="sp-ctl" data-spark="40,42,44,47,49,52,55,58" data-c="#26496E"></svg></div>
           <div class="panel hov stt cascade" style="grid-column:span 3;--i:3"><div class="sl">DECOUPLING</div><div class="sv" id="cd-dec">3.2<small> %</small></div><div class="tr" id="cd-decn">Halved since March</div><svg id="sp-dec" data-spark="6.1,5.8,5.2,4.8,4.4,3.9,3.5,3.2" data-c="#189B69"></svg></div>
@@ -2676,6 +2749,7 @@ function saveProfile(){
     const body={ftp:S.ftp,weight:S.weight,maxhr:S.maxhr,rhr:S.rhr,lthr:S.lthr,tgt:S.tgt,seasonStart:S.seasonStart,startFtp,startWeight};
     const put=(k,v)=>{if(v&&(Array.isArray(v)?v.length:Object.keys(v).length))body[k]=v;};
     put("weekTargets",S.weekTargets);put("plan",S.plan);put("build",S.build);put("events",EVENTS);put("ftpLog",FTPLOG);
+    if(S.scen&&S.scen.list&&S.scen.list.length)body.scen=S.scen;
     fetch("/api/profile",{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(body)}).catch(()=>{});
   },800);
 }
@@ -4924,6 +4998,308 @@ async function renderVersions(){
     catch(e){alert("Restore failed: "+(e.message||e));}});
 }
 const _rb13=renderBackups;renderBackups=async function(){await _rb13();renderVersions();};
+
+
+/* ═══ v4.9 — THE MODEL: the Condition room as a planning instrument ═══ */
+const SHAPES={polarised:{tss:56,label:"POLARISED",mix:[.75,0,.05,.05,.15]},pyramid:{tss:63,label:"PYRAMID",mix:[.6,.15,.12,.08,.05]},sweet:{tss:71,label:"SWEET SPOT",mix:[.5,.1,.28,.1,.02]}};
+const SCEN_DEF=()=>({id:"base",name:"BASE BUILD",hours:6.5,shape:"polarised",ramp:3.5,rest:4,weight:+(S.weight||61.5).toFixed(1)});
+function scenAll(){if(!S.scen||!S.scen.list||!S.scen.list.length)S.scen={list:[SCEN_DEF()],active:"base"};return S.scen;}
+function scenNow(){const a=scenAll();return a.list.find(x=>x.id===a.active)||a.list[0];}
+/* ── the engine: a daily CTL/ATL series forward from today ── */
+function pmcNow(){const pm=(window.PMCF&&PMCF.length?PMCF:(typeof pmcFromActs==="function"?pmcFromActs():[]))||[];
+  return pm.length?{ctl:pm[pm.length-1].ctl,atl:pm[pm.length-1].atl,hist:pm}:{ctl:S.ctl||20,atl:S.atl||20,hist:[]};}
+function horizonDays(){const f=fut();const last=f.length?new Date(f[f.length-1].date):addD(new Date(),90);return Math.max(60,Math.min(400,Math.ceil((last-Date.now())/864e5)+21));}
+/* weekly load for a scenario, honouring the ramp cap, rest weeks and a taper into each A/B event */
+function modelSeries(sc,opt){
+  opt=opt||{};const N=horizonDays(),st=pmcNow();let ctl=st.ctl,atl=st.atl;
+  const out=[],evs=fut().map(e=>({d:Math.max(0,J(e)),days:e.days||1,pr:e.pr||"B"}));
+  const perWeekBase=sc.hours*SHAPES[sc.shape].tss;
+  let wkCtlStart=ctl;
+  for(let d=1;d<=N;d++){
+    const wk=Math.floor((d-1)/7);
+    const rest=sc.rest>0&&((wk+1)%sc.rest===0);
+    let weekTss=perWeekBase*(rest?.6:1);
+    /* the ramp cap: no week may lift fitness faster than the rider allows */
+    if(d%7===1){const maxTss=(wkCtlStart+sc.ramp)*7*(42/41);weekTss=Math.min(weekTss,maxTss);}
+    let load=weekTss/7;
+    /* the event itself is load; the days before it are not */
+    const ev=evs.find(e=>d>=e.d&&d<e.d+e.days);
+    if(ev)load=Math.max(load,ev.pr==="A"?150:120);
+    else{const near=evs.find(e=>e.d-d<=7&&e.d-d>0&&(e.pr==="A"||e.pr==="B"));if(near)load*=(near.pr==="A"?.42:.6);}
+    if(opt.stopAfter&&d>opt.stopAfter)load=0;
+    ctl+=(load-ctl)/42;atl+=(load-atl)/7;
+    if(d%7===0)wkCtlStart=ctl;
+    out.push({d,ctl,atl,tsb:ctl-atl});
+  }
+  return out;
+}
+/* the plan you have already committed, from week targets */
+function committedSeries(){
+  const N=horizonDays(),st=pmcNow();let ctl=st.ctl,atl=st.atl;const out=[];
+  for(let d=1;d<=N;d++){const wi=CURWK+Math.floor(d/7);const tgt=(typeof wkTarget==="function")?wkTarget(wi):null;
+    let load=tgt?tgt/7:Math.max(20,st.atl||30);ctl+=(load-ctl)/42;atl+=(load-atl)/7;out.push({d,ctl,atl,tsb:ctl-atl});}
+  return out;
+}
+const atDay=(ser,d)=>ser[Math.max(0,Math.min(ser.length-1,Math.round(d)-1))]||ser[ser.length-1];
+/* FTP and weight projected from where fitness lands */
+function projFtp(sc,ser,d){const st=pmcNow();const gain=Math.max(0,(atDay(ser,d).ctl-st.ctl))*0.9;
+  const shapeBonus=sc.shape==="sweet"?1.06:sc.shape==="pyramid"?1.03:1;
+  return Math.round((S.ftp||185)+gain*shapeBonus);}
+function projWeight(sc,d){const w0=S.weight||61.5,tgt=sc.weight;const wks=d/7;return +(w0+(tgt-w0)*Math.min(1,wks/12)).toFixed(1);}
+
+/* ── what a road asks, read from the stages attached to the event ── */
+function eventDemands(ev){
+  const ids=(ev.routes&&ev.routes.length?ev.routes:(ev.route?[ev.route]:[])).filter(id=>ROUTES[id]);
+  const days=ev.days||1,D=[];
+  const ftpNow=S.ftp||185,wt=S.weight||61.5;
+  let totalM=0,maxDayTss=0,longestClimb=null,maxKm=0,totalKj=0;
+  ids.forEach(id=>{const c=ROUTES[id];let sim=null;try{sim=simulate(c,{ftp:ftpNow,weight:wt});}catch(e){}
+    totalM+=c.m||0;maxKm=Math.max(maxKm,c.km||0);
+    if(sim){const hrs=sim.total/3600,ifac=0.72;maxDayTss=Math.max(maxDayTss,Math.round(hrs*ifac*ifac*100));
+      totalKj=Math.max(totalKj,Math.round(sim.total*ftpNow*0.62/1000));
+      (sim.splits||[]).forEach(sp=>{if(!longestClimb||sp.secs>longestClimb.secs)longestClimb={secs:sp.secs,w:sp.w,n:sp.n,cat:sp.cat};});}});
+  /* capability today */
+  const curve=(EFTP&&EFTP.curve)||[];
+  const bestAt=secs=>{const c=curve.filter(x=>x.all).reduce((b,x)=>Math.abs(x.dur-secs)<Math.abs((b?b.dur:1e9)-secs)?x:b,null);return c?c.all.w:null;};
+  const rides=((window.TL&&TL.acts&&TL.acts.length?TL.acts:(window.RIDES||[]))||[]);
+  const s0=(S.seasonStart||"2026-03-16");
+  const seasonRides=rides.filter(a=>(a.d||a.date||"")>=s0);
+  const pool=seasonRides.length?seasonRides:rides;
+  const maxTssRidden=Math.max(0,...pool.map(a=>a.tss||0));
+  /* the biggest block of climbing actually ridden in as many days as the event lasts */
+  const byDay=[...pool].sort((a,b)=>(a.d||a.date)<(b.d||b.date)?-1:1);
+  let maxBlockM=0;
+  for(let i=0;i<byDay.length;i++){let m=0;const d0=new Date((byDay[i].d||byDay[i].date)+"T12:00:00");
+    for(let j=i;j<byDay.length;j++){const dj=new Date((byDay[j].d||byDay[j].date)+"T12:00:00");
+      if((dj-d0)/864e5>days-1)break;m+=byDay[j].m||0;}
+    maxBlockM=Math.max(maxBlockM,m);}
+  /* longest run of consecutive ride days */
+  let run=0,best=0,prev=null;
+  byDay.map(a=>a.d||a.date).forEach(d=>{if(prev&&(new Date(d)-new Date(prev))/864e5<=1.2)run++;else run=1;prev=d;best=Math.max(best,run);});
+  const climbSecs=longestClimb?longestClimb.secs:0;
+  const haveClimb=climbSecs?bestAt(climbSecs):null;
+  if(longestClimb)D.push({k:"climb",n:"Longest climb",sub:`${Math.round(climbSecs/60)} MIN · ${(longestClimb.n||"").toUpperCase()}`,
+    ask:longestClimb.w,have:haveClimb||Math.round(ftpNow*0.92),unit:"W",gainable:true});
+  if(maxDayTss)D.push({k:"day",n:days>1?"The big day":"The day itself",sub:`${Math.round(maxKm)} KM · ${fmtInt(Math.round(totalM/Math.max(1,ids.length)))} M`,
+    ask:maxDayTss,have:Math.round(maxTssRidden),unit:"TSS",gainable:true,fixedBy:"one long ride"});
+  if(days>1)D.push({k:"days",n:`${days} days running`,sub:"REPEATABILITY",ask:days,have:Math.max(1,best),unit:"DAYS",gainable:true});
+  if(totalKj)D.push({k:"dur",n:"Late-ride power",sub:`AFTER ${fmtInt(totalKj)} KJ`,ask:95,have:Math.round(100-((window.DECOUP||11.5))),unit:"%",gainable:true,pctScale:true});
+  if(totalM)D.push({k:"climbtot",n:days>1?"Total climbing":"Climbing",sub:`${days>1?days+" DAYS · ":""}${fmtInt(Math.round(totalM))} M`,
+    ask:Math.round(totalM),have:Math.round(maxBlockM),unit:"M",gainable:true});
+  if(!ids.length)D.push({k:"none",n:"No routes attached",sub:"ADD A GPX IN THE RECON ROOM",ask:1,have:0,unit:"",gainable:false});
+  return D;
+}
+/* readiness on the day: capability grown by the scenario, against the ask */
+function readiness(ev,sc,ser){
+  const D=eventDemands(ev);if(!D.length||D[0].k==="none")return{pct:null,D:[]};
+  const d=Math.max(1,J(ev)),ftp0=S.ftp||185,ftpD=projFtp(sc,ser,d),grow=ftpD/ftp0;
+  const wk=Math.max(0,d/7),tsb=atDay(ser,d).tsb,ctlD=atDay(ser,d).ctl,st=pmcNow();
+  const ctlGrow=ctlD/Math.max(8,st.ctl);
+  const scored=D.map(x=>{
+    let proj=x.have;
+    if(x.k==="climb")proj=Math.round(x.have*grow);
+    if(x.k==="day"||x.k==="climbtot")proj=Math.round(x.have*Math.min(1.7,ctlGrow));
+    if(x.k==="days")proj=Math.min(x.ask,x.have+(fut().filter(e=>(e.days||1)>1&&J(e)<d).length?1:0)+(wk>6?1:0));
+    if(x.k==="dur")proj=Math.min(99,Math.round(x.have+Math.min(8,wk*0.35)));
+    const ratio=Math.max(0,Math.min(1.15,proj/x.ask));
+    return {...x,proj,ratio};});
+  const w={climb:1.1,day:1.2,days:1,dur:1,climbtot:.8};
+  const tw=scored.reduce((a,x)=>a+(w[x.k]||1),0);
+  let pct=scored.reduce((a,x)=>a+Math.min(1,x.ratio)*(w[x.k]||1),0)/tw*100;
+  const formPen=tsb<-10?8:tsb<-5?4:tsb>25?5:0;                     // arriving buried or stale both cost
+  pct=Math.max(0,Math.min(99,Math.round(pct-formPen)));
+  return {pct,D:scored,tsb:Math.round(tsb),ftpD,ctlD:Math.round(ctlD),wkg:+(ftpD/projWeight(sc,d)).toFixed(2)};
+}
+/* ── the room ── */
+let MSEL=null,MSER=null,MCOM=null;
+function modelRender(){
+  const root=document.getElementById("model-room");if(!root)return;
+  const sc=scenNow(),A=scenAll();
+  MSER=modelSeries(sc);MCOM=committedSeries();
+  const evs=fut();if(!MSEL||!evs.find(e=>e.id===MSEL))MSEL=(evs.find(e=>e.pr==="A")||evs[0]||{}).id;
+  const R={};evs.forEach(e=>{R[e.id]=readiness(e,sc,MSER);});
+  const Rc={};evs.forEach(e=>{Rc[e.id]=readiness(e,sc,MCOM);});
+  const sel=evs.find(e=>e.id===MSEL);
+  root.innerHTML=`
+  <div class="mdock">
+    <div class="mscen">${A.list.map(x=>`<button class="${x.id===A.active?"on":""}" data-sc="${x.id}">${x.name}</button>`).join("")}<button class="new" id="msc-new">+ NEW SCENARIO</button></div>
+    <div class="mask"><input id="mask-q" placeholder="Ask the DS about this scenario…"/><button id="mask-ask">ASK</button><button class="g" id="mask-an">ANALYSE</button></div>
+  </div>
+  <div class="mtop">
+    <div class="mlevers">
+      <div class="mkk">THE MODEL</div><h3>Move a lever.<br/>Watch the season answer.</h3>
+      <div class="mlv"><div class="mrow"><span class="mnm">HOURS A WEEK</span><span class="mval">${sc.hours.toFixed(1)}<small>H</small></span></div>
+        <input type="range" id="lv-hours" min="2" max="16" step="0.5" value="${sc.hours}"/>
+        <div class="mhint">≈ ${Math.round(sc.hours*SHAPES[sc.shape].tss)} TSS A WEEK · YOU AVERAGE ${Math.round(recentWeeklyTss())}</div></div>
+      <div class="mlv"><div class="mrow"><span class="mnm">INTENSITY SHAPE</span></div>
+        <div class="mshape">${Object.entries(SHAPES).map(([k,v])=>`<button class="${sc.shape===k?"on":""}" data-shape="${k}">${v.label}</button>`).join("")}</div></div>
+      <div class="mlv"><div class="mrow"><span class="mnm">RAMP CAP · CTL / WK</span><span class="mval">+${sc.ramp.toFixed(1)}</span></div>
+        <input type="range" id="lv-ramp" min="1" max="7" step="0.5" value="${sc.ramp}"/>
+        <div class="mhint">ABOVE +5 IS WHERE INJURY AND ILLNESS LIVE</div></div>
+      <div class="mlv"><div class="mrow"><span class="mnm">REST WEEK EVERY</span><span class="mval">${sc.rest||"—"}<small>${sc.rest?"WKS":"NEVER"}</small></span></div>
+        <input type="range" id="lv-rest" min="0" max="6" step="1" value="${sc.rest}"/></div>
+      <div class="mlv"><div class="mrow"><span class="mnm">WEIGHT ON THE DAY</span><span class="mval">${sc.weight.toFixed(1)}<small>KG</small></span></div>
+        <input type="range" id="lv-weight" min="${(Math.min(sc.weight,S.weight||61.5)-6).toFixed(1)}" max="${((S.weight||61.5)+4).toFixed(1)}" step="0.5" value="${sc.weight}"/>
+        <div class="mhint">TODAY ${(S.weight||61.5).toFixed(1)} KG</div></div>
+      <div class="mbuys"><div class="mkk" style="margin-bottom:6px">WHAT THIS SCENARIO BUYS</div>
+        ${evs.slice(0,3).map(e=>{const d=(R[e.id].pct||0)-(Rc[e.id].pct||0);return `<div class="r"><span>${e.name}</span><b class="${d<0?"n":""}">${d>0?"+":""}${d} pts</b></div>`;}).join("")}
+        <div class="r"><span>FTP at the last event</span><b>${projFtp(sc,MSER,J(evs[evs.length-1]||{date:isoDay(addD(new Date(),90))}))} W</b></div>
+        <div class="r"><span>Hours you must find</span><b class="${sc.hours*SHAPES[sc.shape].tss<recentWeeklyTss()?"n":""}">${(sc.hours-recentWeeklyTss()/SHAPES[sc.shape].tss>0?"+":"")}${(sc.hours-recentWeeklyTss()/SHAPES[sc.shape].tss).toFixed(1)} h/wk</b></div>
+        <div style="display:flex;gap:6px;margin-top:12px"><button id="msc-commit" style="flex:1;padding:10px;border:none;border-radius:10px;background:var(--jaune);color:var(--ink);font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.14em;cursor:pointer">COMMIT THIS SCENARIO</button></div>
+      </div>
+    </div>
+    <div class="panel mroad">
+      <h2>The road ahead — <i>every gate on it</i>.</h2>
+      <div class="msub">Solid is ridden. Gold is this scenario. Grey is the plan you have committed. Each gate shows the rider who arrives.</div>
+      <svg id="mroadsvg" viewBox="0 0 1180 300" preserveAspectRatio="none"></svg>
+      <div class="mgates">${evs.slice(0,4).map(e=>{const r=R[e.id],rc=Rc[e.id],d=(r.pct||0)-(rc.pct||0);
+        const col=r.pct==null?"#93A0AB":r.pct>=85?"#189B69":r.pct>=70?"#FFD100":"#E23A2E";
+        const circ=2*Math.PI*18,dash=r.pct==null?0:circ*r.pct/100;
+        return `<div class="mgate ${e.id===MSEL?"sel":""}" data-ev="${e.id}">
+          <div class="mj">J-${J(e)} · ${new Date(e.date+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"}).toUpperCase()} · ${(e.days||1)>1?(e.days+" DAYS"):"ONE DAY"}${e.pr?" · "+e.pr:""}</div>
+          <div class="n">${e.name}</div>
+          <div class="mrowr"><svg class="mring" viewBox="0 0 44 44"><circle cx="22" cy="22" r="18" fill="none" stroke="#EEF2F4" stroke-width="5"/>${r.pct!=null?`<circle cx="22" cy="22" r="18" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${dash.toFixed(1)} ${circ.toFixed(1)}" transform="rotate(-90 22 22)"/>`:""}</svg>
+            <div><div class="mpc" style="${r.pct==null?"color:var(--mist)":""}">${r.pct==null?"—":r.pct+"%"}</div>
+              <div class="mdl" style="color:${r.pct==null?"var(--mist)":d>0?"var(--vert)":d<0?"var(--polka)":"var(--mist)"}">${r.pct==null?"ATTACH A ROUTE":(d===0?"AS COMMITTED":`${d>0?"+":""}${d} vs COMMITTED`)}</div></div></div>
+          <div class="mbars">${(r.D||[]).slice(0,4).map(x=>`<i><b style="width:${Math.round(Math.min(1,x.ratio)*100)}%;background:${x.ratio>=.97?"#189B69":x.ratio>=.85?"#FFD100":"#E23A2E"}"></b></i>`).join("")||"<i></i><i></i><i></i>"}</div></div>`;}).join("")}
+      </div>
+    </div>
+  </div>
+  <div class="mtwo">
+    <div class="panel mpanel">
+      <h2>${sel?sel.name:"No event"} — <i>what the road asks</i>.</h2>
+      <div class="msub">Read from the stages attached to this event. The bar is you today; the dashed mark is where this scenario puts you on the day.</div>
+      <div class="mdm h"><span>DEMAND</span><span>TODAY → ON THE DAY → THE ASK</span><span style="text-align:right">YOU / ASK</span><span style="text-align:right">STATE</span></div>
+      ${sel&&R[sel.id].D.length?R[sel.id].D.map(x=>{
+        const have=Math.min(1,x.have/x.ask),proj=Math.min(1.02,x.proj/x.ask);
+        const col=proj>=.97?"rgba(24,155,105,.35)":proj>=.85?"rgba(255,209,0,.5)":"rgba(226,58,46,.3)";
+        const st=proj>=.97?["ON TRACK","var(--vert)"]:proj>=.85?["CLOSES","#B08900"]:["NEEDS WORK","var(--polka)"];
+        const fmt=v=>x.unit==="M"||x.unit==="TSS"?fmtInt(v):v;
+        return `<div class="mdm"><span class="mnm">${x.n}<b>${x.sub}</b></span>
+          <div class="mbar"><div class="maskh"></div><div class="mhave" style="width:${(have*100).toFixed(0)}%;background:${col}"></div><div class="mproj" style="left:${(proj*100).toFixed(0)}%"></div></div>
+          <span class="v">${fmt(x.have)}<small> / ${fmt(x.ask)} ${x.unit}</small></span><span class="mst" style="color:${st[1]}">${st[0]}</span></div>`;}).join("")
+        :`<div class="mfoot">Attach a GPX to this event in the Recon Room and its demands appear here.</div>`}
+      ${sel&&R[sel.id].pct!=null?`<div class="mfoot">On the day you arrive at <b>${R[sel.id].ftpD} W</b>, ${R[sel.id].wkg} W/kg, fitness ${R[sel.id].ctlD}, form ${R[sel.id].tsb>0?"+":""}${R[sel.id].tsb}. The axes come from the roads themselves — a flat sportive would be judged on sustained tempo and fuelling instead.</div>`:""}
+    </div>
+    <div class="panel mpanel mledger2"><h2>The ledger.</h2>
+      <div class="msub">One change at a time, and what it is worth across the whole calendar. The model run twice, with and without.</div>
+      <div id="mledger" style="margin-top:12px"></div>
+      <div class="mfoot">Commit a line and it writes itself into the build.</div></div>
+  </div>`;
+  drawRoad(evs,R);
+  renderLedger(sc,evs);
+  /* wiring */
+  root.querySelectorAll("[data-sc]").forEach(b=>b.onclick=()=>{scenAll().active=b.dataset.sc;saveProfile();modelRender();});
+  root.querySelectorAll("[data-shape]").forEach(b=>b.onclick=()=>{scenNow().shape=b.dataset.shape;saveProfile();modelRender();});
+  root.querySelectorAll("[data-ev]").forEach(b=>b.onclick=()=>{MSEL=b.dataset.ev;modelRender();});
+  const live=(id,key,f)=>{const el=document.getElementById(id);if(!el)return;
+    el.oninput=()=>{scenNow()[key]=f(el.value);modelRender();document.getElementById(id).focus();};
+    el.onchange=()=>saveProfile();};
+  live("lv-hours","hours",v=>+v);live("lv-ramp","ramp",v=>+v);live("lv-rest","rest",v=>+v);live("lv-weight","weight",v=>+v);
+  const nb=document.getElementById("msc-new");if(nb)nb.onclick=()=>{const n=prompt("Name this scenario","BIG OCTOBER");if(!n)return;
+    const c={...scenNow(),id:"s"+Date.now(),name:n.toUpperCase()};scenAll().list.push(c);scenAll().active=c.id;saveProfile();modelRender();};
+  const cb=document.getElementById("msc-commit");if(cb)cb.onclick=()=>commitScenario(scenNow());
+  const ab=document.getElementById("mask-an");if(ab)ab.onclick=()=>askModel("");
+  const qb=document.getElementById("mask-ask");if(qb)qb.onclick=()=>askModel(document.getElementById("mask-q").value);
+}
+function recentWeeklyTss(){const w=(TSSWK||[]).slice(Math.max(0,CURWK-4),CURWK).filter(x=>x>0);return w.length?w.reduce((a,b)=>a+b,0)/w.length:250;}
+function drawRoad(evs,R){
+  const svg=document.getElementById("mroadsvg");if(!svg||!MSER)return;
+  const W=1180,H=300,pl=16,pr=64,pt=34,pb=28;
+  const hist=(pmcNow().hist||[]).slice(-120);
+  const all=[...hist.map(h=>h.ctl),...MSER.map(s=>s.ctl),...MCOM.map(s=>s.ctl)];
+  const mx=Math.max(...all,20)*1.28,total=hist.length+MSER.length;
+  const x=i=>pl+i/(total-1)*(W-pl-pr),y=v=>H-pb-(v/mx)*(H-pt-pb);
+  const cut=hist.length-1;
+  const P=(arr,off,key)=>arr.map((v,i)=>`${x(i+off).toFixed(1)},${y(key?v[key]:v).toFixed(1)}`).join("L");
+  let s=`<defs><linearGradient id="mp1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#26496E" stop-opacity=".2"/><stop offset="1" stop-color="#26496E" stop-opacity=".02"/></linearGradient>
+    <linearGradient id="mp2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD100" stop-opacity=".42"/><stop offset="1" stop-color="#FFD100" stop-opacity=".04"/></linearGradient></defs>`;
+  if(hist.length>1){s+=`<path d="M${x(0)},${H-pb}L${P(hist,0,"ctl")}L${x(cut)},${H-pb}Z" fill="url(#mp1)"/>`;
+    s+=`<path d="M${P(hist,0,"ctl")}" fill="none" stroke="#141E28" stroke-width="2.4" stroke-linejoin="round"/>`;}
+  s+=`<path d="M${x(cut)},${H-pb}L${P(MSER,cut+1,"ctl")}L${x(total-1)},${H-pb}Z" fill="url(#mp2)"/>`;
+  s+=`<path d="M${P(MCOM,cut+1,"ctl")}" fill="none" stroke="#93A0AB" stroke-width="1.5" stroke-dasharray="3 5"/>`;
+  s+=`<path d="M${P(MSER,cut+1,"ctl")}" fill="none" stroke="#B08900" stroke-width="2.6" stroke-dasharray="8 5" stroke-linejoin="round"/>`;
+  s+=`<line x1="${x(cut)}" y1="${pt-16}" x2="${x(cut)}" y2="${H-pb}" stroke="#141E28" stroke-opacity=".3"/>`;
+  s+=`<text x="${x(cut)}" y="${pt-21}" text-anchor="middle" font-family="Space Grotesk" font-size="8" font-weight="700" letter-spacing="1.6" fill="#44515D">TODAY</text>`;
+  evs.slice(0,4).forEach(e=>{const d=J(e);if(d<1||d>MSER.length)return;const gx=x(cut+d),gy=y(atDay(MSER,d).ctl);
+    const r=R[e.id],col=r.pct==null?"#93A0AB":r.pct>=85?"#189B69":r.pct>=70?"#FFD100":"#E23A2E";
+    s+=`<rect x="${(gx-1.2).toFixed(1)}" y="${pt-8}" width="2.4" height="${H-pb-pt+8}" fill="${col}" opacity=".2"/>`;
+    s+=`<circle cx="${gx.toFixed(1)}" cy="${gy.toFixed(1)}" r="5.5" fill="${col}" stroke="#141E28" stroke-width="2.2"/>`;
+    s+=`<text x="${gx.toFixed(1)}" y="${pt-12}" text-anchor="middle" font-family="Space Grotesk" font-size="8" font-weight="700" letter-spacing="1.2" fill="#141E28">${e.name.toUpperCase().slice(0,16)}</text>`;
+    s+=`<text x="${gx.toFixed(1)}" y="${pt-1}" text-anchor="middle" font-family="Archivo" font-size="11" font-weight="900" fill="${col==="#FFD100"?"#B08900":col}">${r.pct==null?"—":r.pct+"%"}</text>`;});
+  s+=`<text x="${x(total-1)+6}" y="${y(MSER[MSER.length-1].ctl)+4}" font-family="Space Grotesk" font-size="8.5" font-weight="700" fill="#B08900">${Math.round(MSER[MSER.length-1].ctl)}</text>`;
+  s+=`<text x="${x(total-1)+6}" y="${y(MCOM[MCOM.length-1].ctl)+13}" font-family="Space Grotesk" font-size="8.5" font-weight="700" fill="#93A0AB">${Math.round(MCOM[MCOM.length-1].ctl)}</text>`;
+  svg.innerHTML=s;
+}
+/* ── the ledger: the same model, run with and without ── */
+function renderLedger(sc,evs){
+  const el=document.getElementById("mledger");if(!el)return;
+  const base={};evs.forEach(e=>base[e.id]=readiness(e,sc,MSER).pct);
+  const variants=[
+    {t:"<b>+1 hour a week</b> · mostly Z2",m:s=>({...s,hours:s.hours+1}),commit:s=>({hours:s.hours+1})},
+    {t:"<b>+2 hours a week</b>",m:s=>({...s,hours:s.hours+2}),commit:s=>({hours:s.hours+2})},
+    {t:"<b>Sweet spot</b> instead of "+SHAPES[sc.shape].label.toLowerCase(),m:s=>({...s,shape:"sweet"}),commit:s=>({shape:"sweet"})},
+    {t:"<b>Ramp harder</b> · +1 CTL a week",m:s=>({...s,ramp:s.ramp+1}),commit:s=>({ramp:s.ramp+1})},
+    {t:`<b>−1 kg</b> by the last event`,m:s=>({...s,weight:s.weight-1}),commit:s=>({weight:s.weight-1})},
+    {t:"<b>Skip two weeks</b> in the middle",m:s=>({...s,hours:s.hours*0.62}),commit:null},
+    {t:"<b>No rest weeks</b>",m:s=>({...s,rest:0}),commit:s=>({rest:0})}];
+  el.innerHTML=variants.map((v,i)=>{
+    const s2=v.m(sc),ser2=modelSeries(s2);
+    const deltas=evs.slice(0,3).map(e=>({n:e.name,d:(readiness(e,s2,ser2).pct||0)-(base[e.id]||0)})).filter(x=>x.d!==0);
+    if(!deltas.length){
+      /* readiness can be capped at 100 by demands you already meet — say what the change is still worth */
+      const key=evs.find(e=>e.pr==="A")||evs[0];
+      if(!key)return `<div class="r"><span>${v.t}</span><span class="d" style="color:var(--mist)">NO EVENTS</span></div>`;
+      const d=Math.max(1,J(key)),r1=readiness(key,sc,MSER),r2=readiness(key,s2,ser2);
+      const dw=(r2.ftpD||0)-(r1.ftpD||0),df=(r2.tsb||0)-(r1.tsb||0),dk=+((r2.wkg||0)-(r1.wkg||0)).toFixed(2);
+      const bits=[];if(dw)bits.push(`${dw>0?"+":""}${dw} W`);if(dk)bits.push(`${dk>0?"+":""}${dk} W/kg`);if(df)bits.push(`FORM ${df>0?"+":""}${df}`);
+      const neg2=dw<0||df<-2;
+      return `<div class="r"><span>${v.t}</span><span class="d ${neg2?"n":""}" style="${bits.length?"":"color:var(--mist)"}">${bits.length?bits.join(" · "):"NO CHANGE"}${v.commit&&bits.length?`<button data-led="${i}">APPLY</button>`:""}</span></div>`;}
+    const neg=deltas.some(x=>x.d<0);
+    return `<div class="r"><span>${v.t}</span><span class="d ${neg?"n":""}">${deltas.map(x=>`${x.n.toUpperCase().slice(0,12)} ${x.d>0?"+":""}${x.d}`).join(" · ")}${v.commit?`<button data-led="${i}">APPLY</button>`:""}</span></div>`;}).join("");
+  el.querySelectorAll("[data-led]").forEach(b=>b.onclick=()=>{const v=variants[+b.dataset.led];if(!v.commit)return;
+    Object.assign(scenNow(),v.commit(scenNow()));saveProfile();modelRender();});
+}
+/* ── commit: the scenario becomes week targets in the Roadbook ── */
+function commitScenario(sc){
+  if(!confirm(`Write this scenario into your build?\n\n${sc.hours.toFixed(1)} h a week · ${SHAPES[sc.shape].label} · ramp +${sc.ramp} · rest every ${sc.rest||"—"} weeks.\n\nWeek targets from next Monday to your last event will be set. Sessions you have already planned are untouched.`))return;
+  const N=horizonDays(),per=sc.hours*SHAPES[sc.shape].tss;
+  S.weekTargets=S.weekTargets||{};let wkCtl=pmcNow().ctl;
+  for(let w=0;w*7<N;w++){
+    const rest=sc.rest>0&&((w+1)%sc.rest===0);
+    let tss=Math.round(per*(rest?.6:1));
+    tss=Math.min(tss,Math.round((wkCtl+sc.ramp)*7*(42/41)));
+    const evNear=fut().find(e=>{const d=J(e);return d>w*7&&d<=(w+1)*7;});
+    if(evNear&&(evNear.pr==="A"))tss=Math.round(tss*.5);
+    const mon=isoDay(addD(mondayOf(new Date()),(w+1)*7));
+    S.weekTargets[mon]=tss;wkCtl+=(tss/7-wkCtl)/42*7;
+  }
+  S.build=S.build||{};S.build.scenario={...sc,at:new Date().toISOString()};
+  saveProfile();sysMsg&&sysMsg("SCENARIO COMMITTED — WEEK TARGETS WRITTEN TO THE ROADBOOK");
+  modelRender();if(typeof tlRender==="function")tlRender(true);
+}
+/* ── the DS on the model ── */
+async function askModel(q){
+  const box=document.getElementById("mledger");const sc=scenNow(),evs=fut();
+  const pack={scenario:sc,recentWeekly:Math.round(recentWeeklyTss()),
+    events:evs.slice(0,4).map(e=>{const r=readiness(e,sc,MSER);return {name:e.name,date:e.date,days:e.days||1,pr:e.pr,J:J(e),
+      readiness:r.pct,formOnDay:r.tsb,ftpOnDay:r.ftpD,demands:(r.D||[]).map(x=>({n:x.n,ask:x.ask,have:x.have,onDay:x.proj,unit:x.unit}))};})};
+  const el=document.createElement("div");el.className="mfoot";el.textContent="The DS is reading the model…";
+  box.parentNode.insertBefore(el,box.nextSibling);
+  try{const d=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},
+      body:JSON.stringify({mode:"ask",q:(q||"Read this scenario against my events. Is the plan enough, what is the single biggest gap, and what would you change?")+"\n\nMODEL:\n"+JSON.stringify(pack)})});
+    el.outerHTML=`<div id="mds"></div>`;dsRender(document.getElementById("mds"),d);}
+  catch(e){el.textContent="The DS could not read the model: "+(e.message||e);}
+}
+/* hook the room into the Condition tab */
+(function(){
+  const legacy=document.getElementById("cond-legacy");if(legacy)legacy.classList.add("labhide");
+  const _sv=window.showV;
+  if(typeof showV==="function")showV=function(v){_sv(v);if(v==="cond")setTimeout(modelRender,60);};
+  const _al14=applyLive;applyLive=function(m){_al14(m);setTimeout(()=>{if(document.getElementById("model-room"))modelRender();},700);};
+  const _ss14=showScene;showScene=function(id){_ss14(id);if(id==="analyse")setTimeout(modelRender,80);};
+  setTimeout(()=>{if(document.getElementById("model-room"))modelRender();},1500);
+})();
 
 </script>
 <div id="sheet" class="sheet" style="display:none"><div class="sheetin" id="sheetin"></div></div>
