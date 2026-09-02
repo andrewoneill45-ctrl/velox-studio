@@ -1255,7 +1255,7 @@ svg#rc-prof{display:block;width:100%;height:340px}
 .mask input{width:min(340px,42vw);background:#fff;border:1px solid var(--line);border-radius:11px;padding:10px 13px;font-size:12.5px;outline:none;font-family:Inter,sans-serif}
 .mask button{padding:10px 14px;border:none;border-radius:11px;font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.14em;cursor:pointer;background:var(--ink);color:#fff}
 .mask button.g{background:var(--jaune);color:var(--ink)}
-.mtop{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;align-items:start}
+.mtop{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;align-items:stretch}
 .mlevers{background:var(--ink);color:#F4F6F5;border-radius:20px;padding:20px 22px}
 .mlevers h3{font-family:'Fraunces',serif;font-style:italic;font-weight:400;font-size:19px;margin:0 0 3px;line-height:1.25}
 .mlevers .mkk{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.2em;color:#93A0AB}
@@ -1275,12 +1275,12 @@ svg#rc-prof{display:block;width:100%;height:340px}
 .mbuys .r{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;padding:5px 0;color:#DCE3E7}
 .mbuys .r b{font-family:'Space Grotesk';font-weight:700;color:var(--jaune);white-space:nowrap}
 .mbuys .r b.n{color:#FF9E8F}
-.mroad{padding:20px 24px 16px}
+.mroad{padding:20px 24px 16px;display:flex;flex-direction:column}
 .mroad h2,.mpanel h2{font-family:'Fraunces',serif;font-weight:400;font-size:24px;margin:0;letter-spacing:-.01em}
 .mroad h2 i,.mpanel h2 i{font-style:italic}
 .msub{font-family:'Fraunces',serif;font-style:italic;font-size:13.5px;color:var(--ink2);margin-top:4px;line-height:1.45}
-#mroadsvg{width:100%;height:300px;display:block;margin-top:10px;overflow:visible}
-.mgates{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:16px}
+#mroadsvg{width:100%;flex:1 1 auto;min-height:240px;display:block;margin-top:10px;overflow:visible}
+.mgates{flex:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:16px}
 .mgate{border:1px solid var(--line);border-radius:15px;padding:13px 15px;cursor:pointer;background:#fff;transition:border-color .2s,box-shadow .2s;min-width:0}
 .mgate:hover{border-color:var(--mist)}
 .mgate.sel{border-color:var(--ink);box-shadow:0 0 0 2px rgba(20,30,40,.07)}
@@ -5000,6 +5000,9 @@ async function renderVersions(){
 const _rb13=renderBackups;renderBackups=async function(){await _rb13();renderVersions();};
 
 
+
+/* the one key both the Roadbook and the model use for a season week */
+function wkKey(i){const d=new Date(SEASON0);d.setDate(d.getDate()+i*7);return isoDay(mondayOf(d));}
 /* ═══ v4.9 — THE MODEL: the Condition room as a planning instrument ═══ */
 const SHAPES={polarised:{tss:56,label:"POLARISED",mix:[.75,0,.05,.05,.15]},pyramid:{tss:63,label:"PYRAMID",mix:[.6,.15,.12,.08,.05]},sweet:{tss:71,label:"SWEET SPOT",mix:[.5,.1,.28,.1,.02]}};
 const SCEN_DEF=()=>({id:"base",name:"BASE BUILD",hours:6.5,shape:"polarised",ramp:3.5,rest:4,weight:+(S.weight||61.5).toFixed(1)});
@@ -5014,6 +5017,7 @@ function modelSeries(sc,opt){
   opt=opt||{};const N=horizonDays(),st=pmcNow();let ctl=st.ctl,atl=st.atl;
   const out=[],evs=fut().map(e=>({d:Math.max(0,J(e)),days:e.days||1,pr:e.pr||"B"}));
   const perWeekBase=sc.hours*SHAPES[sc.shape].tss;
+  const plannedOn=d=>{const k=isoDay(addD(new Date(),d));const L=(S.plan&&S.plan[k])||[];return L.length?L.reduce((a,x)=>a+(+x.tss||0),0):null;};
   let wkCtlStart=ctl;
   for(let d=1;d<=N;d++){
     const wk=Math.floor((d-1)/7);
@@ -5022,6 +5026,8 @@ function modelSeries(sc,opt){
     /* the ramp cap: no week may lift fitness faster than the rider allows */
     if(d%7===1){const maxTss=(wkCtlStart+sc.ramp)*7*(42/41);weekTss=Math.min(weekTss,maxTss);}
     let load=weekTss/7;
+    /* sessions already in the Roadbook are real: for the next fortnight they are the truth */
+    const pl=d<=14?plannedOn(d):null;if(pl!=null)load=pl;
     /* the event itself is load; the days before it are not */
     const ev=evs.find(e=>d>=e.d&&d<e.d+e.days);
     if(ev)load=Math.max(load,ev.pr==="A"?150:120);
@@ -5036,8 +5042,12 @@ function modelSeries(sc,opt){
 /* the plan you have already committed, from week targets */
 function committedSeries(){
   const N=horizonDays(),st=pmcNow();let ctl=st.ctl,atl=st.atl;const out=[];
-  for(let d=1;d<=N;d++){const wi=CURWK+Math.floor(d/7);const tgt=(typeof wkTarget==="function")?wkTarget(wi):null;
-    let load=tgt?tgt/7:Math.max(20,st.atl||30);ctl+=(load-ctl)/42;atl+=(load-atl)/7;out.push({d,ctl,atl,tsb:ctl-atl});}
+  for(let d=1;d<=N;d++){
+    const k=isoDay(addD(new Date(),d)),sess=(S.plan&&S.plan[k])||[];
+    const wi=CURWK+Math.floor(d/7),tgt=(typeof wkTarget==="function")?wkTarget(wi):null;
+    /* planned sessions first, then the week target, then what the rider has been doing */
+    let load=sess.length?sess.reduce((a,x)=>a+(+x.tss||0),0):(tgt?tgt/7:Math.max(20,st.atl||30));
+    ctl+=(load-ctl)/42;atl+=(load-atl)/7;out.push({d,ctl,atl,tsb:ctl-atl});}
   return out;
 }
 const atDay=(ser,d)=>ser[Math.max(0,Math.min(ser.length-1,Math.round(d)-1))]||ser[ser.length-1];
@@ -5271,8 +5281,9 @@ function commitScenario(sc){
     tss=Math.min(tss,Math.round((wkCtl+sc.ramp)*7*(42/41)));
     const evNear=fut().find(e=>{const d=J(e);return d>w*7&&d<=(w+1)*7;});
     if(evNear&&(evNear.pr==="A"))tss=Math.round(tss*.5);
-    const mon=isoDay(addD(mondayOf(new Date()),(w+1)*7));
-    S.weekTargets[mon]=tss;wkCtl+=(tss/7-wkCtl)/42*7;
+    /* write with the same key the Roadbook reads by, so the two can never disagree */
+    const mon=wkKey(CURWK+1+w);
+    if(mon)S.weekTargets[mon]=tss;wkCtl+=(tss/7-wkCtl)/42*7;
   }
   S.build=S.build||{};S.build.scenario={...sc,at:new Date().toISOString()};
   saveProfile();sysMsg&&sysMsg("SCENARIO COMMITTED — WEEK TARGETS WRITTEN TO THE ROADBOOK");
@@ -5300,6 +5311,31 @@ async function askModel(q){
   const _ss14=showScene;showScene=function(id){_ss14(id);if(id==="analyse")setTimeout(modelRender,80);};
   setTimeout(()=>{if(document.getElementById("model-room"))modelRender();},1500);
 })();
+
+
+/* ═══ v4.9.1 — one source of truth: every room recomputes from the same plan ═══ */
+let _syncT=null,_syncing=false;
+function massifSync(from){
+  if(_syncing)return;_syncing=true;
+  try{
+    if(window.TL&&TL.built&&typeof tlRender==="function")tlRender(true);
+    if(typeof renderRibbon==="function")renderRibbon();
+    if(typeof renderDispatch==="function")renderDispatch();
+    if(typeof drawMassif==="function")drawMassif();
+    if(typeof drawTraj==="function")drawTraj();
+    if(typeof renderWeekBand==="function")renderWeekBand();
+    if(document.getElementById("model-room")&&typeof modelRender==="function")modelRender();
+  }catch(e){}
+  _syncing=false;
+}
+/* every mutation already funnels through saveProfile, so that is where the bus lives */
+const _sp15=saveProfile;saveProfile=function(){_sp15();clearTimeout(_syncT);_syncT=setTimeout(()=>massifSync("save"),260);};
+/* the Season's projected form and the model must never disagree: same engine, same numbers */
+projForm=function(ev){if(!ev)return null;try{const ser=committedSeries();const d=Math.max(1,J(ev));return Math.round(atDay(ser,d).tsb);}catch(e){return null;}};
+/* committing a scenario refreshes the rooms that consume week targets */
+const _cs15=commitScenario;commitScenario=function(sc){_cs15(sc);massifSync("commit");};
+/* the DS planning a week, or the build writing targets, flows back into the model */
+const _dc15=dsCommit;dsCommit=function(list){_dc15(list);massifSync("dscommit");};
 
 </script>
 <div id="sheet" class="sheet" style="display:none"><div class="sheetin" id="sheetin"></div></div>
