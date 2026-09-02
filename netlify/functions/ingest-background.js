@@ -29,6 +29,8 @@ export default async (req) => {
     st.lastIngest = new Date().toISOString(); st.lastIngestId = id; delete st.pending; st.lastError = null;
   } catch (e) { st.lastError = String(e.message || e); st.lastErrorAt = new Date().toISOString(); }
   const fresh = await readJSON("state.json", {});
-  await writeJSON("state.json", { ...fresh, ...st, lastWebhook: fresh.lastWebhook || st.lastWebhook || null });
+  const merged = { ...fresh, ...st, lastWebhook: fresh.lastWebhook || st.lastWebhook || null };
+  if (!st.pending) delete merged.pending;              // the flag clears once the ride is in
+  await writeJSON("state.json", merged);
   return new Response("ok");
 };
