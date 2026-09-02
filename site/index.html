@@ -1279,7 +1279,17 @@ svg#rc-prof{display:block;width:100%;height:340px}
 .mroad h2,.mpanel h2{font-family:'Fraunces',serif;font-weight:400;font-size:24px;margin:0;letter-spacing:-.01em}
 .mroad h2 i,.mpanel h2 i{font-style:italic}
 .msub{font-family:'Fraunces',serif;font-style:italic;font-size:13.5px;color:var(--ink2);margin-top:4px;line-height:1.45}
-#mroadsvg{width:100%;flex:1 1 auto;min-height:240px;display:block;margin-top:10px;overflow:visible}
+#mroadsvg{display:block;overflow:visible;cursor:crosshair;touch-action:pan-y}
+.mscrub{position:absolute;pointer-events:none;opacity:0;transition:opacity .14s;background:#fff;border:1px solid var(--line);border-radius:14px;
+  box-shadow:0 8px 30px rgba(20,30,40,.14);padding:12px 14px;min-width:210px;max-width:260px;z-index:6;top:8px}
+.mscrub.on{opacity:1}
+.mscrub .kd{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.18em;color:var(--mist)}
+.mscrub .ti{font-family:'Fraunces',serif;font-size:16px;line-height:1.2;margin-top:3px}
+.mscrub .ch{display:inline-block;font-family:'Space Grotesk';font-size:7px;font-weight:700;letter-spacing:.12em;padding:3px 7px;border-radius:6px;margin-top:6px}
+.mscrub .st{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px;padding-top:9px;border-top:1px solid var(--hair)}
+.mscrub .st div .l{font-family:'Space Grotesk';font-size:6.5px;font-weight:700;letter-spacing:.14em;color:var(--mist)}
+.mscrub .st div .v{font-family:'Archivo';font-weight:900;font-size:15px;letter-spacing:-.02em;margin-top:2px}
+.mscrub .nx{font-family:'Fraunces',serif;font-style:italic;font-size:11.5px;color:var(--ink2);margin-top:9px}
 .mgates{flex:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:16px}
 .mgate{border:1px solid var(--line);border-radius:15px;padding:13px 15px;cursor:pointer;background:#fff;transition:border-color .2s,box-shadow .2s;min-width:0}
 .mgate:hover{border-color:var(--mist)}
@@ -5161,7 +5171,7 @@ function modelRender(){
     <div class="panel mroad">
       <h2>The road ahead — <i>every gate on it</i>.</h2>
       <div class="msub">Solid is ridden. Gold is this scenario. Grey is the plan you have committed. Each gate shows the rider who arrives.</div>
-      <svg id="mroadsvg" viewBox="0 0 1180 300" preserveAspectRatio="none"></svg>
+      <div id="mroadwrap" style="position:relative;flex:1 1 auto;min-height:230px;margin-top:10px;overflow:hidden"><svg id="mroadsvg"></svg><div id="mscrub" class="mscrub"></div></div>
       <div class="mgates">${evs.slice(0,4).map(e=>{const r=R[e.id],rc=Rc[e.id],d=(r.pct||0)-(rc.pct||0);
         const col=r.pct==null?"#93A0AB":r.pct>=85?"#189B69":r.pct>=70?"#FFD100":"#E23A2E";
         const circ=2*Math.PI*18,dash=r.pct==null?0:circ*r.pct/100;
@@ -5336,6 +5346,117 @@ projForm=function(ev){if(!ev)return null;try{const ser=committedSeries();const d
 const _cs15=commitScenario;commitScenario=function(sc){_cs15(sc);massifSync("commit");};
 /* the DS planning a week, or the build writing targets, flows back into the model */
 const _dc15=dsCommit;dsCommit=function(list){_dc15(list);massifSync("dscommit");};
+
+
+/* ═══ v4.9.2 — the road drawn true, and scrubbable ═══ */
+drawRoad=function(evs,R){
+  const svg=document.getElementById("mroadsvg"),wrap=document.getElementById("mroadwrap");if(!svg||!wrap||!MSER)return;
+  /* draw in real pixels so nothing is stretched */
+  const box=wrap.getBoundingClientRect();
+  /* never draw against an unlaid-out box: wait for the frame that has one */
+  if(box.width<60||box.height<60){if(!drawRoad._retry){drawRoad._retry=1;requestAnimationFrame(()=>{drawRoad._retry=0;drawRoad(evs,R);});}return;}
+  const W=Math.round(box.width),H=Math.round(box.height);svg.setAttribute("width",W);svg.setAttribute("height",H);
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);svg.removeAttribute("preserveAspectRatio");
+  const pl=14,pr=Math.min(70,W*0.06),pt=38,pb=26;
+  const hist=(pmcNow().hist||[]).slice(-120);
+  const all=[...hist.map(h=>h.ctl),...MSER.map(s=>s.ctl),...MCOM.map(s=>s.ctl)];
+  const mx=Math.max(...all,20)*1.25,total=hist.length+MSER.length;
+  const x=i=>pl+i/(total-1)*(W-pl-pr),y=v=>H-pb-(v/mx)*(H-pt-pb);
+  const cut=hist.length-1;
+  const P=(arr,off,key)=>arr.map((v,i)=>`${x(i+off).toFixed(1)},${y(key?v[key]:v).toFixed(1)}`).join("L");
+  ROADX={x,y,cut,total,hist,W,H,pt,pb};
+  let s=`<defs><linearGradient id="mp1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#26496E" stop-opacity=".2"/><stop offset="1" stop-color="#26496E" stop-opacity=".02"/></linearGradient>
+    <linearGradient id="mp2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD100" stop-opacity=".4"/><stop offset="1" stop-color="#FFD100" stop-opacity=".04"/></linearGradient></defs>`;
+  if(hist.length>1){s+=`<path d="M${x(0)},${H-pb}L${P(hist,0,"ctl")}L${x(cut)},${H-pb}Z" fill="url(#mp1)"/>`;
+    s+=`<path d="M${P(hist,0,"ctl")}" fill="none" stroke="#141E28" stroke-width="2.2" stroke-linejoin="round"/>`;}
+  s+=`<path d="M${x(cut)},${H-pb}L${P(MSER,cut+1,"ctl")}L${x(total-1)},${H-pb}Z" fill="url(#mp2)"/>`;
+  s+=`<path d="M${P(MCOM,cut+1,"ctl")}" fill="none" stroke="#93A0AB" stroke-width="1.5" stroke-dasharray="3 5"/>`;
+  s+=`<path d="M${P(MSER,cut+1,"ctl")}" fill="none" stroke="#B08900" stroke-width="2.4" stroke-dasharray="8 5" stroke-linejoin="round"/>`;
+  s+=`<line x1="${x(cut)}" y1="${pt-14}" x2="${x(cut)}" y2="${H-pb}" stroke="#141E28" stroke-opacity=".3"/>`;
+  s+=`<text x="${x(cut)}" y="${pt-19}" text-anchor="middle" font-family="Space Grotesk" font-size="8" font-weight="700" letter-spacing="1.6" fill="#44515D">TODAY</text>`;
+  /* month ticks so the road reads as time */
+  let lastM=-1;
+  for(let i=0;i<total;i+=1){const dt=addD(new Date(),i-cut);if(dt.getMonth()!==lastM&&x(i)>pl+26&&x(i)<W-pr-20){lastM=dt.getMonth();
+    s+=`<line x1="${x(i).toFixed(1)}" y1="${pt-4}" x2="${x(i).toFixed(1)}" y2="${H-pb}" stroke="#F1F4F5"/>`;
+    s+=`<text x="${x(i).toFixed(1)}" y="${H-9}" text-anchor="middle" font-family="Space Grotesk" font-size="8" font-weight="700" letter-spacing="1.2" fill="#B8C2CA">${dt.toLocaleDateString("en-GB",{month:"short"}).toUpperCase()}</text>`;}}
+  const seen=[];
+  evs.slice(0,4).forEach(e=>{const d=J(e);if(d<1||d>MSER.length)return;const gx=x(cut+d),gy=y(atDay(MSER,d).ctl);
+    const r=R[e.id],col=r.pct==null?"#93A0AB":r.pct>=85?"#189B69":r.pct>=70?"#FFD100":"#E23A2E";
+    let ty=pt-12;while(seen.some(p=>Math.abs(p.x-gx)<86&&Math.abs(p.y-ty)<11)){ty-=12;}   /* labels never collide */
+    seen.push({x:gx,y:ty});
+    s+=`<rect x="${(gx-1).toFixed(1)}" y="${pt-6}" width="2" height="${H-pb-pt+6}" fill="${col}" opacity=".22"/>`;
+    s+=`<circle cx="${gx.toFixed(1)}" cy="${gy.toFixed(1)}" r="5" fill="${col}" stroke="#141E28" stroke-width="2"/>`;
+    s+=`<text x="${Math.max(pl+28,Math.min(W-pr-28,gx)).toFixed(1)}" y="${ty}" text-anchor="middle" font-family="Space Grotesk" font-size="7.5" font-weight="700" letter-spacing="1.1" fill="#141E28">${e.name.toUpperCase().slice(0,15)} <tspan fill="${col==="#FFD100"?"#B08900":col}">${r.pct==null?"—":r.pct+"%"}</tspan></text>`;});
+  s+=`<text x="${(x(total-1)+5).toFixed(1)}" y="${(y(MSER[MSER.length-1].ctl)+4).toFixed(1)}" font-family="Space Grotesk" font-size="8.5" font-weight="700" fill="#B08900">${Math.round(MSER[MSER.length-1].ctl)}</text>`;
+  s+=`<text x="${(x(total-1)+5).toFixed(1)}" y="${(y(MCOM[MCOM.length-1].ctl)+13).toFixed(1)}" font-family="Space Grotesk" font-size="8.5" font-weight="700" fill="#93A0AB">${Math.round(MCOM[MCOM.length-1].ctl)}</text>`;
+  s+=`<g id="mrx" style="display:none"><line id="mrxl" y1="${pt-6}" y2="${H-pb}" stroke="#141E28" stroke-opacity=".45"/><circle id="mrxd" r="5.5" fill="#FFD100" stroke="#141E28" stroke-width="2.2"/><circle id="mrxc" r="4" fill="#fff" stroke="#93A0AB" stroke-width="1.8"/></g>`;
+  svg.innerHTML=s;
+  wireScrub(evs);
+};
+let ROADX=null;
+const MTYPEC={Endurance:"#26496E",Tempo:"#189B69",Threshold:"#D99000","VO2 Max":"#E23A2E",VO2:"#E23A2E",Recovery:"#93A0AB",Sprint:"#7A3FBF",Rest:"#93A0AB",Trip:"#141E28",Race:"#E23A2E"};
+function wireScrub(evs){
+  const svg=document.getElementById("mroadsvg"),card=document.getElementById("mscrub"),wrap=document.getElementById("mroadwrap");
+  if(!svg||!card||!ROADX)return;
+  const {x,y,cut,total,hist,W,H}=ROADX;
+  const acts=(window.TL&&TL.acts)||[];
+  const byDay={};acts.forEach(a=>{(byDay[a.d]=byDay[a.d]||[]).push(a);});
+  const show=cx=>{
+    const i=Math.max(0,Math.min(total-1,Math.round((cx-x(0))/((x(total-1)-x(0))/(total-1)))));
+    const future=i>cut,dOff=i-cut,dt=addD(new Date(),dOff),key=isoDay(dt);
+    const pt=future?atDay(MSER,dOff):hist[i]||hist[hist.length-1];
+    const cpt=future?atDay(MCOM,dOff):pt;
+    const g=document.getElementById("mrx"),ln=document.getElementById("mrxl"),dot=document.getElementById("mrxd"),cd=document.getElementById("mrxc");
+    if(!g)return;g.style.display="block";ln.setAttribute("x1",x(i));ln.setAttribute("x2",x(i));
+    dot.setAttribute("cx",x(i));dot.setAttribute("cy",y(pt.ctl));
+    cd.setAttribute("cx",x(i));cd.setAttribute("cy",y(cpt.ctl));cd.style.display=future?"block":"none";
+    /* what is on that day */
+    let title,chip=null,load=null,sub=null;
+    if(future){
+      const sess=(S.plan&&S.plan[key])||[];
+      const ev=evs.find(e=>{const d0=J(e),d1=d0+(e.days||1)-1;return dOff>=d0&&dOff<=d1;});
+      if(ev){title=ev.name;chip=["EVENT · STAGE "+(dOff-J(ev)+1),MTYPEC.Race];load=null;}
+      else if(sess.length){title=sess.map(z=>z.nm).join(" + ");chip=[(sess[0].type||"SESSION").toUpperCase(),MTYPEC[sess[0].type]||"#26496E"];
+        load=sess.reduce((a,z)=>a+(+z.tss||0),0);sub=sess[0].mins?`${sess.reduce((a,z)=>a+(+z.mins||0),0)} min`:null;}
+      else{const wi=CURWK+Math.floor(dOff/7),t=wkTarget(wi);title=t?"Open day":"Nothing planned";chip=["PLANNED WEEK "+(t||"—")+" TSS","#93A0AB"];}
+    }else{
+      const rides=byDay[key]||[];
+      if(rides.length){title=rides.map(r=>r.nm||"Ride").join(" + ");chip=["RIDDEN",MTYPEC.Endurance];
+        load=rides.reduce((a,r)=>a+(+r.tss||0),0);sub=`${Math.round(rides.reduce((a,r)=>a+(r.km||0),0))} km · ${fmtInt(Math.round(rides.reduce((a,r)=>a+(r.m||0),0)))} m`;}
+      else{title="Rest day";chip=["NO RIDE","#93A0AB"];}
+    }
+    const nextEv=evs.find(e=>J(e)>=dOff);
+    card.className="mscrub on";
+    card.innerHTML=`<div class="kd">${dt.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"}).toUpperCase()}${future?` · J-${dOff}`:""}</div>
+      <div class="ti">${title}</div>
+      ${chip?`<span class="ch" style="background:${chip[1]}1A;color:${chip[1]}">${chip[0]}</span>`:""}
+      ${sub?`<div class="kd" style="margin-top:6px;letter-spacing:.1em">${sub.toUpperCase()}</div>`:""}
+      <div class="st">
+        <div><div class="l">LOAD</div><div class="v">${load!=null?load:"—"}</div></div>
+        <div><div class="l">FITNESS</div><div class="v">${Math.round(pt.ctl)}</div></div>
+        <div><div class="l">FATIGUE</div><div class="v">${Math.round(pt.atl)}</div></div>
+        <div><div class="l">FORM</div><div class="v" style="color:${pt.tsb>5?"var(--vert)":pt.tsb<-15?"var(--polka)":"var(--ink)"}">${pt.tsb>0?"+":""}${Math.round(pt.tsb)}</div></div>
+      </div>
+      ${future&&nextEv?`<div class="nx">${nextEv.name} in ${Math.max(0,J(nextEv)-dOff)} days${future?` · committed plan puts fitness at ${Math.round(cpt.ctl)}`:""}.</div>`:""}`;
+    const cw=card.getBoundingClientRect().width||230;
+    card.style.left=Math.max(6,Math.min(W-cw-6,x(i)-cw/2))+"px";
+  };
+  const hide=()=>{card.className="mscrub";const g=document.getElementById("mrx");if(g)g.style.display="none";};
+  const px=e=>{const r=svg.getBoundingClientRect();return (e.clientX-r.left)/r.width*W;};
+  svg.onmousemove=e=>show(px(e));svg.onmouseleave=hide;
+  svg.ontouchstart=e=>{show(px(e.touches[0]));};
+  svg.ontouchmove=e=>{show(px(e.touches[0]));if(e.cancelable)e.preventDefault();};
+  svg.ontouchend=hide;
+}
+/* redraw true when the room changes size */
+(function(){const w=()=>document.getElementById("mroadwrap");
+  let ro=null;const attach=()=>{const el=w();if(!el||ro)return;
+    let lastW=0;
+    ro=new ResizeObserver(es=>{const w=Math.round(es[0].contentRect.width);
+      if(!MSER||w<60||Math.abs(w-lastW)<2)return;lastW=w;
+      const evs=fut(),R={};evs.forEach(e=>R[e.id]=readiness(e,scenNow(),MSER));drawRoad(evs,R);});
+    ro.observe(el);};
+  setTimeout(attach,2000);const _mr=modelRender;modelRender=function(){_mr();setTimeout(attach,50);};})();
 
 </script>
 <div id="sheet" class="sheet" style="display:none"><div class="sheetin" id="sheetin"></div></div>
