@@ -1,9 +1,12 @@
 import { readJSON, writeJSON, INTERNAL } from "./_lib.js";
+import { pullUltrahuman } from "./ultrahuman.js";
 export const config = { schedule: "30 4 * * *" };
 export default async () => {
   const base = process.env.URL, st = await readJSON("state.json", {});
   const trace = [];
   try {
+    /* the ring first, so readiness is computed on the night that has just happened */
+    try { const uh = await pullUltrahuman(2); trace.push("ring:" + (uh.ok ? uh.days.length + "d" : uh.reason)); } catch (e) { trace.push("ring:" + String(e.message || e)); }
     const r1 = await fetch(`${base}/api/sync?phase=list`, { headers: INTERNAL() }).catch(e => ({ ok: false, status: String(e) }));
     trace.push("list:" + (r1.status || (r1.ok ? "ok" : "fail")));
     const r2 = await fetch(`${base}/api/sync?phase=compute`, { headers: INTERNAL() });

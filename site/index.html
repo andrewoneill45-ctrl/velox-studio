@@ -1326,6 +1326,25 @@ svg#rc-prof{display:block;width:100%;height:340px}
 @media(max-width:820px){.mroad{padding:16px 16px 12px}.mpanel{padding:16px 16px}#mroadsvg{height:230px}
   .mdm{grid-template-columns:minmax(90px,1fr) minmax(70px,1.4fr) 76px;gap:8px;font-size:11.5px}
   .mdm>*:nth-child(4){display:none}.mask input{width:100%;order:3}.mask{width:100%}}
+
+/* ═══ SOURCES, tidied (v5.0) ═══ */
+.srcsec{margin:0 0 14px}
+.srchead{display:flex;align-items:baseline;gap:10px;margin:22px 2px 10px}
+.srchead h3{font-family:'Fraunces',serif;font-weight:400;font-size:20px;margin:0}
+.srchead .kk{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.2em;color:var(--mist)}
+.srchead .line{flex:1;height:1px;background:var(--line)}
+details.acc{background:#fff;border:1px solid var(--line);border-radius:16px;margin-bottom:10px;overflow:hidden}
+details.acc>summary{list-style:none;cursor:pointer;padding:15px 20px;display:flex;align-items:center;gap:12px}
+details.acc>summary::-webkit-details-marker{display:none}
+details.acc>summary .t{font-family:'Space Grotesk';font-size:9px;font-weight:700;letter-spacing:.16em}
+details.acc>summary .s{font-size:12px;color:var(--ink2);margin-left:2px}
+details.acc>summary .chev{margin-left:auto;color:var(--mist);font-size:11px;transition:transform .2s}
+details.acc[open]>summary .chev{transform:rotate(90deg)}
+details.acc>summary .pill{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.12em;padding:4px 9px;border-radius:7px}
+details.acc .accin{padding:0 20px 18px}
+details.acc .accin>.panel{box-shadow:none;border:none;padding:0!important;margin:0!important;background:transparent}
+.srcgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+@media(max-width:820px){.srchead h3{font-size:17px}details.acc>summary{padding:13px 15px;flex-wrap:wrap}details.acc .accin{padding:0 15px 15px}}
 </style>
 </head>
 <body>
@@ -2247,6 +2266,7 @@ function renderLadder(){
     ["Wahoo SYSTM","#5A6B7A","W","Alternative turbo","off"]];
   const badge={live:["LIVE","#E2F1EA","var(--vert)"],via:["VIA STRAVA","#EDF1F4","var(--bleu)"],
     p2:["PHASE 2","#FBEEDD","#C4761B"],off:["OFF","var(--hair)","var(--mist)"]};
+  window.INTS=ints;window.INTBADGE=badge;
   document.getElementById("ints").innerHTML=ints.map(([n,c,ini,s,st])=>{const b=badge[st];
     return `<div class="panel hov int"><div class="logo2" style="background:${st==="off"||st==="p2"?"#E3E8EB":c};color:${st==="off"||st==="p2"?"#93A0AB":"#fff"}">${ini||"⌘"}</div>
     <div><div class="in">${n}</div><div class="is">${s}</div></div>
@@ -5479,6 +5499,105 @@ function wireScrub(evs){
       catch(x){sysMsg&&sysMsg("MORNING RUN FAILED — "+(x.message||x));}
       loadStatus();}
   });
+})();
+
+
+/* ═══ v5.0 — the Sources page, tidied; the ring wired in ═══ */
+(function(){
+  const scene=document.getElementById("v-sources")||document.querySelector("#scene-sources .wrap")||null;
+  function tidy(){
+    const host=document.getElementById("statuspanel");if(!host||document.getElementById("src-tidy"))return;
+    const parent=host.parentNode;
+    const wrap=document.createElement("div");wrap.id="src-tidy";
+    parent.insertBefore(wrap,host);
+    const sec=(kk,title)=>{const h=document.createElement("div");h.className="srchead";
+      h.innerHTML=`<span class="kk">${kk}</span><h3>${title}</h3><span class="line"></span>`;wrap.appendChild(h);return h;};
+    const put=el=>{if(el)wrap.appendChild(el);};
+    const acc=(title,sub,pill,pillCol,el,open)=>{
+      if(!el)return;const d=document.createElement("details");d.className="acc";if(open)d.open=true;
+      d.innerHTML=`<summary><span class="t">${title}</span><span class="s">${sub}</span>${pill?`<span class="pill" style="background:${pillCol}1A;color:${pillCol}">${pill}</span>`:""}<span class="chev">›</span></summary><div class="accin"></div>`;
+      d.querySelector(".accin").appendChild(el);wrap.appendChild(d);};
+    /* order: what is happening now, then the connections, then the set-up detail */
+    sec("NOW","How the app is doing.");
+    put(document.getElementById("statuspanel"));
+    put(document.getElementById("syspanel"));
+    sec("CONNECTIONS","Where the numbers come from.");
+    const grid=document.querySelector(".srcgrid")||document.querySelector("#v-sources .g3")||null;
+    const cards=document.getElementById("ints");if(cards)put(cards);
+    sec("SET-UP","Only when something needs doing.");
+    if(!document.getElementById("uhpanel")){const u=document.createElement("div");u.className="panel";u.id="uhpanel";
+      u.innerHTML='<div class="ds">Connect on the live site to set the ring up.</div>';document.body.appendChild(u);}
+    acc("APPLE HEALTH","Ring, watch and band into Massif","",null,document.getElementById("healthpanel"),false);
+    acc("ULTRAHUMAN RING","Direct from the partner API","",null,document.getElementById("uhpanel"),false);
+    acc("POWER STREAMS","Backfill your history","",null,document.getElementById("backfillpanel"),false);
+    acc("THE LIBRARY","What the DS reads","",null,document.getElementById("librarypanel"),false);
+    acc("BACKUPS","Snapshots and earlier versions","",null,document.getElementById("backuppanel"),false);
+    setPills();
+  }
+  function setPills(){
+    const S0=window.STATUS;if(!S0)return;
+    const accs=document.querySelectorAll("#src-tidy details.acc");
+    const set=(i,txt,col)=>{const p=accs[i]&&accs[i].querySelector(".pill");if(!p)return;p.textContent=txt;p.style.background=col+"1A";p.style.color=col;};
+    const today=isoDay(new Date());
+    set(0,S0.lastHealth===today?"TODAY":S0.lastHealth?("LAST "+S0.lastHealth.slice(5)):"NOT SET UP",S0.lastHealth===today?"#189B69":"#D99000");
+    set(1,UHS&&UHS.configured?(UHS.lastPull?"LIVE":"READY"):"NEEDS A TOKEN",UHS&&UHS.configured?"#189B69":"#93A0AB");
+    set(2,S0.streams+"/"+S0.rides,S0.streams>=S0.rides?"#189B69":"#26496E");
+    set(4,"NIGHTLY","#141E28");
+  }
+  let UHS=null;
+  window.renderUltrahuman=async function(){
+    let el=document.getElementById("uhpanel");
+    if(!el){el=document.createElement("div");el.className="panel";el.id="uhpanel";
+      const h=document.getElementById("healthpanel");if(h&&h.parentNode)h.parentNode.insertBefore(el,h.nextSibling);}
+    try{UHS=await api("/api/ultrahuman?status=1");}catch(e){UHS={configured:false};}
+    el.innerHTML=`<div class="aihead"><span class="al" style="color:var(--ink)">ULTRAHUMAN RING AIR</span>
+      <span class="ds" style="margin:0">${UHS.configured?"Connected — the ring is read straight from Ultrahuman each morning.":"The ring already reaches Massif through Apple Health. This is the direct route, which brings recovery index, movement index and sleep staging as Ultrahuman scores them."}</span></div>
+      ${UHS.configured?`<div class="statusline" style="margin-top:12px">
+          <span class="stc"><i></i>LAST PULL ${rel(UHS.lastPull).toUpperCase()}</span>
+          ${UHS.lastError?`<span class="stc bad"><i></i>${String(UHS.lastError).toUpperCase().slice(0,40)}</span>`:""}</div>
+        <div style="display:flex;gap:8px;margin-top:12px"><button class="aibtn" id="uh-now" style="background:var(--ink)">PULL THE LAST 3 DAYS</button><button class="tlbtn" id="uh-7">PULL 7 DAYS</button></div>`
+      :`<div class="hstep"><span>1</span><div>Email <b>support@ultrahuman.com</b> from the address on your Ultrahuman account, or use the in-app chat, and ask for <b>API access</b>: an API key and a Partner ID. Say it is for a personal training dashboard.</div></div>
+        <div class="hstep"><span>2</span><div>In the Ultrahuman app: <b>Profile → settings (cog, top left) → Partner ID</b>, and enter the Partner ID they send you.</div></div>
+        <div class="hstep"><span>3</span><div>Then set both in Netlify and redeploy:<div class="hurl">netlify env:set ULTRAHUMAN_TOKEN "your-api-key"<br/>netlify env:set ULTRAHUMAN_EMAIL "the-email-on-your-ultrahuman-account"</div></div></div>
+        <div class="hstep"><span>4</span><div>Come back here and press pull. Until then the ring still reaches Massif through Apple Health, so nothing is lost by waiting.</div></div>`}`;
+    const b1=document.getElementById("uh-now"),b7=document.getElementById("uh-7");
+    const pull=async n=>{sysMsg&&sysMsg("READING THE RING…");
+      try{const r=await api("/api/ultrahuman?days="+n);
+        sysMsg&&sysMsg(r.ok?`RING READ — ${r.days.length} DAYS UPDATED`:"RING FAILED — "+String(r.reason).toUpperCase());
+        await loadStatus();renderUltrahuman();if(r.ok)readinessNote(isoDay(new Date()));}
+      catch(e){sysMsg&&sysMsg("RING FAILED — "+(e.message||e));}};
+    if(b1)b1.onclick=()=>pull(3);if(b7)b7.onclick=()=>pull(7);
+    setPills();
+  };
+  const _rs=renderStatus;renderStatus=function(){_rs();setPills();};
+  const _al16=applyLive;applyLive=function(m){_al16(m);setTimeout(()=>{renderUltrahuman().then?renderUltrahuman():0;tidy();},1400);};
+  setTimeout(()=>{if(LIVE){renderUltrahuman();}tidy();},2600);
+})();
+
+
+/* the connection badges read the real state rather than a fixed list */
+(function(){
+  const _sp=window.setPills;
+  function refreshInts(){
+    const host=document.getElementById("ints");if(!host||!window.INTS)return;
+    const S0=window.STATUS,today=isoDay(new Date());
+    const state={};
+    state["Strava"]=S0?(S0.lastRide?["LIVE","#E2F1EA","var(--vert)"]:["NO RIDES","#FBEEDD","#C4761B"]):["LIVE","#E2F1EA","var(--vert)"];
+    state["Apple Health"]=S0&&S0.lastHealth===today?["TODAY","#E2F1EA","var(--vert)"]
+      :S0&&S0.lastHealth?["LAST "+S0.lastHealth.slice(5),"#FBEEDD","#C4761B"]:["NOT SET UP","var(--hair)","var(--mist)"];
+    state["Ultrahuman"]=window.UHSTATE&&UHSTATE.configured?(UHSTATE.lastPull?["LIVE","#E2F1EA","var(--vert)"]:["READY","#EDF1F4","var(--bleu)"])
+      :["VIA APPLE HEALTH","#EDF1F4","var(--bleu)"];
+    state["Garmin"]=["VIA APPLE HEALTH","#EDF1F4","var(--bleu)"];
+    host.querySelectorAll(".int").forEach(el=>{const nm=el.querySelector(".in").textContent.trim();const st=state[nm];if(!st)return;
+      const sg=el.querySelector(".sg");sg.textContent=st[0];sg.style.background=st[1];sg.style.color=st[2];
+      const logo=el.querySelector(".logo2");const on=st[1]!=="var(--hair)";
+      const row=INTS.find(x=>x[0]===nm);if(row&&on){logo.style.background=row[1];logo.style.color="#fff";}});
+  }
+  window.refreshInts=refreshInts;
+  const _rs2=renderStatus;renderStatus=function(){_rs2();refreshInts();};
+  const _ru=window.renderUltrahuman;
+  if(_ru)window.renderUltrahuman=async function(){await _ru();try{window.UHSTATE=await api("/api/ultrahuman?status=1");}catch(e){}refreshInts();};
+  setTimeout(refreshInts,3000);
 })();
 
 </script>
