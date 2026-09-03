@@ -12,5 +12,6 @@ export default gated(async (req) => {
     pending: (st.pending && st.lastWebhook && (Date.now() - new Date(st.lastWebhook)) < 15 * 60e3) ? st.pending : null,
     lastError: st.lastError || null, lastErrorAt: st.lastErrorAt || null,
     lastMorning: st.lastMorning || null, morningCards: cards.morning || null,
+    lastMorningError: st.lastMorningError || null, lastMorningTrace: st.lastMorningTrace || null, lastMorningAt: st.lastMorningAt || null,
     streams: (blobs || []).length, rides: rides.length });
 });

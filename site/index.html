@@ -5458,6 +5458,29 @@ function wireScrub(evs){
     ro.observe(el);};
   setTimeout(attach,2000);const _mr=modelRender;modelRender=function(){_mr();setTimeout(attach,50);};})();
 
+
+/* ═══ v4.9.3 — the morning chip tells the truth, and can be run by hand ═══ */
+(function(){
+  const _sc=statusChips;statusChips=function(){
+    let h=_sc();const S0=STATUS;if(!S0)return h;
+    if(S0.lastMorningError){
+      h=h.replace(/<span class="stc warn"><i><\/i>MORNING NOT YET RUN<\/span>/,
+        `<span class="stc bad" title="${(S0.lastMorningError||"").replace(/"/g,"'")} ${(S0.lastMorningTrace||"")}"><i></i>MORNING FAILED · ${(S0.lastMorningError||"").toUpperCase().slice(0,28)}</span>`);
+    }else if(S0.morningCards!==isoDay(new Date())&&new Date().getHours()>=7){
+      h=h.replace(/<span class="stc warn"><i><\/i>MORNING NOT YET RUN<\/span>/,
+        `<span class="stc warn"><i></i>MORNING NOT YET RUN · <u style="cursor:pointer" id="runmorn">RUN IT NOW</u></span>`);
+    }
+    return h;};
+  document.addEventListener("click",async e=>{
+    if(e.target&&e.target.id==="runmorn"){e.preventDefault();
+      e.target.textContent="RUNNING…";
+      try{await api("/api/run-morning");await loadStatus();
+        await refreshCoachNote(true);await readinessNote(isoDay(new Date()));sysMsg&&sysMsg("MORNING RUN — CARDS WRITTEN");}
+      catch(x){sysMsg&&sysMsg("MORNING RUN FAILED — "+(x.message||x));}
+      loadStatus();}
+  });
+})();
+
 </script>
 <div id="sheet" class="sheet" style="display:none"><div class="sheetin" id="sheetin"></div></div>
 <script>

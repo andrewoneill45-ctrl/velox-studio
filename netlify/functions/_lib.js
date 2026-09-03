@@ -89,9 +89,14 @@ export async function wellnessSummary() {
 export function gateToken() {
   return createHmac("sha256", (process.env.HEALTH_INGEST_KEY || "massif") + ":" + (process.env.SITE_PASSCODE || "")).update("massif-session").digest("hex");
 }
+/* a key the server can always derive, so scheduled and internal calls never depend on an optional variable */
+export function internalKey() {
+  return createHmac("sha256", (process.env.SITE_PASSCODE || "") + "|" + (process.env.STRAVA_CLIENT_SECRET || "massif")).update("massif-internal").digest("hex");
+}
 export function gateOK(req) {
   if (!process.env.SITE_PASSCODE) return true;
-  const k = req.headers.get("x-massif-key"); if (k && process.env.HEALTH_INGEST_KEY && k === process.env.HEALTH_INGEST_KEY) return true;
+  const k = req.headers.get("x-massif-key");
+  if (k && (k === internalKey() || (process.env.HEALTH_INGEST_KEY && k === process.env.HEALTH_INGEST_KEY))) return true;
   const m = (req.headers.get("cookie") || "").match(/massif_session=([a-f0-9]{64})/);
   return !!m && m[1] === gateToken();
 }
@@ -100,7 +105,7 @@ export const gated = (fn, opts = {}) => async (req) => {
   if (!gateOK(req)) return json({ error: "locked" }, 401);
   return fn(req);
 };
-export const INTERNAL = () => ({ "x-massif-key": process.env.HEALTH_INGEST_KEY || "" });
+export const INTERNAL = () => ({ "x-massif-key": internalKey() });
 /* FTP in force on a given date, from the rider's log; falls back to the season baseline, then current */
 export function ftpAtFactory(prof) {
   const log = (prof.ftpLog || []).filter(e => /^\d{4}-\d{2}-\d{2}/.test(e.date || "") && +(e.ftp ?? e.v) > 0)
