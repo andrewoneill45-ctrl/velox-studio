@@ -1741,7 +1741,7 @@ const S={ftp:280,weight:75.0,maxhr:185,rhr:47,lthr:168,tgt:{ftp:300,climb:60000,
 let startFtp=180,startWeight=68,climbed=38420,sprintBest=892,chainNow=9;
 let DNOW=new Date("2026-06-01T08:00:00");
 let SEASON0=new Date("2026-03-16");
-const fmtInt=n=>n.toLocaleString("en-GB");
+const fmtInt=n=>(n==null||isNaN(+n))?"—":Math.round(+n).toLocaleString("en-GB");
 const todayStr=()=>new Date().toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"2-digit"}).toUpperCase();
 function pop(el){if(!el)return;el.classList.remove("pop");void el.offsetWidth;el.classList.add("pop");}
 function countUp(el){
@@ -1802,7 +1802,8 @@ function genCols(km,m,ch){
   const sh=[.34,.28,.38],ls=[.11,.09,.13];
   return sh.map((s,i)=>({n:["First col","Second col","Final col"][i],len:+(km*ls[i]).toFixed(1),g:+((m*.92*s)/(km*ls[i]*10)).toFixed(1),top:900+i*450}));}
 function racePanelHTML(ev,dark){
-  const cl=ev.cols.map(c=>c.n.replace("Col du ","").replace("Col de la ","").replace(" — Bédoin","")).slice(0,4).join(" · ");
+  try{
+  const cl=(ev.cols||[]).map(c=>String(c.n||"").replace("Col du ","").replace("Col de la ","").replace(" — Bédoin","")).slice(0,4).join(" · ");
   return `<div class="band"${dark?' style="background:var(--ink)"':''}>
       <div><div class="rn">${ev.short}</div><div class="ra">${ev.loc} · ${Math.round(Math.max(...ev.cols.map(c=>c.top)))} m · ${ev.pr}-RACE</div></div>
       <button class="btn btn-ink reconbtn" data-ev="${ev.id}" style="background:var(--jaune);color:var(--ink);padding:12px 16px;font-size:9.5px">RECON →</button>
@@ -1811,6 +1812,8 @@ function racePanelHTML(ev,dark){
       <div class="jrow"><span class="j">J-${J(ev)}<small> DAYS</small></span>
       <span class="ev">${evDate(ev)}<br/>${ev.km} km · ${ev.m.toLocaleString()} m<br/>${cl}</span></div>
     </div>`;
+  }catch(e){return "";}   /* a hand-made event without demo fields must never break the page */
+
 }
 function renderSeasonHead(){
   const a=nextA();
@@ -1824,7 +1827,7 @@ function renderSeasonHead(){
     window.SEASON_FLAGS=[];drawMassif();return;
   }
   document.getElementById("kicker").textContent="THE ROAD TO "+a.short;
-  document.getElementById("herolede").innerHTML=`<b>3,240 TSS</b> stands between you and the start line in ${a.loc.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())}. Every ride from here is altitude banked, every number in this room is live.`;
+  document.getElementById("herolede").innerHTML=`<b>3,240 TSS</b> stands between you and the start line in ${String(a.loc||a.name||"the start line").toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())}. Every ride from here is altitude banked, every number in this room is live.`;
   document.getElementById("t-race").textContent=a.short;
   document.getElementById("t-j").dataset.final=J(a);document.getElementById("t-j").textContent=J(a);
   document.getElementById("t-jd").innerHTML=`<b>${evDate(a)}</b> · ${a.km} km · ${fmtInt(a.m)} m`;
@@ -2561,7 +2564,7 @@ function drawTraj(){
 }
 /* ═══ INIT ═══ */
 window.SEASON_FLAGS=[];
-function refreshFlags(){window.SEASON_FLAGS=EVENTS.map(e=>({i:Math.floor((new Date(e.date)-SEASON0)/(7*864e5)),n:e.short.split(" ").pop(),A:e.pr==="A",j:J(e),dd:e.days||1}));}
+function refreshFlags(){window.SEASON_FLAGS=EVENTS.map(e=>({i:Math.floor((new Date(e.date)-SEASON0)/(7*864e5)),n:String(e.short||e.name||"").split(" ").pop(),A:e.pr==="A",j:J(e),dd:e.days||1}));}
 const _renderSeasonHead=renderSeasonHead;
 renderSeasonHead=function(){refreshFlags();_renderSeasonHead();};
 renderJerseys();drawJerseyP();renderLadder();renderLog();renderWkFront();renderBests();
@@ -2599,7 +2602,10 @@ let md=t=>(t||"").split("**").map((x,i)=>i%2?`<strong>${x}</strong>`:x).join("")
 
 function applyProfile(p,connected){
   S.ftp=p.ftp;S.weight=p.weight;S.maxhr=p.maxhr;S.rhr=p.rhr;S.lthr=p.lthr;
-  S.tgt={...S.tgt,...(p.tgt||{})};S.weekTargets=p.weekTargets||{};S.plan=p.plan||{};S.seasonStart=p.seasonStart||"2026-03-16";const ps=document.getElementById("pf-season");if(ps)ps.value=S.seasonStart;startFtp=p.startFtp||startFtp;startWeight=p.startWeight||startWeight;
+  S.tgt={...S.tgt,...(p.tgt||{})};S.weekTargets=p.weekTargets||{};S.plan=p.plan||{};
+  if(p.build)S.build=p.build;                                  /* the committed build survives a reload */
+  if(p.scen&&p.scen.list&&p.scen.list.length)S.scen=p.scen;    /* and so does every scenario */
+  S.seasonStart=p.seasonStart||"2026-03-16";const ps=document.getElementById("pf-season");if(ps)ps.value=S.seasonStart;startFtp=p.startFtp||startFtp;startWeight=p.startWeight||startWeight;
   if(Array.isArray(p.events)){EVENTS.length=0;p.events.forEach(e=>EVENTS.push(e));}
   if(p.ftpLog&&p.ftpLog.length){FTPLOG.length=0;p.ftpLog.forEach(e=>FTPLOG.push(e));}
   if(connected){DNOW=new Date();SEASON0=new Date((p.seasonStart||"2026-03-16")+"T00:00:00");}
@@ -2834,6 +2840,7 @@ openRecon=function(id){_openRecon(id);
 
 /* ── persistence: drawer changes save to the server ── */
 let PROFILE_READY=false;
+window.__live=(v)=>{LIVE=!!v;PROFILE_READY=true;return LIVE;};   /* test hook: lets a headless check exercise the save path */
 function saveProfile(){
   /* never write back until the rider's own profile has arrived from the server:
      otherwise a page painted from the device cache can save its empty defaults over real work */
@@ -5984,6 +5991,44 @@ function wxArrow(dir,size){const s=size||11;
   window.dsWaiting=function(el){if(!el)return()=>{};let i=0;el.textContent="The DS is "+phrases[0];
     const t=setInterval(()=>{i=(i+1)%phrases.length;el.textContent="The DS is "+phrases[i];},3500);return()=>clearInterval(t);};
 })();
+
+/* ═══ v5.7 — the committed scenario governs everything the DS plans ═══ */
+(function(){
+  /* what is actually committed, so every planner speaks from the same sheet */
+  window.committedScenario=function(){
+    const b=(S.build&&S.build.scenario)||null;
+    if(b)return b;
+    const a=(S.scen&&S.scen.list||[]).find(x=>x.id===(S.scen&&S.scen.active));
+    return a||null;
+  };
+  function scenLine(){
+    const sc=committedScenario();if(!sc)return null;
+    const per=Math.round(sc.hours*((SHAPES[sc.shape]||SHAPES.polarised).tss));
+    return {name:sc.name,hoursPerWeek:sc.hours,weeklyTssTarget:per,
+      intensityShape:(SHAPES[sc.shape]||{}).label||sc.shape,rampCapCtlPerWeek:sc.ramp,
+      restWeekEvery:sc.rest||null,targetWeightKg:sc.weight,
+      committedAt:sc.at||null,
+      instruction:`Plan inside this committed scenario: about ${sc.hours} hours (${per} TSS) a week, ${(SHAPES[sc.shape]||{}).label||sc.shape} distribution, never lifting fitness faster than ${sc.ramp} CTL a week${sc.rest?`, with a lighter week every ${sc.rest}`:""}. Respect the week's own target where one is set.`};
+  }
+  /* every DS planning call carries it */
+  const _ac=aiContext;aiContext=function(k){const c=_ac(k);try{const sl=scenLine();if(sl)c.scenario=sl;
+    if(S.weekTargets)c.weekTarget=S.weekTargets[k]||null;}catch(e){}return c;};
+  if(typeof buildContext==="function"){const _bc=buildContext;buildContext=function(){const c=_bc.apply(this,arguments);try{const sl=scenLine();if(sl)c.scenario=sl;}catch(e){}return c;};}
+  /* the chip shows which scenario is live, and the levers say when they differ from it */
+  const _mr=modelRender;modelRender=function(){
+    _mr();
+    const sc=committedScenario(),cur=scenNow();if(!sc)return;
+    document.querySelectorAll("#model-room [data-sc]").forEach(b=>{
+      const x=(S.scen.list||[]).find(y=>y.id===b.dataset.sc);
+      if(x&&sc&&x.name===sc.name&&x.hours===sc.hours&&x.shape===sc.shape&&x.ramp===sc.ramp&&x.rest===sc.rest){
+        if(!b.querySelector(".liv")){const i=document.createElement("i");i.className="liv";i.textContent="LIVE";
+          i.style.cssText="font-style:normal;margin-left:7px;font-size:6.5px;letter-spacing:.14em;background:var(--jaune);color:var(--ink);padding:2px 5px;border-radius:4px";b.appendChild(i);}}});
+    const differs=sc&&(cur.hours!==sc.hours||cur.shape!==sc.shape||cur.ramp!==sc.ramp||cur.rest!==sc.rest||cur.weight!==sc.weight);
+    const btn=document.getElementById("msc-commit");
+    if(btn){btn.textContent=differs?"COMMIT THIS SCENARIO":"COMMITTED — RE-APPLY";btn.style.opacity=differs?"1":".72";}
+  };
+})();
+
 </script>
 <div id="sheet" class="sheet" style="display:none"><div class="sheetin" id="sheetin"></div></div>
 <script>
