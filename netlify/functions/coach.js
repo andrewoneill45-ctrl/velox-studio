@@ -16,12 +16,19 @@ OUTPUT FORMAT — respond with ONLY this JSON object, no fences, nothing outside
   const metrics = await readJSON("metrics.json", {});
   let context = { profile: { ftp: prof.ftp, weight: prof.weight, wkg: +(prof.ftp / prof.weight).toFixed(2), targets: prof.tgt } };
   const libIdx = await readJSON("library-index.json", []);
+  /* the evidence pack is cached: sixteen sequential blob reads on every call was most of the wait */
   let evidence = "";
-  for (const x of libIdx.slice(0, 16)) {
-    const d = await readJSON(`library/${x.id}.json`); if (!d) continue;
-    const add = `• ${d.title} [${d.quality}]: ${d.summary} Protocols: ${(d.protocols || []).join(" | ")}${d.cautions?.length ? " Cautions: " + d.cautions.join(" | ") : ""}
-`;
-    if (evidence.length + add.length > 9500) break; evidence += add;
+  const digest = await readJSON("library-digest.json");
+  if (digest && digest.n === libIdx.length && digest.text) evidence = digest.text;
+  else {
+    const docs = await Promise.all(libIdx.slice(0, 16).map(x => readJSON(`library/${x.id}.json`).catch(() => null)));
+    for (const d of docs) {
+      if (!d) continue;
+      const add = `\u2022 ${d.title} [${d.quality}]: ${d.summary} Protocols: ${(d.protocols || []).join(" | ")}${d.cautions?.length ? " Cautions: " + d.cautions.join(" | ") : ""}\n`;
+      if (evidence.length + add.length > 9500) break;
+      evidence += add;
+    }
+    await writeJSON("library-digest.json", { n: libIdx.length, at: new Date().toISOString(), text: evidence });
   }
   const wl = await wellnessSummary();
   const wellness = wl.latest ? { today: wl.latest, last7: wl.days.slice(-7), readiness: wl.readiness } : null;
@@ -120,9 +127,21 @@ export default gated(async (req) => {
     const job = "j" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
     await writeJSON(`jobs/${job}.json`, { state: "running", at: new Date().toISOString(), mode: body.mode });
     const base = process.env.URL;
-    fetch(`${base}/.netlify/functions/coach-background`, { method: "POST",
-      headers: { "content-type": "application/json", ...INTERNAL() }, body: JSON.stringify({ job, body }) }).catch(() => {});
-    return json({ job, state: "running" });
+    /* the dispatch must be awaited: an unawaited fetch can be killed with the invocation */
+    let dispatch = null;
+    try {
+      const r = await fetch(`${base}/.netlify/functions/coach-background`, { method: "POST",
+        headers: { "content-type": "application/json", ...INTERNAL() }, body: JSON.stringify({ job, body }) });
+      dispatch = r.status;
+    } catch (e) { dispatch = "throw: " + String(e.message || e); }
+    /* 202 is what a background function returns. Anything else means it never started. */
+    if (dispatch !== 202 && dispatch !== 200) {
+      await writeJSON(`jobs/${job}.json`, { state: "error", at: new Date().toISOString(),
+        error: `the background worker did not start (${dispatch})` });
+      return json({ job, state: "error", dispatch });
+    }
+    await writeJSON(`jobs/${job}.json`, { state: "running", at: new Date().toISOString(), mode: body.mode, dispatch });
+    return json({ job, state: "running", dispatch });
   }
   return runCoach(body);
 });

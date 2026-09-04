@@ -5978,18 +5978,27 @@ function wxArrow(dir,size){const s=size||11;
     if(!/\/api\/coach(\?|$)/.test(url)||!res.ok)return res;
     let d;try{d=await res.clone().json();}catch(e){return res;}
     if(!d||!d.job)return res;
-    const started=Date.now();let wait=1200;
-    while(Date.now()-started<180000){
-      await new Promise(r=>setTimeout(r,wait));wait=Math.min(3000,wait*1.15);
-      let j;try{const r2=await realFetch("/api/job?id="+d.job);if(!r2.ok)continue;j=await r2.json();}catch(e){continue;}
+    if(d.state==="error")return new Response(JSON.stringify({error:d.error||("the DS could not start ("+(d.dispatch||"?")+")")}),{status:500,headers:{"content-type":"application/json"}});
+    const started=Date.now();let wait=1000,misses=0;
+    window.__dsElapsed=0;
+    while(Date.now()-started<150000){
+      await new Promise(r=>setTimeout(r,wait));wait=Math.min(2500,wait*1.12);
+      window.__dsElapsed=Math.round((Date.now()-started)/1000);
+      let j;try{const r2=await realFetch("/api/job?id="+d.job);if(!r2.ok){misses++;if(misses>6)break;continue;}j=await r2.json();}catch(e){misses++;if(misses>6)break;continue;}
       if(j.state==="done")return new Response(JSON.stringify(j.data),{status:200,headers:{"content-type":"application/json"}});
       if(j.state==="error")return new Response(JSON.stringify({error:j.error||"the DS could not finish"}),{status:500,headers:{"content-type":"application/json"}});
+      /* nothing has picked the job up: say so rather than spin */
+      if(window.__dsElapsed>25&&j.state==="running"&&!j.worker)
+        return new Response(JSON.stringify({error:"the background worker never started — press the button again, and tell me if it repeats"}),{status:500,headers:{"content-type":"application/json"}});
     }
     return new Response(JSON.stringify({error:"the DS is taking longer than usual — try again"}),{status:504,headers:{"content-type":"application/json"}});
   };
   const phrases=["reading your last four weeks…","checking readiness and the road ahead…","weighing the evidence base…","writing the week…","checking the numbers add up…"];
-  window.dsWaiting=function(el){if(!el)return()=>{};let i=0;el.textContent="The DS is "+phrases[0];
-    const t=setInterval(()=>{i=(i+1)%phrases.length;el.textContent="The DS is "+phrases[i];},3500);return()=>clearInterval(t);};
+  window.dsWaiting=function(el){if(!el)return()=>{};let i=0;const t0=Date.now();
+    const paint=()=>{const s=Math.round((Date.now()-t0)/1000);el.textContent="The DS is "+phrases[i]+"  ("+s+"s)";};
+    paint();const t=setInterval(()=>{i=(i+1)%phrases.length;paint();},3000);
+    const tick=setInterval(paint,1000);
+    return()=>{clearInterval(t);clearInterval(tick);};};
 })();
 
 /* ═══ v5.7 — the committed scenario governs everything the DS plans ═══ */

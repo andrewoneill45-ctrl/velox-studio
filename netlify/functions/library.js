@@ -10,6 +10,7 @@ export default gated(async (req) => {
   if (!process.env.HEALTH_INGEST_KEY || key !== process.env.HEALTH_INGEST_KEY) return json({ error: "unauthorised" }, 401);
   if (req.method === "DELETE" && id) {
     await store().delete(`library/${id}.json`);
+    await writeJSON("library-digest.json", null).catch(() => {});
     await writeJSON("library-index.json", (await readJSON("library-index.json", [])).filter(d => d.id !== id));
     return json({ ok: true });
   }

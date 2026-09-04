@@ -15,6 +15,6 @@ export default gated(async (req) => {
     lastError: st.lastError || null, lastErrorAt: st.lastErrorAt || null,
     lastMorning: st.lastMorning || null, morningCards: cards.morning || null,
     lastUltrahuman: st.lastUltrahuman || null, lastUltrahumanError: st.lastUltrahumanError || null,
-    lastMorningError: st.lastMorningError || null, lastMorningTrace: st.lastMorningTrace || null, lastMorningAt: st.lastMorningAt || null,
+    lastMorningError: st.lastMorningError || null, lastCoachJob: st.lastCoachJob || null, lastMorningTrace: st.lastMorningTrace || null, lastMorningAt: st.lastMorningAt || null,
     streams: (blobs || []).length, rides: rides.length });
 });
