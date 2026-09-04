@@ -8,6 +8,8 @@ export default gated(async (req) => {
     lastRide: acts[0]?.start_date || null, lastRideName: acts[0]?.name || null,
     lastCompute: m.syncedAt || null, lastHealth: wk[wk.length - 1] || null,
     lastWebhook: st.lastWebhook || null, lastIngest: st.lastIngest || null,
+    lastHandoff: st.lastHandoff || null, lastHandoffAt: st.lastHandoffAt || null,
+    lastCatchup: st.lastCatchup || null, lastCatchupDid: st.lastCatchupDid || null, lastCatchupError: st.lastCatchupError || null,
     // a ride "arriving" for more than 15 minutes is a stuck flag, not an arrival
     pending: (st.pending && st.lastWebhook && (Date.now() - new Date(st.lastWebhook)) < 15 * 60e3) ? st.pending : null,
     lastError: st.lastError || null, lastErrorAt: st.lastErrorAt || null,

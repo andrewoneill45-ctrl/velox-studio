@@ -12,8 +12,16 @@ export default async (req) => {
     st.lastWebhook = new Date().toISOString(); st.pending = body.object_id; await writeJSON("state.json", st);
     const base = process.env.URL || `https://${req.headers.get("host")}`;
     // background function returns 202 immediately; Strava gets its 200 within the two-second window
-    try { await fetch(`${base}/.netlify/functions/ingest-background`, { method: "POST", headers: { "content-type": "application/json", ...INTERNAL() },
-      body: JSON.stringify({ id: body.object_id, aspect: body.aspect_type }) }); } catch {}
+    /* record what the hand-off actually did, so a failure can never be invisible again */
+    try {
+      const r = await fetch(`${base}/.netlify/functions/ingest-background`, { method: "POST", headers: { "content-type": "application/json", ...INTERNAL() },
+        body: JSON.stringify({ id: body.object_id, aspect: body.aspect_type }) });
+      const st2 = await readJSON("state.json", {});
+      await writeJSON("state.json", { ...st2, lastHandoff: `${r.status}`, lastHandoffAt: new Date().toISOString() });
+    } catch (e) {
+      const st2 = await readJSON("state.json", {});
+      await writeJSON("state.json", { ...st2, lastHandoff: "throw: " + String(e.message || e), lastHandoffAt: new Date().toISOString() });
+    }
   }
   return json({ ok: true });
 };

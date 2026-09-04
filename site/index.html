@@ -1345,6 +1345,32 @@ details.acc .accin{padding:0 20px 18px}
 details.acc .accin>.panel{box-shadow:none;border:none;padding:0!important;margin:0!important;background:transparent}
 .srcgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
 @media(max-width:820px){.srchead h3{font-size:17px}details.acc>summary{padding:13px 15px;flex-wrap:wrap}details.acc .accin{padding:0 15px 15px}}
+
+/* ═══ WEATHER (v5.2) ═══ */
+.wxstrip{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap;margin-top:14px}
+.wxnow{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;min-width:230px}
+.wxnow .ic{font-size:26px;line-height:1}
+.wxnow .t{font-family:'Archivo';font-weight:900;font-size:26px;letter-spacing:-.02em;line-height:1}
+.wxnow .t small{font-size:11px;color:var(--mist);font-family:'Space Grotesk';margin-left:2px}
+.wxnow .d{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.14em;color:var(--mist);margin-top:3px}
+.wxdays{display:flex;gap:6px;flex:1;min-width:0}
+.wxd{flex:1;min-width:0;background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:1px}
+.wxd.best{border-color:var(--jaune);box-shadow:0 0 0 2px rgba(255,209,0,.25)}
+.wxd .dy{font-family:'Space Grotesk';font-size:7px;font-weight:700;letter-spacing:.12em;color:var(--mist)}
+.wxd .ic{font-size:17px;line-height:1.3}
+.wxd .tm{font-family:'Archivo';font-weight:900;font-size:14px;letter-spacing:-.02em}
+.wxd .wd{font-family:'Space Grotesk';font-size:7px;font-weight:700;color:var(--mist);margin-top:2px}
+.wxd .pp{font-family:'Space Grotesk';font-size:7px;font-weight:700;color:var(--bleu);margin-top:auto;padding-top:2px}
+.wxd .ic{filter:grayscale(.15)}
+.wxline{font-family:'Fraunces',serif;font-style:italic;font-size:13px;color:var(--ink2);margin-top:10px}
+.wxchip{display:inline-flex;align-items:center;gap:5px;font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.1em;color:var(--ink2);background:var(--hair);padding:3px 7px;border-radius:6px;margin-top:6px}
+.rc2 .wxband{display:grid;grid-template-columns:auto repeat(4,1fr);gap:14px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-top:10px;background:#fff}
+.rc2 .wxband .ic{font-size:28px}
+.rc2 .wxband .l{font-family:'Space Grotesk';font-size:7px;font-weight:700;letter-spacing:.16em;color:var(--mist)}
+.rc2 .wxband .v{font-family:'Archivo';font-weight:900;font-size:18px;letter-spacing:-.02em;margin-top:2px}
+.rc2 .wxband .v small{font-size:8px;font-family:'Space Grotesk';color:var(--mist)}
+.windarrow{display:inline-block;transform-origin:50% 50%}
+@media(max-width:820px){.wxdays{flex-wrap:wrap}.wxd{flex:0 0 calc(25% - 5px)}.rc2 .wxband{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -5598,6 +5624,201 @@ function wireScrub(evs){
   const _ru=window.renderUltrahuman;
   if(_ru)window.renderUltrahuman=async function(){await _ru();try{window.UHSTATE=await api("/api/ultrahuman?status=1");}catch(e){}refreshInts();};
   setTimeout(refreshInts,3000);
+})();
+
+
+/* ═══ v5.1 — workouts to the Karoo, via Intervals.icu ═══ */
+let ICU=null;
+async function renderIntervals(){
+  let el=document.getElementById("icupanel");
+  if(!el){el=document.createElement("div");el.className="panel";el.id="icupanel";
+    const h=document.getElementById("uhpanel");if(h&&h.parentNode)h.parentNode.insertBefore(el,h.nextSibling);}
+  if(LIVE){try{ICU=await api("/api/intervals?status=1");}catch(e){ICU={configured:false};}}else ICU={configured:false};
+  el.innerHTML=`<div class="aihead"><span class="al" style="color:var(--ink)">HAMMERHEAD KAROO — VIA INTERVALS.ICU</span>
+    <span class="ds" style="margin:0">${ICU.configured?"Connected. Planned sessions are pushed to your Intervals.icu calendar; the Karoo pulls them on its next sync.":"The Karoo takes structured workouts from Intervals.icu, which is free. Massif writes the sessions there and the head unit collects them."}</span></div>
+    ${ICU.configured?`<div class="statusline" style="margin-top:12px">
+        <span class="stc"><i></i>LAST PUSH ${rel(ICU.lastPush).toUpperCase()}</span>
+        <span class="stc"><i style="background:var(--bleu)"></i>${ICU.count} SESSIONS SENT</span>
+        ${ICU.lastError?`<span class="stc bad"><i></i>${String(ICU.lastError).toUpperCase().slice(0,44)}</span>`:""}</div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <button class="aibtn" id="icu-14" style="background:var(--ink)">PUSH THE NEXT 14 DAYS</button>
+        <button class="tlbtn" id="icu-30">PUSH 30 DAYS</button>
+        <button class="tlbtn" id="icu-clear" title="Forget what has been sent so sessions can be pushed again">RESET THE RECORD</button></div>
+      <div class="ds" style="margin-top:10px">On the Karoo: <b>Dashboard → connect Intervals.icu</b>, then pull to refresh Workouts. A session already sent is never sent twice.</div>`
+    :`<div class="hstep"><span>1</span><div>Make a free account at <b>intervals.icu</b> and connect it to Strava there, so your rides land in both places.</div></div>
+      <div class="hstep"><span>2</span><div>On the Karoo or the Hammerhead dashboard, connect your <b>Intervals.icu</b> account. Rides upload and planned workouts sync down.</div></div>
+      <div class="hstep"><span>3</span><div>In Intervals.icu: <b>Settings → Developer</b>. Copy your <b>API key</b> and your <b>athlete id</b> (the i123456 in the address bar), then:<div class="hurl">netlify env:set INTERVALS_KEY "your-api-key"<br/>netlify env:set INTERVALS_ATHLETE "i123456"</div></div></div>
+      <div class="hstep"><span>4</span><div>Come back and press push. Every planned session goes to the calendar as a structured workout with its intervals and watts.</div></div>`}`;
+  const go=async(n)=>{sysMsg&&sysMsg("SENDING SESSIONS TO INTERVALS.ICU…");
+    try{const r=await api("/api/intervals?days="+n);
+      sysMsg&&sysMsg(r.ok?(r.sent.length?`${r.sent.length} SESSION${r.sent.length>1?"S":""} SENT — SYNC THE KAROO`:"NOTHING NEW TO SEND"):"PUSH FAILED — "+String(r.reason).toUpperCase());
+      renderIntervals();}catch(e){sysMsg&&sysMsg("PUSH FAILED — "+(e.message||e));}};
+  const b14=document.getElementById("icu-14"),b30=document.getElementById("icu-30"),bc=document.getElementById("icu-clear");
+  if(b14)b14.onclick=()=>go(14);if(b30)b30.onclick=()=>go(30);
+  if(bc)bc.onclick=async()=>{if(!confirm("Forget which sessions have been sent? Pushing again will create duplicates on the calendar for anything already there."))return;
+    await api("/api/intervals?clear=1");renderIntervals();};
+}
+/* the session sheet gets a Karoo button beside the .zwo download */
+(function(){
+  const _os=openSession;openSession=function(di,idx){_os(di,idx);
+    setTimeout(()=>{const acts=document.querySelector("#sheetin .sh-acts");if(!acts||document.getElementById("sh-karoo"))return;
+      const b=document.createElement("button");b.className="tlbtn";b.id="sh-karoo";b.textContent="SEND TO KAROO";
+      b.onclick=async()=>{if(!ICU||!ICU.configured){alert("Connect Intervals.icu first — Sources → Hammerhead Karoo.");return;}
+        b.textContent="SENDING…";try{const r=await api("/api/intervals?days=21");b.textContent=r.ok?"SENT ✓":"FAILED";}catch(e){b.textContent="FAILED";}};
+      acts.appendChild(b);},80);};
+})();
+/* the accordion and the connector badge */
+(function(){
+  const _t=window.setPills;
+  const _al17=applyLive;applyLive=function(m){_al17(m);setTimeout(()=>{renderIntervals();addKarooAcc();},1600);};
+  function addKarooAcc(){
+    const wrap=document.getElementById("src-tidy");if(!wrap||document.getElementById("karoo-acc"))return;
+    const el=document.getElementById("icupanel");if(!el)return;
+    const d=document.createElement("details");d.className="acc";d.id="karoo-acc";
+    d.innerHTML=`<summary><span class="t">HAMMERHEAD KAROO</span><span class="s">Workouts to the head unit</span><span class="pill" style="background:#26496E1A;color:var(--bleu)">${ICU&&ICU.configured?"CONNECTED":"SET UP"}</span><span class="chev">›</span></summary><div class="accin"></div>`;
+    d.querySelector(".accin").appendChild(el);
+    const uh=[...wrap.querySelectorAll("details.acc")].find(x=>x.querySelector(".t").textContent.includes("ULTRAHUMAN"));
+    if(uh&&uh.nextSibling)wrap.insertBefore(d,uh.nextSibling);else wrap.appendChild(d);
+    const card=[...document.querySelectorAll("#ints .int")].find(x=>x.querySelector(".in").textContent.includes("Hammerhead"));
+    if(card){const sg=card.querySelector(".sg");sg.textContent=ICU&&ICU.configured?"WORKOUTS + RIDES":"VIA STRAVA";
+      sg.style.background=ICU&&ICU.configured?"#E2F1EA":"#EDF1F4";sg.style.color=ICU&&ICU.configured?"var(--vert)":"var(--bleu)";}
+  }
+  setTimeout(()=>{renderIntervals();addKarooAcc();},3000);
+})();
+
+
+/* ═══ v5.2 — the weather, where it changes what you do ═══ */
+let WX=null,WXAT=0;
+window.__wx=v=>{WX=v;WXAT=Date.now();return !!WX;};
+const WMO={0:["Clear","☀"],1:["Mostly clear","🌤"],2:["Partly cloudy","⛅"],3:["Overcast","☁"],45:["Fog","🌫"],48:["Freezing fog","🌫"],
+ 51:["Light drizzle","🌦"],53:["Drizzle","🌦"],55:["Heavy drizzle","🌧"],56:["Freezing drizzle","🌧"],57:["Freezing drizzle","🌧"],
+ 61:["Light rain","🌦"],63:["Rain","🌧"],65:["Heavy rain","🌧"],66:["Freezing rain","🌧"],67:["Freezing rain","🌧"],
+ 71:["Light snow","🌨"],73:["Snow","🌨"],75:["Heavy snow","❄"],77:["Snow","🌨"],80:["Showers","🌦"],81:["Showers","🌧"],82:["Heavy showers","⛈"],
+ 85:["Snow showers","🌨"],86:["Snow showers","🌨"],95:["Thunder","⛈"],96:["Thunder","⛈"],99:["Thunder","⛈"]};
+const wxIcon=c=>(WMO[c]||["—","·"])[1],wxName=c=>(WMO[c]||["—","·"])[0];
+const compass=d=>["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"][Math.round(((d||0)%360)/22.5)%16];
+async function loadWx(force){
+  if(!LIVE)return null;
+  if(WX&&!force&&Date.now()-WXAT<30*60e3)return WX;
+  try{const d=await api("/api/weather");if(d&&!d.error){WX=d;WXAT=Date.now();}else WX=null;}catch(e){WX=null;}
+  return WX;
+}
+/* what to wear and whether to move the hard day */
+function wxAdvice(d){
+  if(!d)return "";
+  const bits=[];
+  const feels=d.feels!=null?d.feels:d.tmax;
+  if(feels<=4)bits.push("winter kit, overshoes, long gloves");
+  else if(feels<=9)bits.push("long sleeves and knee warmers");
+  else if(feels<=15)bits.push("arm warmers you can take off");
+  else if(feels>=26)bits.push("an extra bottle and salt");
+  else bits.push("short sleeves");
+  if((d.pop||0)>=55)bits.push("a rain jacket");
+  if((d.wind||0)>=32)bits.push("deep sections are a handful today");
+  return bits.join(", ");
+}
+function bestDay(days){
+  if(!days||!days.length)return null;
+  const score=d=>{const feels=d.feels!=null?d.feels:d.tmax;
+    return -(d.pop||0)*0.9-(d.wind||0)*1.3-(d.rain||0)*7-Math.abs(feels-17)*1.6;};
+  const wk=days.slice(0,7).map((d,i)=>({d,i,s:score(d)})).sort((a,b)=>b.s-a.s);
+  return wk[0]?wk[0].d:null;
+}
+function renderWx(){
+  const host=document.getElementById("dispatch");if(!host||!WX)return;
+  let el=document.getElementById("wxstrip");
+  if(!el){el=document.createElement("div");el.id="wxstrip";el.className="wxstrip";
+    const sl=host.querySelector(".statusline");if(sl&&sl.parentNode)sl.parentNode.insertBefore(el,sl.nextSibling);else host.appendChild(el);}
+  const n=WX.now,days=(WX.days||[]).slice(0,6),best=bestDay(WX.days);
+  const today=days[0];
+  el.innerHTML=`
+    <div class="wxnow"><div class="ic">${wxIcon(n?n.code:today&&today.code)}</div>
+      <div><div class="t">${Math.round(n?n.temp:today?today.tmax:0)}<small>°C</small></div>
+      <div class="d">${(wxName(n?n.code:today&&today.code)).toUpperCase()} · FEELS ${Math.round(n?n.feels:today?today.feels:0)}° · ${Math.round(n?n.wind:today?today.wind:0)} KM/H ${compass(n?n.dir:today&&today.dir)}</div></div></div>
+    <div class="wxdays">${days.map((d,i)=>{const isBest=best&&d.date===best.date;
+      return `<div class="wxd ${isBest?"best":""}" title="${wxName(d.code)}">
+        <div class="dy">${i===0?"TODAY":new Date(d.date+"T12:00:00").toLocaleDateString("en-GB",{weekday:"short"}).toUpperCase()}</div>
+        <div class="ic">${wxIcon(d.code)}</div><div class="tm">${Math.round(d.tmax)}°</div>
+        <div class="wd">${Math.round(d.wind)} ${compass(d.dir)}</div>
+        ${d.pop>=30?`<div class="pp">${Math.round(d.pop)}%</div>`:""}</div>`;}).join("")}</div>
+    <div style="flex-basis:100%"><div class="wxline" style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><span style="flex:1;min-width:240px">${today?`Today: ${wxAdvice(today)}.`:""}${best&&best.date!==(days[0]||{}).date?` The best window this week looks like ${new Date(best.date+"T12:00:00").toLocaleDateString("en-GB",{weekday:"long"})} — ${Math.round(best.tmax)}°, ${Math.round(best.wind)} km/h, ${Math.round(best.pop||0)}% rain. Worth putting the long ride there.`:""}</span><a href="https://open-meteo.com/" target="_blank" rel="noopener" style="font-family:'Space Grotesk';font-style:normal;font-size:7px;font-weight:700;letter-spacing:.14em;color:var(--mist);text-decoration:none">WEATHER BY OPEN-METEO · CC BY 4.0</a></div></div>`;
+}
+/* the Roadbook's day cards carry the forecast while it exists */
+function wxForDay(iso){return WX&&(WX.days||[]).find(d=>d.date===iso)||null;}
+(function(){
+  const _tr=tlRender;tlRender=function(keep){_tr(keep);
+    if(!WX)return;
+    document.querySelectorAll("#tlgrid [data-day]").forEach(card=>{
+      const iso=card.dataset.day,d=wxForDay(iso);if(!d||card.querySelector(".wxchip"))return;
+      const chip=document.createElement("div");chip.className="wxchip";
+      chip.innerHTML=`${wxIcon(d.code)} ${Math.round(d.tmax)}° · ${Math.round(d.wind)} ${compass(d.dir)}${d.pop>=40?` · ${Math.round(d.pop)}%`:""}`;
+      const foot=card.querySelector(".dfact")||card;foot.appendChild(chip);});};
+})();
+/* the race card: the forecast on the day, and what the wind does to each climb */
+function bearing(a,b){if(!a||!b)return null;const φ1=a[0]*Math.PI/180,φ2=b[0]*Math.PI/180,Δλ=(b[1]-a[1])*Math.PI/180;
+  const y=Math.sin(Δλ)*Math.cos(φ2),x=Math.cos(φ1)*Math.sin(φ2)-Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ);
+  return (Math.atan2(y,x)*180/Math.PI+360)%360;}
+function windOn(bear,wdir,wkmh){
+  if(bear==null||wdir==null)return null;
+  const rel=((wdir+180-bear)+540)%360-180;      /* wind blows FROM wdir; +180 gives where it is going */
+  const head=-Math.cos(rel*Math.PI/180)*wkmh;   /* positive = headwind */
+  const cross=Math.abs(Math.sin(rel*Math.PI/180))*wkmh;
+  return {head:+head.toFixed(1),cross:+cross.toFixed(1),
+    label:head>6?"HEADWIND":head<-6?"TAILWIND":cross>12?"CROSSWIND":"LITTLE WIND"};
+}
+async function raceWeather(ev,stageDate,c,sim,st){
+  const pt=(c.points&&c.points.length)?c.points[Math.floor(c.points.length/2)]:null;
+  const lat=pt&&pt.lat,lon=pt&&pt.lon;
+  let w=null;
+  try{w=await api(`/api/weather?date=${stageDate}${lat?`&lat=${lat}&lon=${lon}`:""}`);}catch(e){}
+  if(!w||!w.day)return null;
+  const d=w.day,forecast=w.kind==="forecast";
+  const hours=(w.hourly||[]).filter(h=>{const hh=new Date(h.t).getHours();return hh>=Math.floor(st/60)&&hh<=Math.ceil((st+sim.total/60)/60);});
+  const wind=forecast?d.wind:d.wind,dir=forecast?d.dir:d.dir;
+  const climbs=(sim.splits||[]).map(sp=>{
+    const a=c.points[sp.i0],b=c.points[sp.i1];
+    const br=(a&&b&&a.lat!=null)?bearing([a.lat,a.lon],[b.lat,b.lon]):null;
+    const eff=windOn(br,dir,wind);
+    let delta=null;
+    if(eff){const v=(sp.len*1000)/sp.secs;const va=v+eff.head/3.6;
+      const extra=0.5*1.225*0.32*(Math.max(0,va*va-v*v))*v;   /* watts the wind adds or gives back */
+      delta=Math.round(sp.secs*(extra/Math.max(60,sp.w))); }
+    return {n:sp.n,eff,delta};});
+  return {kind:w.kind,day:d,climbs,forecast,
+    total:climbs.reduce((a,x)=>a+(x.delta||0),0)};
+}
+const _orc=openRaceCard;openRaceCard=function(){
+  _orc();
+  const ev=EVENTS.find(e=>e.id===rcEv),c=RCX,sim=RCSIM;if(!ev||!c||!sim)return;
+  const st=(ev.recon&&ev.recon.startMin)||480;
+  const days=ev.days||1,stage=days>1?rcStage:1;
+  const d=addD(new Date(ev.date+"T12:00:00"),stage-1),stageDate=isoDay(d);
+  raceWeather(ev,stageDate,c,sim,st).then(w=>{
+    if(!w)return;const el=document.querySelector("#sheetin .rc2");if(!el)return;
+    const prof=el.querySelector(".prof");if(!prof)return;
+    const D=w.day,band=document.createElement("div");band.className="wxband";
+    const feels=D.feels!=null?D.feels:D.tmax;
+    band.innerHTML=`<div class="ic">${w.forecast?wxIcon(D.code):"📅"}</div>
+      <div><div class="l">${w.forecast?"FORECAST":"TYPICAL FOR THE DATE"}</div><div class="v">${Math.round(D.tmax)}<small>°C MAX</small></div></div>
+      <div><div class="l">FEELS LIKE</div><div class="v">${Math.round(feels||D.tmax)}<small>°C</small></div></div>
+      <div><div class="l">WIND</div><div class="v">${Math.round(D.wind)}<small> KM/H ${compass(D.dir)}</small></div></div>
+      <div><div class="l">${w.forecast?"RAIN":"RAIN, TYPICAL"}</div><div class="v">${w.forecast?Math.round(D.pop||0)+"%":(D.rain||0).toFixed(1)+" mm"}</div></div>`;
+    prof.parentNode.insertBefore(band,prof.nextSibling);
+    /* the wind written onto each climb */
+    const rows=el.querySelectorAll(".kom .krow:not(.h)");
+    w.climbs.forEach((cl,i)=>{const row=rows[i];if(!row||!cl.eff)return;
+      const nm=row.querySelector(".nm small");if(!nm)return;
+      const sign=cl.delta>0?"+":"";
+      nm.innerHTML+=` · <span style="color:${cl.eff.head>6?"var(--polka)":cl.eff.head<-6?"var(--vert)":"var(--mist)"}">${cl.eff.label} ${Math.abs(Math.round(cl.eff.head))} KM/H${cl.delta?` · ${sign}${cl.delta}s`:""}</span>`;});
+    if(w.total){const fin=el.querySelector(".fin .ft");
+      if(fin)fin.innerHTML+=` <b>The wind is worth ${w.total>0?"about "+Math.abs(Math.round(w.total/60))+" minutes against you":"about "+Math.abs(Math.round(w.total/60))+" minutes in your favour"} across the climbs.</b>`;}
+  });
+};
+/* boot */
+(function(){
+  const _al18=applyLive;applyLive=function(m){_al18(m);loadWx().then(w=>{if(w){renderWx();if(window.TL&&TL.built)tlRender(true);}});};
+  setTimeout(()=>{if(LIVE)loadWx().then(w=>{if(w)renderWx();});},3200);
+  setInterval(()=>{if(LIVE&&document.visibilityState==="visible")loadWx(true).then(w=>{if(w)renderWx();});},60*60e3);
 })();
 
 </script>
