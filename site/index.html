@@ -1371,6 +1371,22 @@ details.acc .accin>.panel{box-shadow:none;border:none;padding:0!important;margin
 .rc2 .wxband .v small{font-size:8px;font-family:'Space Grotesk';color:var(--mist)}
 .windarrow{display:inline-block;transform-origin:50% 50%}
 @media(max-width:820px){.wxdays{flex-wrap:wrap}.wxd{flex:0 0 calc(25% - 5px)}.rc2 .wxband{grid-template-columns:1fr 1fr}}
+
+.wxweek{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:8px}
+.wxc{border:1px solid var(--line);border-radius:12px;background:#fff;padding:8px 8px 7px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:1px;position:relative;min-width:0}
+.wxc.today{border-color:var(--ink)}
+.wxc.best{border-color:var(--jaune);box-shadow:0 0 0 2px rgba(255,209,0,.22)}
+.wxc.none{background:var(--hair);border-style:dashed;opacity:.65}
+.wxc .dy{font-family:'Space Grotesk';font-size:7px;font-weight:700;letter-spacing:.14em;color:var(--mist)}
+.wxc .ic{font-size:16px;line-height:1.25;filter:grayscale(.15)}
+.wxc .tm{font-family:'Archivo';font-weight:900;font-size:14px;letter-spacing:-.02em}
+.wxc .tm i{font-style:normal;font-family:'Space Grotesk';font-size:8px;font-weight:700;color:var(--mist);margin-left:3px}
+.wxc .wd{font-family:'Space Grotesk';font-size:7px;font-weight:700;color:var(--ink2);display:flex;align-items:center;gap:3px}
+.wxc .wd .ar{display:inline-block;font-size:8px;color:var(--bleu)}
+.wxc .pp{font-family:'Space Grotesk';font-size:6.5px;font-weight:700;color:var(--bleu);min-height:9px}
+.wxc .bst{position:absolute;top:-7px;left:50%;transform:translateX(-50%);background:var(--jaune);color:var(--ink);font-family:'Space Grotesk';font-size:6px;font-weight:700;letter-spacing:.12em;padding:2px 6px;border-radius:5px;white-space:nowrap}
+.wxmini{margin-top:8px;font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.1em;color:var(--ink2);background:var(--hair);padding:4px 8px;border-radius:7px;align-self:flex-start}
+@media(max-width:820px){.wxweek{display:none}.wbc .wxmini{margin-top:6px}}
 </style>
 </head>
 <body>
@@ -3005,7 +3021,7 @@ renderDaysLive=function(){
     const fut=d>today;
     const hh=r=>`${Math.floor(r.secs/3600)}h${String(Math.floor(r.secs%3600/60)).padStart(2,"0")}`;
     const stx=rides.length?rides.map(r=>`<b>${r.nm}</b><br/>${r.km} km · ${fmtInt(r.m)} m · ${hh(r)} · ${r.tss} TSS`).join("<br/><br/>")+`<br/><br/><span style="opacity:.7">CLICK — OPEN IN THE LABORATORY →</span>`:"";
-    out+=`<div class="stg" ${rides.length?`data-ride="${rides[0].id}"`:'style="cursor:default"'}>
+    out+=`<div class="stg" data-wxday="${iso}" ${rides.length?`data-ride="${rides[0].id}"`:'style="cursor:default"'}>
       <div class="day">${d.toLocaleDateString("en-GB",{weekday:"short"}).toUpperCase()} ${d.getDate()}</div>
       <div class="nm" style="margin-top:14px">${rides.length?rides[0].nm:(fut?"—":"Rest day")}</div>
       <div class="ds">${rides.length?`${rides[0].km} km · ${fmtInt(rides[0].m)} m${rides.length>1?` · +${rides.length-1} more`:""}`:(fut?"Not yet ridden":"No ride logged")}</div>
@@ -5819,6 +5835,77 @@ const _orc=openRaceCard;openRaceCard=function(){
   const _al18=applyLive;applyLive=function(m){_al18(m);loadWx().then(w=>{if(w){renderWx();if(window.TL&&TL.built)tlRender(true);}});};
   setTimeout(()=>{if(LIVE)loadWx().then(w=>{if(w)renderWx();});},3200);
   setInterval(()=>{if(LIVE&&document.visibilityState==="visible")loadWx(true).then(w=>{if(w)renderWx();});},60*60e3);
+})();
+
+
+/* ═══ v5.3 — the weather sits over the week, column for column ═══ */
+(function(){
+  /* one cell per day, on the same seven-column grid as the plan cards */
+  function weekRow(){
+    const band=v4El("weekband");if(!band||!WX)return;
+    const grid=band.querySelector(".wb2");if(!grid)return;
+    let row=band.querySelector(".wxweek");
+    if(!row){row=document.createElement("div");row.className="wxweek";grid.parentNode.insertBefore(row,grid);}
+    const mon=mondayOf(new Date()),todayIso=isoDay(new Date());
+    const best=bestDay((WX.days||[]).filter(d=>{const dd=new Date(d.date);return dd>=mon&&dd<addD(mon,7);}));
+    row.innerHTML=Array.from({length:7},(_,i)=>{
+      const d=addD(mon,i),iso=isoDay(d),w=wxForDay(iso);
+      if(!w)return `<div class="wxc none"><div class="dy">${d.toLocaleDateString("en-GB",{weekday:"short"}).toUpperCase()}</div><div class="ic">·</div><div class="tm">—</div><div class="wd">NO FORECAST</div></div>`;
+      const isBest=best&&best.date===iso,rain=(w.pop||0)>=40;
+      return `<div class="wxc ${iso===todayIso?"today":""} ${isBest?"best":""}" title="${wxName(w.code)} · feels ${Math.round(w.feels!=null?w.feels:w.tmax)}° · gusts ${Math.round(w.gust||w.wind)} km/h">
+        <div class="dy">${d.toLocaleDateString("en-GB",{weekday:"short"}).toUpperCase()}</div>
+        <div class="ic">${wxIcon(w.code)}</div>
+        <div class="tm">${Math.round(w.tmax)}°<i>${Math.round(w.tmin)}</i></div>
+        <div class="wd"><span class="ar" style="transform:rotate(${Math.round((w.dir||0)+180)}deg)">↑</span> ${Math.round(w.wind)} ${compass(w.dir)}</div>
+        <div class="pp ${rain?"on":""}">${rain?Math.round(w.pop)+"% RAIN":""}</div>
+        ${isBest?`<div class="bst">BEST DAY</div>`:""}</div>`;}).join("");
+  }
+  /* on a phone the week band scrolls, so the weather rides inside each card instead */
+  function weekCards(){
+    if(!WX)return;
+    document.querySelectorAll(".wb2 .wbc[data-di]").forEach(card=>{
+      const w=wxForDay(card.dataset.di);
+      const old=card.querySelector(".wxmini");if(old)old.remove();
+      if(!w||!window.matchMedia("(max-width:820px)").matches)return;
+      const el=document.createElement("div");el.className="wxmini";
+      el.innerHTML=`${wxIcon(w.code)} ${Math.round(w.tmax)}° · ${Math.round(w.wind)} ${compass(w.dir)}${(w.pop||0)>=40?` · ${Math.round(w.pop)}%`:""}`;
+      card.appendChild(el);});
+  }
+  const _wr=weekRow;weekRow=function(){_wr();weekCards();};
+  window.matchMedia("(max-width:820px)").addEventListener?.("change",()=>{weekRow();});
+  window.wxWeekRow=weekRow;
+  const _rw=renderWx;renderWx=function(){_rw();weekRow();};
+  const _rb=renderWeekBand;renderWeekBand=function(){_rb();weekRow();};
+  /* the Roadbook's day cards */
+  function roadbookWx(){
+    if(!WX)return;
+    keyDemoCards();
+    document.querySelectorAll("[data-wxday]").forEach(card=>{
+      const w=wxForDay(card.dataset.wxday);
+      const old=card.querySelector(".wxmini");if(old)old.remove();
+      if(!w)return;
+      const el=document.createElement("div");el.className="wxmini";
+      el.innerHTML=`${wxIcon(w.code)} ${Math.round(w.tmax)}° · ${Math.round(w.wind)} ${compass(w.dir)}${(w.pop||0)>=40?` · ${Math.round(w.pop)}%`:""}`;
+      card.appendChild(el);});
+  }
+
+  /* demo cards carry no date; derive one from the weekday label so the chip still lands */
+  function keyDemoCards(){
+    const mon=mondayOf(new Date());
+    document.querySelectorAll("#days .stg").forEach(card=>{
+      if(card.dataset.wxday)return;
+      const lab=card.querySelector(".day");if(!lab)return;
+      const m=/([A-Z]{3})\s+(\d{1,2})/.exec(lab.textContent.trim());if(!m)return;
+      for(let i=0;i<7;i++){const d=addD(mon,i);
+        if(d.getDate()===+m[2]&&d.toLocaleDateString("en-GB",{weekday:"short"}).toUpperCase()===m[1]){card.dataset.wxday=isoDay(d);break;}}
+    });
+  }
+  window.roadbookWx=roadbookWx;
+  const _rdl=window.renderDaysLive;
+  if(_rdl)window.renderDaysLive=function(){_rdl.apply(this,arguments);setTimeout(roadbookWx,30);};
+  const _ss19=showScene;showScene=function(id){_ss19(id);if(id==="plan")setTimeout(roadbookWx,120);if(id==="season")setTimeout(weekRow,120);};
+  const _lw=loadWx;loadWx=async function(f){const r=await _lw(f);if(r){weekRow();roadbookWx();}return r;};
+  setTimeout(()=>{weekRow();roadbookWx();},3600);
 })();
 
 </script>
