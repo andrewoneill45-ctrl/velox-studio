@@ -554,6 +554,19 @@ svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshai
 .stg.planned:hover .foot .acts button{color:#AEBBC6}
 .stg.planned:hover .foot .acts button.dl{color:#FFD100}
 .stg.planned:hover .foot .acts button.x{color:#FF8A7A}
+/* the weather chip inverts with everything else on a flipped card */
+.stg .wxmini{position:relative;z-index:5;transition:background .18s,color .18s,border-color .18s;border:1px solid transparent}
+/* the chip lives in the footer and takes the footer's colours */
+.stg .foot .wxmini{margin:0 0 0 auto;background:transparent;border:none;padding:0 0 0 10px;color:var(--ink2);align-self:flex-end}
+.stg.planned:hover .foot .wxmini{color:#AEBBC6}
+.stg.planned:hover .foot .wxmini .rn{color:#8FB6E8}
+.stg.planned:hover .foot .wxmini svg [fill="#F7F8F7"]{fill:#2A3945}
+.stg.planned:hover .foot .wxmini svg [stroke="#141E28"]{stroke:#DEE7EC}
+.stg.planned:hover .foot .wxmini svg [fill="#E7EBEE"]{fill:#33424E}
+.stg.planned:hover .foot .wxmini svg [stroke="#26496E"]{stroke:#8FB6E8}
+.stg.planned:hover .foot .wxmini svg [fill="#26496E"]{fill:#8FB6E8}
+/* the same on the week band's own dark states */
+.wbc.dark .wxmini,.wbc:hover .wxmini{transition:background .18s,color .18s}
 .stg.planned:hover .openlink{color:#fff}
 /* the sheet fits its frame — no scrolling */
 .sheetin{display:flex;flex-direction:column;overflow:hidden;padding:34px 48px 28px}
@@ -5884,7 +5897,8 @@ const _orc=openRaceCard;openRaceCard=function(){
       if(!w)return;
       const el=document.createElement("div");el.className="wxmini";
       el.innerHTML=`${wxSvg(w.code,13)}<span>${Math.round(w.tmax)}°</span>${wxArrow(w.dir,9)}<span>${Math.round(w.wind)} ${compass(w.dir)}</span>${(w.pop||0)>=40?`<span class="rn">${Math.round(w.pop)}%</span>`:""}`;
-      card.appendChild(el);});
+      const foot=card.querySelector(".foot");
+      (foot||card).appendChild(el);});
   }
 
   /* demo cards carry no date; derive one from the weekday label so the chip still lands */
