@@ -3406,12 +3406,12 @@ async function aiBuild(k,instruction){
   it.focus=document.querySelector("#ai-focus .chp.on")?.dataset.v||it.focus||"Build fitness";
   it.note=document.getElementById("ai-note")?.value??it.note??"";
   const st=document.getElementById("ai-status"),out=document.getElementById("ai-out");
-  st.textContent="Claude is reading last week and your form…";
+  const stopWait=(window.dsWaiting||(()=>()=>{}))(st);
   try{
     const d=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"planweek",context:aiContext(k),instruction:instruction||null})});
-    st.textContent="";
+    stopWait();st.textContent="";
     let plan=d.plan;
-    if(!plan&&d.text){try{const c=d.text.replace(/```json|```/g,"").trim();plan=JSON.parse(c.slice(c.indexOf("{"),c.lastIndexOf("}")+1));}catch(e){}}
+    if(!plan&&d.text){try{const c=d.text.replace(/```json|```/g,"").trim();plan=JSON.parse(c.slice(c.indexOf("{"),c.lastIndexOf("}")+1));}catch(e){stopWait();}}
     if(!plan){out.innerHTML=`<div class="panel" style="padding:22px 26px;margin-top:14px"><div class="aisum">"The plan came back incomplete. Let me try again."</div><button class="aibtn" id="ai-retry">TRY AGAIN</button></div>`;document.getElementById("ai-retry").onclick=()=>aiBuild(k,instruction);return;}
     d.plan=plan;
     AIW.proposal=d.plan;renderProposal(k);
@@ -5961,6 +5961,29 @@ function wxSvg(code,size){
 function wxArrow(dir,size){const s=size||11;
   return `<svg viewBox="0 0 16 16" width="${s}" height="${s}" style="display:block;transform:rotate(${Math.round((dir||0)+180)}deg)"><path d="M8,2 L8,14 M8,2 L4.6,6 M8,2 L11.4,6" fill="none" stroke="#26496E" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>`;}
 
+
+/* ═══ v5.6 — the DS's long jobs run in the background, the page waits properly ═══ */
+(function(){
+  const realFetch=window.fetch.bind(window);
+  window.fetch=async function(input,init){
+    const url=typeof input==="string"?input:(input&&input.url)||"";
+    const res=await realFetch(input,init);
+    if(!/\/api\/coach(\?|$)/.test(url)||!res.ok)return res;
+    let d;try{d=await res.clone().json();}catch(e){return res;}
+    if(!d||!d.job)return res;
+    const started=Date.now();let wait=1200;
+    while(Date.now()-started<180000){
+      await new Promise(r=>setTimeout(r,wait));wait=Math.min(3000,wait*1.15);
+      let j;try{const r2=await realFetch("/api/job?id="+d.job);if(!r2.ok)continue;j=await r2.json();}catch(e){continue;}
+      if(j.state==="done")return new Response(JSON.stringify(j.data),{status:200,headers:{"content-type":"application/json"}});
+      if(j.state==="error")return new Response(JSON.stringify({error:j.error||"the DS could not finish"}),{status:500,headers:{"content-type":"application/json"}});
+    }
+    return new Response(JSON.stringify({error:"the DS is taking longer than usual — try again"}),{status:504,headers:{"content-type":"application/json"}});
+  };
+  const phrases=["reading your last four weeks…","checking readiness and the road ahead…","weighing the evidence base…","writing the week…","checking the numbers add up…"];
+  window.dsWaiting=function(el){if(!el)return()=>{};let i=0;el.textContent="The DS is "+phrases[0];
+    const t=setInterval(()=>{i=(i+1)%phrases.length;el.textContent="The DS is "+phrases[i];},3500);return()=>clearInterval(t);};
+})();
 </script>
 <div id="sheet" class="sheet" style="display:none"><div class="sheetin" id="sheetin"></div></div>
 <script>

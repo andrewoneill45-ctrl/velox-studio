@@ -1,7 +1,6 @@
-import { json, readJSON, getProfile, wellnessSummary, gated } from "./_lib.js";
-export default gated(async (req) => {
+import { json, readJSON, getProfile, wellnessSummary, gated, writeJSON, INTERNAL } from "./_lib.js";
+export async function runCoach(body) {
   if (!process.env.ANTHROPIC_API_KEY) return json({ error: "no_key" }, 501);
-  const body = req.method === "POST" ? await req.json() : {};
   const { mode = "weekly", id = null, event = null, q = null } = body;
   const CARDM = ["weekly", "readiness", "debrief", "ask", "condition", "recon"];
   const CARDRULES = `
@@ -111,4 +110,20 @@ Rules: if wellness.readiness exists, let this morning's readiness shape today an
     } catch {}
   }
   return json({ text });
+}
+
+/* the fast path: short answers still return inline. Long ones are handed to the background. */
+const HEAVY = ["planweek", "build"];
+export default gated(async (req) => {
+  const body = req.method === "POST" ? await req.json() : {};
+  if (HEAVY.includes(body.mode) && !body.inline) {
+    const job = "j" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    await writeJSON(`jobs/${job}.json`, { state: "running", at: new Date().toISOString(), mode: body.mode });
+    const base = process.env.URL;
+    fetch(`${base}/.netlify/functions/coach-background`, { method: "POST",
+      headers: { "content-type": "application/json", ...INTERNAL() }, body: JSON.stringify({ job, body }) }).catch(() => {});
+    return json({ job, state: "running" });
+  }
+  return runCoach(body);
 });
+
