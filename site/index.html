@@ -556,24 +556,36 @@ svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshai
 .stg.planned:hover .foot .acts button.x{color:#FF8A7A}
 /* the weather chip inverts with everything else on a flipped card */
 .stg .wxmini{position:relative;z-index:5;transition:background .18s,color .18s,border-color .18s;border:1px solid transparent}
-/* a ridden card that flips dark takes its footer with it — no white band under the panel */
-.stg:hover:has(.stx) .foot,.stg.pin:has(.stx) .foot{background:#141E28;margin:auto -20px -18px 0;margin-right:-20px;margin-left:-20px;padding:12px 20px 18px;border-radius:0 0 14px 14px}
-.stg:hover:has(.stx) .foot .tss,.stg:hover:has(.stx) .foot .tss small,.stg:hover:has(.stx) .foot .tss b{color:#fff}
-.stg:hover:has(.stx) .foot .acts button{color:#AEBBC6}
-.stg:hover:has(.stx) .foot .acts button.dl{color:#FFD100}
-.stg:hover:has(.stx) .foot .acts button.x{color:#FF8A7A}
-.stg:hover:has(.stx) .foot .wxmini,.stg.pin:has(.stx) .foot .wxmini{color:#AEBBC6}
-.stg:hover:has(.stx) .foot .wxmini .rn{color:#8FB6E8}
-.stg:hover:has(.stx) .foot .wxmini svg [fill="#F7F8F7"]{fill:#2A3945}
-.stg:hover:has(.stx) .foot .wxmini svg [stroke="#141E28"]{stroke:#DEE7EC}
-.stg:hover:has(.stx) .foot .wxmini svg [fill="#E7EBEE"]{fill:#33424E}
-.stg:hover:has(.stx) .foot .wxmini svg [stroke="#26496E"]{stroke:#8FB6E8}
-.stg:hover:has(.stx) .foot .wxmini svg [fill="#26496E"]{fill:#8FB6E8}
-/* and the chip must never push past the card edge */
-.stg .foot{flex-wrap:wrap;gap:6px}
-.stg .foot .wxmini{min-width:0;white-space:nowrap;flex-shrink:1;overflow:hidden}
+/* the card itself flips: no dark panel floating on a white card, no white band, no overflow */
+.stg:hover:has(.stx),.stg.pin:has(.stx),.stg.planned:hover{background:#141E28;border-color:#141E28}
+.stg:hover:has(.stx) .stx,.stg.pin:has(.stx) .stx{background:transparent;inset:0;padding:20px 20px 0;overflow:hidden}
+.stg:hover:has(.stx) .day,.stg.planned:hover .day{color:#8FA0AD}
+.stg:hover:has(.stx) .nm,.stg.planned:hover .nm{color:#F4F6F5}
+.stg:hover:has(.stx) .ds,.stg.planned:hover .ds{color:#AEBBC6}
+.stg:hover:has(.stx) .foot,.stg.pin:has(.stx) .foot,.stg.planned:hover .foot{background:transparent}
+.stg:hover:has(.stx) .foot .tss,.stg:hover:has(.stx) .foot .tss small,.stg:hover:has(.stx) .foot .tss b,
+.stg.planned:hover .foot .tss,.stg.planned:hover .foot .tss small,.stg.planned:hover .foot .tss b{color:#fff}
+.stg:hover:has(.stx) .foot .acts button,.stg.planned:hover .foot .acts button{color:#AEBBC6}
+.stg:hover:has(.stx) .foot .acts button.dl,.stg.planned:hover .foot .acts button.dl{color:#FFD100}
+.stg:hover:has(.stx) .foot .acts button.x,.stg.planned:hover .foot .acts button.x{color:#FF8A7A}
+.stg:hover:has(.stx) .openlink,.stg.planned:hover .openlink{color:#AEBBC6}
+/* the weather chip goes with it */
+.stg:hover:has(.stx) .wxmini,.stg.pin:has(.stx) .wxmini,.stg.planned:hover .wxmini{color:#AEBBC6}
+.stg:hover:has(.stx) .wxmini .rn,.stg.planned:hover .wxmini .rn{color:#8FB6E8}
+.stg:hover:has(.stx) .wxmini svg [fill="#F7F8F7"],.stg.planned:hover .wxmini svg [fill="#F7F8F7"]{fill:#2A3945}
+.stg:hover:has(.stx) .wxmini svg [stroke="#141E28"],.stg.planned:hover .wxmini svg [stroke="#141E28"]{stroke:#DEE7EC}
+.stg:hover:has(.stx) .wxmini svg [fill="#E7EBEE"],.stg.planned:hover .wxmini svg [fill="#E7EBEE"]{fill:#33424E}
+.stg:hover:has(.stx) .wxmini svg [stroke="#26496E"],.stg.planned:hover .wxmini svg [stroke="#26496E"]{stroke:#8FB6E8}
+.stg:hover:has(.stx) .wxmini svg [fill="#26496E"],.stg.planned:hover .wxmini svg [fill="#26496E"]{fill:#8FB6E8}
+.stg .wxmini{min-width:0;white-space:nowrap}
+/* the overlay repeats the ride's name, so the card's own heading steps aside while it shows */
+.stg:hover:has(.stx) .day,.stg:hover:has(.stx) .nm,.stg:hover:has(.stx) .ds,
+.stg.pin:has(.stx) .day,.stg.pin:has(.stx) .nm,.stg.pin:has(.stx) .ds{opacity:0;transition:opacity .15s}
 /* the chip lives in the footer and takes the footer's colours */
-.stg .foot .wxmini{margin:0 0 0 auto;background:transparent;border:none;padding:0 0 0 10px;color:var(--ink2);align-self:flex-end}
+.stg .day{display:flex;align-items:center;gap:8px}
+.stg .day .wxmini{margin-left:auto;background:transparent;border:none;padding:0;color:var(--ink2);font-size:7px}
+.stg .day .wxmini svg{width:11px;height:12px}
+.stg .foot .wxmini{margin:0 0 0 auto;background:transparent;border:none;padding:0;color:var(--ink2)}
 .stg.planned:hover .foot .wxmini{color:#AEBBC6}
 .stg.planned:hover .foot .wxmini .rn{color:#8FB6E8}
 .stg.planned:hover .foot .wxmini svg [fill="#F7F8F7"]{fill:#2A3945}
@@ -5920,8 +5932,8 @@ const _orc=openRaceCard;openRaceCard=function(){
       if(!w)return;
       const el=document.createElement("div");el.className="wxmini";
       el.innerHTML=`${wxSvg(w.code,13)}<span>${Math.round(w.tmax)}°</span>${wxArrow(w.dir,9)}<span>${Math.round(w.wind)} ${compass(w.dir)}</span>${(w.pop||0)>=40?`<span class="rn">${Math.round(w.pop)}%</span>`:""}`;
-      const foot=card.querySelector(".foot");
-      (foot||card).appendChild(el);});
+      const day=card.querySelector(".day");
+      if(day){day.appendChild(el);}else{const foot=card.querySelector(".foot");(foot||card).appendChild(el);}});
   }
 
   /* demo cards carry no date; derive one from the weekday label so the chip still lands */
