@@ -556,6 +556,22 @@ svg#relev{display:block;width:100%;height:52px;touch-action:none;cursor:crosshai
 .stg.planned:hover .foot .acts button.x{color:#FF8A7A}
 /* the weather chip inverts with everything else on a flipped card */
 .stg .wxmini{position:relative;z-index:5;transition:background .18s,color .18s,border-color .18s;border:1px solid transparent}
+/* a ridden card that flips dark takes its footer with it — no white band under the panel */
+.stg:hover:has(.stx) .foot,.stg.pin:has(.stx) .foot{background:#141E28;margin:auto -20px -18px 0;margin-right:-20px;margin-left:-20px;padding:12px 20px 18px;border-radius:0 0 14px 14px}
+.stg:hover:has(.stx) .foot .tss,.stg:hover:has(.stx) .foot .tss small,.stg:hover:has(.stx) .foot .tss b{color:#fff}
+.stg:hover:has(.stx) .foot .acts button{color:#AEBBC6}
+.stg:hover:has(.stx) .foot .acts button.dl{color:#FFD100}
+.stg:hover:has(.stx) .foot .acts button.x{color:#FF8A7A}
+.stg:hover:has(.stx) .foot .wxmini,.stg.pin:has(.stx) .foot .wxmini{color:#AEBBC6}
+.stg:hover:has(.stx) .foot .wxmini .rn{color:#8FB6E8}
+.stg:hover:has(.stx) .foot .wxmini svg [fill="#F7F8F7"]{fill:#2A3945}
+.stg:hover:has(.stx) .foot .wxmini svg [stroke="#141E28"]{stroke:#DEE7EC}
+.stg:hover:has(.stx) .foot .wxmini svg [fill="#E7EBEE"]{fill:#33424E}
+.stg:hover:has(.stx) .foot .wxmini svg [stroke="#26496E"]{stroke:#8FB6E8}
+.stg:hover:has(.stx) .foot .wxmini svg [fill="#26496E"]{fill:#8FB6E8}
+/* and the chip must never push past the card edge */
+.stg .foot{flex-wrap:wrap;gap:6px}
+.stg .foot .wxmini{min-width:0;white-space:nowrap;flex-shrink:1;overflow:hidden}
 /* the chip lives in the footer and takes the footer's colours */
 .stg .foot .wxmini{margin:0 0 0 auto;background:transparent;border:none;padding:0 0 0 10px;color:var(--ink2);align-self:flex-end}
 .stg.planned:hover .foot .wxmini{color:#AEBBC6}
