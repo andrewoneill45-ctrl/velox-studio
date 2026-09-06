@@ -1523,6 +1523,10 @@ details.acc .accin>.panel{box-shadow:none;border:none;padding:0!important;margin
   #model-room{margin-top:0}
   .padd{min-height:36px;display:inline-flex;align-items:center;padding:0 2px}
 }
+
+/* the sky sits behind the ridge and never catches a click */
+#massif #m-sky{pointer-events:none}
+@media(prefers-reduced-motion:reduce){#massif .mcl,#massif .mrain,#massif .mhz{transform:none!important}}
 </style>
 </head>
 <body>
@@ -6174,6 +6178,111 @@ function wxArrow(dir,size){const s=size||11;
       if(words.length>11&&!/%$/.test(words))t.textContent=words.slice(0,10)+"…";
     });
   };
+})();
+
+
+/* ═══ v6.1 — the sky over the massif is your body's weather ═══ */
+const SKYSET={
+  green:{top:"#D9EEE2",mid:"#F3F0DC",hz:"#F4F6F5",sun:"#FFD100",sunY:262,sunR:30,halo:.55,ridge:"#189B69",crest:"#FFD100",far:.55,mid2:.75,cirrus:3,cum:0,strat:0,haze:0,rain:0,dusk:0},
+  amber:{top:"#EAD3AE",mid:"#F5E8D2",hz:"#F4F6F5",sun:"#E9A21C",sunY:286,sunR:28,halo:.5,ridge:"#D99000",crest:"#E9B94A",far:.45,mid2:.65,cirrus:2,cum:4,strat:0,haze:1,rain:0,dusk:0},
+  red:{top:"#2F3D55",mid:"#6C7A93",hz:"#C9B7B2",sun:"#E8611F",sunY:322,sunR:34,halo:.5,ridge:"#E23A2E",crest:"#E8611F",far:.9,mid2:1,cirrus:0,cum:0,strat:5,haze:1,rain:1,dusk:1}
+};
+function skyBand(){
+  const w=window.WELL||(typeof WELL!=="undefined"?WELL:null);const R=w&&w.readiness;if(!R)return null;
+  const st=String(R.state||"").toLowerCase(),sc=+R.score;
+  if(/vert|green/.test(st))return "green";if(/amber/.test(st))return "amber";if(/rouge|red|rest/.test(st))return "red";
+  return sc>=70?"green":sc>=45?"amber":"red";
+}
+let SKYANIM=null,SKYSTATE=null;
+function paintSky(force){
+  const svg=document.getElementById("massif");if(!svg)return;
+  const band=skyBand();
+  if(!band){const old=svg.querySelector("#m-sky");if(old)old.remove();return;}
+  const T=SKYSET[band];
+  if(SKYSTATE===band&&!force&&svg.querySelector("#m-sky"))return recolourRidge(T);
+  SKYSTATE=band;
+  const W=1600,H=560,sunX=1180;
+  const rng=(n,base,amp,seed)=>{const p=[];for(let i=0;i<=n;i++){const x=i/n;p.push(`${(x*W).toFixed(0)},${(H*(base-amp*(Math.sin(x*4.1+seed)*.5+Math.sin(x*9.7+seed*2)*.3+Math.sin(x*23+seed)*.15+.55))).toFixed(0)}`);}return p.join("L");};
+  const cloud=(x,y,w,h,op)=>{let g=`<g class="mcl" data-x="${x}" data-s="${(0.6+h/60).toFixed(2)}" opacity="${op}">`;const n=7;
+    for(let i=0;i<n;i++){const t=i/(n-1),cx=x-w+2*w*t,r=h*(0.85+0.55*Math.sin(t*Math.PI)+((i*7)%3)*0.12),cy=y-r*0.35*Math.sin(t*Math.PI);
+      g+=`<circle cx="${cx.toFixed(0)}" cy="${cy.toFixed(0)}" r="${r.toFixed(0)}" fill="#fff" filter="url(#msoftc)"/>`;}
+    return g+`<ellipse cx="${x}" cy="${y+h*.6}" rx="${w*.95}" ry="${h*.42}" fill="#8E9BA6" opacity=".3" filter="url(#msoftc)"/></g>`;};
+  const stratus=(x,y,w,h,op)=>`<g class="mcl" data-x="${x}" data-s="${(0.35+h/80).toFixed(2)}" opacity="${op}"><ellipse cx="${x}" cy="${y}" rx="${w}" ry="${h}" fill="#1E2A3D" filter="url(#msoft)"/></g>`;
+  let s=`<g id="m-sky"><defs>
+    <linearGradient id="mskyg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${T.top}"/><stop offset=".55" stop-color="${T.mid}"/><stop offset="1" stop-color="${T.hz}"/></linearGradient>
+    <radialGradient id="mhalo" gradientUnits="userSpaceOnUse" cx="${sunX}" cy="${T.sunY}" r="360"><stop offset="0" stop-color="${T.sun}" stop-opacity="${T.halo}"/><stop offset=".35" stop-color="${T.sun}" stop-opacity="${T.halo*.28}"/><stop offset="1" stop-color="${T.sun}" stop-opacity="0"/></radialGradient>
+    <linearGradient id="mveil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity="${T.dusk?.18:.5}"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <linearGradient id="mrain" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DCE3EA" stop-opacity="0"/><stop offset=".4" stop-color="#DCE3EA" stop-opacity=".32"/><stop offset="1" stop-color="#DCE3EA" stop-opacity=".04"/></linearGradient>
+    <linearGradient id="mdusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${T.sun}" stop-opacity="0"/><stop offset=".75" stop-color="${T.sun}" stop-opacity=".22"/><stop offset="1" stop-color="${T.sun}" stop-opacity=".05"/></linearGradient>
+    <filter id="msoft" x="-20%" y="-60%" width="140%" height="220%"><feGaussianBlur stdDeviation="14"/></filter>
+    <filter id="msoftc" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="7"/></filter>
+    <filter id="mcrest" x="-5%" y="-50%" width="110%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+  </defs>
+  <rect width="${W}" height="${H}" fill="url(#mskyg)"/>`;
+  if(T.dusk)s+=`<rect y="${T.sunY-160}" width="${W}" height="${H}" fill="url(#mdusk)"/>`;
+  /* cirrus: long soft strokes, drifting */
+  for(let i=0;i<T.cirrus;i++){const y=238+i*26,x0=120+i*380;s+=`<g class="mcl" data-x="${x0}" data-s="0.25" opacity="${.65-i*.12}"><path d="M${x0},${y} C${x0+200},${y-12} ${x0+420},${y+10} ${x0+620},${y-6}" stroke="#fff" stroke-width="${11-i*2}" stroke-linecap="round" fill="none" filter="url(#msoft)"/></g>`;}
+  /* the sun */
+  s+=`<rect width="${W}" height="${H}" fill="url(#mhalo)"/>`;
+  s+=`<circle id="m-sun" cx="${sunX}" cy="${T.sunY}" r="${T.sunR}" fill="${T.sun}" opacity="${T.dusk?.95:1}"/>`;
+  /* clouds */
+  if(T.cum){s+=cloud(1020,262,150,26,.95)+cloud(1350,244,110,20,.85)+cloud(520,270,140,22,.72)+cloud(780,250,90,16,.6);}
+  if(T.strat){s+=stratus(300,236,340,14,.55)+stratus(900,206,420,16,.6)+stratus(1380,258,300,12,.5)+stratus(620,292,260,10,.45)+stratus(1150,312,360,9,.4);}
+  /* far ranges: weather flattens them, dusk darkens them */
+  const farCol=T.dusk?"#1E2A3D":"#26496E";
+  s+=`<path d="M0,${H}L${rng(80,.62,.16,1.2)}L${W},${H}Z" fill="${farCol}" opacity="${(T.dusk?.55:.10)*T.far}"/>`;
+  s+=`<path d="M0,${H}L${rng(80,.70,.14,2.9)}L${W},${H}Z" fill="${farCol}" opacity="${(T.dusk?.7:.16)*T.mid2}"/>`;
+  if(T.haze)s+=`<g class="mhz" opacity="1"><rect x="-200" y="${H*.56}" width="${W+400}" height="120" fill="url(#mveil)"/></g>`;
+  /* rain: a fine slow veil, only on the red evening */
+  if(T.rain){s+=`<g class="mrain">`;for(let i=0;i<90;i++){const x=(i*18.3+(i%5)*4)%W,y0=200+(i%7)*14,len=140+(i%4)*50;s+=`<line x1="${x+8}" y1="${y0}" x2="${x-6}" y2="${y0+len}" stroke="url(#mrain)" stroke-width="${.8+(i%3)*.3}" stroke-linecap="round"/>`;}s+=`</g>`;}
+  s+=`</g>`;
+  const old=svg.querySelector("#m-sky");if(old)old.remove();
+  svg.insertAdjacentHTML("afterbegin",s);
+  recolourRidge(T);
+  startSky();
+}
+function recolourRidge(T){
+  const svg=document.getElementById("massif");if(!svg)return;
+  const past=svg.querySelector("#mpast");if(!past)return;
+  past.setAttribute("stroke",T.ridge);
+  /* a lit crest along the road ridden */
+  let crest=svg.querySelector("#m-crest");
+  if(!crest){crest=past.cloneNode(false);crest.id="m-crest";past.parentNode.insertBefore(crest,past);}
+  crest.setAttribute("d",past.getAttribute("d"));crest.setAttribute("stroke",T.crest);crest.setAttribute("stroke-width","14");crest.setAttribute("opacity",T.dusk?".28":".45");crest.setAttribute("filter","url(#mcrest)");
+  /* the lollipop: pulse ring and the rider's dot */
+  const circles=[...svg.querySelectorAll("#m-main > circle")];
+  circles.forEach(c=>{if(c.getAttribute("fill")==="none")c.setAttribute("stroke",T.ridge);else if(c.getAttribute("r")==="8")c.setAttribute("fill",T.ridge);});
+  svg.querySelectorAll("#m-main text").forEach(t=>{if(!t.dataset.ink)t.dataset.ink=t.getAttribute("fill")||"#141E28";t.setAttribute("fill",T.dusk?"#F4F6F5":t.dataset.ink);});
+  svg.querySelectorAll("#m-main circle[r='4'],#m-main circle[r='5']").forEach(c=>{if(T.dusk)c.setAttribute("fill","#F4F6F5");});
+}
+/* the sky keeps moving: clouds drift, haze breathes, rain falls, the sun settles */
+function startSky(){
+  if(SKYANIM)cancelAnimationFrame(SKYANIM);
+  if(window.matchMedia("(prefers-reduced-motion:reduce)").matches)return;
+  const t0=performance.now();
+  const tick=now=>{
+    const svg=document.getElementById("massif"),sky=svg&&svg.querySelector("#m-sky");
+    if(!sky){SKYANIM=null;return;}
+    const scene=document.getElementById("scene-season")||document.querySelector("[id*=season]");
+    const visible=!document.hidden&&(!scene||scene.offsetParent!==null);
+    const t=(now-t0)/1000;
+    if(visible){
+      sky.querySelectorAll(".mcl").forEach(g=>{const sp=+g.dataset.s,x0=+g.dataset.x;const dx=((t*6*sp+x0)%2000)-x0-200;g.setAttribute("transform",`translate(${dx.toFixed(1)},${(Math.sin(t*.3+x0)*3).toFixed(1)})`);});
+      const hz=sky.querySelector(".mhz");if(hz)hz.setAttribute("transform",`translate(${(Math.sin(t*.15)*60).toFixed(1)},0)`);
+      const rn=sky.querySelector(".mrain");if(rn)rn.setAttribute("transform",`translate(${(-(t*40)%60).toFixed(1)},${((t*140)%70).toFixed(1)})`);
+      const sun=sky.querySelector("#m-sun");if(sun){const base=+sun.dataset.y||(sun.dataset.y=sun.getAttribute("cy"));sun.setAttribute("cy",(+base-Math.min(14,t*3)+Math.sin(t*.5)*1.5).toFixed(1));}
+    }
+    SKYANIM=requestAnimationFrame(tick);
+  };
+  SKYANIM=requestAnimationFrame(tick);
+}
+/* hook: whenever the massif is drawn or readiness arrives, the sky follows */
+(function(){
+  const _dm=drawMassif;drawMassif=function(){_dm();setTimeout(()=>paintSky(true),40);};
+  const _rr=window.renderReadiness;if(_rr)renderReadiness=function(){_rr.apply(this,arguments);paintSky();};
+  const _ss=showScene;showScene=function(id){_ss(id);if(id==="season")setTimeout(()=>paintSky(),120);};
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden)startSky();});
+  setTimeout(()=>paintSky(true),3000);
 })();
 
 </script>
