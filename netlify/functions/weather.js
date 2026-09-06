@@ -72,7 +72,7 @@ export default gated(async (req) => {
     const c = await climate(lat, lon, date);
     return json({ kind: "climate", lat, lon, day: c ? { date, ...c } : null });
   }
-  const f = await forecast(lat, lon, 10);
+  const f = await forecast(lat, lon, 16);
   const days = (f.daily?.time || []).map((t, i) => ({ date: t, code: f.daily.weather_code[i],
     tmax: f.daily.temperature_2m_max[i], tmin: f.daily.temperature_2m_min[i], feels: f.daily.apparent_temperature_max[i],
     rain: f.daily.precipitation_sum[i], pop: f.daily.precipitation_probability_max[i], wind: f.daily.wind_speed_10m_max[i],
