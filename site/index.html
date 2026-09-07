@@ -1550,6 +1550,14 @@ details.acc .accin>.panel{box-shadow:none;border:none;padding:0!important;margin
 .rbwx{margin:0 0 12px;grid-template-columns:repeat(7,1fr)}
 .rbwx .wxc.none .wd{font-size:6px;letter-spacing:.1em}
 @media(min-width:821px){#days .stg .wxmini{display:none}}
+
+.ftpask .fq{display:flex;flex-wrap:wrap;gap:6px}
+.ftpask .fqb{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.12em;padding:8px 10px;border-radius:9px;border:1px solid var(--line);background:#fff;color:var(--ink2);cursor:pointer;text-align:left}
+.ftpask .fqb:hover{border-color:var(--ink);color:var(--ink)}
+.ftpask .inp{flex:1;min-width:0}
+#ftpans{margin-top:12px}
+#ftpans .thinking{font-family:'Fraunces',serif;font-style:italic;font-size:13px;color:var(--ink2)}
+@media(max-width:820px){.ftpask .fqb{flex:1 1 calc(50% - 4px);min-height:38px}.ftpask .frow{flex-wrap:wrap}.ftpask .inp{flex:1 1 100%}.ftpask .aibtn{width:100%;margin-top:8px}}
 </style>
 </head>
 <body>
@@ -1788,6 +1796,20 @@ details.acc .accin>.panel{box-shadow:none;border:none;padding:0!important;margin
     <div id="ftplog"></div>
     <div class="dsect" style="margin:16px 0 4px">SUGGESTED eFTP</div>
     <div id="eftpbox" style="display:none"></div>
+    <div class="dsect" style="margin:16px 0 4px">ASK THE DS ABOUT YOUR ENGINE</div>
+    <div id="ftpask" class="ftpask">
+      <div class="fq">
+        <button class="fqb" data-q="Where is my FTP actually going, and is 205 W by Nice realistic?">IS MY TARGET REALISTIC?</button>
+        <button class="fqb" data-q="What is the single biggest limiter in my power profile right now, and what sessions fix it?">WHAT'S MY LIMITER?</button>
+        <button class="fqb" data-q="What test or effort should I do next to give eFTP something to read, and when?">HOW DO I TEST?</button>
+        <button class="fqb" data-q="Is my FTP the number holding me back for Nice, or is it durability and weight?">FTP OR DURABILITY?</button>
+      </div>
+      <div class="frow" style="gap:8px;align-items:stretch;margin-top:10px">
+        <input class="inp" id="ftpq" placeholder="Ask about your power, your progress, what to do next…"/>
+        <button class="aibtn" id="ftpaskb" style="background:var(--ink);flex:none">ASK</button>
+      </div>
+      <div id="ftpans"></div>
+    </div>
   </div>
   <div class="dsect">BODY</div>
   <div class="dcard">
@@ -6349,6 +6371,49 @@ function startSky(){
   const _rw=window.roadbookWx||roadbookWx;window.roadbookWx=roadbookWx=function(){_rw();roadbookRow();};
   const _lw=loadWx;loadWx=async function(f){const r=await _lw(f);if(r)roadbookRow();return r;};
   window.matchMedia("(max-width:820px)").addEventListener?.("change",()=>roadbookWx());
+})();
+
+
+/* ═══ v6.3 — ask the DS about the engine, from inside the FTP card ═══ */
+(function(){
+  function enginePack(){
+    const E=(typeof EFTP!=="undefined"&&EFTP)||window.EFTP||null;
+    const curve=(E&&E.curve)||[],pick=d=>{const c=curve.find(x=>x.dur===d);return c&&c.all?{all:c.all.w,season:c.season&&c.season.w,recent:c.recent&&c.recent.w,when:c.all.d,ride:c.all.nm}:null;};
+    const pm=(typeof pmcFromActs==="function"?pmcFromActs():[])||[],last=pm[pm.length-1]||{};
+    const evs=(typeof fut==="function"?fut():[]).slice(0,3).map(e=>({name:e.name,date:e.date,days:e.days||1,pr:e.pr,J:J(e)}));
+    const sc=(typeof committedScenario==="function"&&committedScenario())||null;
+    return {
+      ftp:{current:S.ftp,weight:S.weight,wkg:+(S.ftp/S.weight).toFixed(2),startFtp:typeof startFtp!=="undefined"?startFtp:null,
+        history:(FTPLOG||[]).slice(-6).map(f=>({date:f.date||f.d,ftp:f.ftp??f.v,source:f.src||f.s})),target:S.tgt&&S.tgt.ftp},
+      eftp:E?{suggested:E.suggest,reason:E.reason,ridesRead:E.cached,windowDays:E.windowDays,evidenceAgeDays:E.ageDays}:null,
+      powerCurve:{"5s":pick(5),"1min":pick(60),"5min":pick(300),"12min":pick(720),"20min":pick(1200),"60min":pick(3600)},
+      condition:{ctl:Math.round(last.ctl||0),atl:Math.round(last.atl||0),tsb:Math.round(last.tsb||0),
+        weeklyTss:typeof recentWeeklyTss==="function"?Math.round(recentWeeklyTss()):null},
+      readiness:((typeof WELL!=="undefined"&&WELL)||window.WELL||{}).readiness||null,
+      scenario:sc?{hours:sc.hours,shape:sc.shape,ramp:sc.ramp,rest:sc.rest,targetWeight:sc.weight}:null,
+      events:evs
+    };
+  }
+  async function askEngine(q){
+    const box=document.getElementById("ftpans");if(!box)return;
+    box.innerHTML=`<div class="thinking">The DS is reading your power…</div>`;
+    const stop=(window.dsWaiting||(()=>()=>{}))(box.querySelector(".thinking"));
+    try{
+      const d=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},
+        body:JSON.stringify({mode:"ask",q:(q||"Read my engine. Where is my FTP going, what is the limiter, and what should I do about it?")+
+          "\\n\\nAnswer about this rider's power specifically, using the numbers below. Be concrete: name durations, watts and sessions. If the evidence is thin, say what effort would give eFTP something to read.\\n\\nENGINE:\\n"+JSON.stringify(enginePack())})});
+      stop();dsRender(box,d);
+    }catch(e){stop();box.innerHTML=`<div class="thinking">The DS could not answer — ${String(e.message||e)}</div>`;}
+  }
+  window.askEngine=askEngine;
+  document.addEventListener("click",e=>{
+    const b=e.target.closest&&e.target.closest(".ftpask .fqb");
+    if(b){e.preventDefault();const i=document.getElementById("ftpq");if(i)i.value=b.dataset.q;askEngine(b.dataset.q);return;}
+    if(e.target&&e.target.id==="ftpaskb"){e.preventDefault();askEngine(document.getElementById("ftpq").value);}
+  });
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Enter"&&e.target&&e.target.id==="ftpq"){e.preventDefault();askEngine(e.target.value);}
+  });
 })();
 
 </script>
