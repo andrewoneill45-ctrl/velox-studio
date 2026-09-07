@@ -2,7 +2,7 @@ import { json, readJSON, getProfile, wellnessSummary, gated, writeJSON, INTERNAL
 export async function runCoach(body) {
   if (!process.env.ANTHROPIC_API_KEY) return json({ error: "no_key" }, 501);
   const { mode = "weekly", id = null, event = null, q = null } = body;
-  const CARDM = ["weekly", "readiness", "debrief", "ask", "condition", "recon"];
+  const CARDM = ["weekly", "readiness", "debrief", "ask", "condition", "recon", "engine"];
   const CARDRULES = `
 OUTPUT FORMAT — respond with ONLY this JSON object, no fences, nothing outside it:
 {"headline": string (≤16 words, the verdict, second person, plain English),
@@ -55,6 +55,19 @@ OUTPUT FORMAT — respond with ONLY this JSON object, no fences, nothing outside
       const avg = a => Math.round(a.reduce((x, y) => x + y, 0) / (a.length || 1));
       context.quarters = [avg(sl([0, .25])), avg(sl([.25, .5])), avg(sl([.5, .75])), avg(sl([.75, 1]))]; }
     ask = `The rider asks about this ride: "${q}". Answer directly and specifically from the data, under 120 words.`;
+  } else if (mode === "engine") {
+    /* the rider's power, and nothing else: they asked from the FTP card */
+    context = { engine: body.engine || {}, wellness };
+    ask = `The rider is looking at their FTP and power curve and asks: "${q || "read my engine"}".
+
+Answer THAT question about THEIR power. Rules:
+- Use the numbers in ENGINE. Name durations, watts, dates and rides. Never speak generally.
+- If eFTP is withholding a suggestion, explain what specific effort would give it something to read, and on which day.
+- Where you prescribe, give watts or a % of their current FTP, a duration and a day.
+- If their question is about a target, say plainly whether the trend supports it and what rate of gain it needs.
+- If the honest answer is that FTP is not their limiter, say so and name what is.
+- Do not summarise their training week. Do not give a general condition report.
+Fill the card: headline = the answer in one line, stats = the two or three numbers that matter to it, points = DO / WHY / WATCH / NEXT.`;
   } else if (mode === "condition") {
     context.recent = { pmcTail: (metrics.pmc || []).slice(-21), weeks: metrics.weeks, curWeek: metrics.curWeek,
       bests: metrics.bests, tssSeason: metrics.tssSeason, chain: metrics.chain, zones28: metrics.zones28 };
@@ -81,7 +94,7 @@ OUTPUT FORMAT — respond with ONLY this JSON object, no fences, nothing outside
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "content-type": "application/json", "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
-    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "planweek" ? 2400 : mode === "build" ? 3600 : CARDM.includes(mode) ? 1400 : 700,
+    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "planweek" ? 2400 : mode === "build" ? 3600 : mode === "engine" ? 1100 : CARDM.includes(mode) ? 1400 : 700,
       system: (mode === "build" ? `You are The DS, planning a periodised BUILD from today to a goal for one amateur rider. Respond with ONLY a JSON object, no fences:
 {"summary": string (2-3 sentences: the shape of the build and why, naming evidence used),
  "phases": [{"name":"Base"|"Build"|"Specific"|"Trip"|"Recover"|"Taper"|"Event","weeks":number,"focus":string ≤18 words}],
