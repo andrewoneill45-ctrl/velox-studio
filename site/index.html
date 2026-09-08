@@ -4733,7 +4733,10 @@ function openSession(di,idx){
   const r=v4El("sh-recon");if(r)r.onclick=()=>{close();rcStage=p.stage||1;openRecon(ev.id);};
   v4El("sh-del").onclick=()=>{S.plan[di].splice(idx||0,1);if(!S.plan[di].length)delete S.plan[di];saveProfile();close();if(window.TL&&TL.built){tlRender(true);}drawMassif();drawTraj();renderV4();};
   v4El("sh-adjb").onclick=async()=>{const v=v4El("sh-adj").value.trim();if(!v)return;const out=v4El("sh-ai");out.innerHTML='<div class="ds">The DS is reworking the session…</div>';
-    try{const d=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"ask",q:`Adjust this planned session on ${di}: "${p.nm}" (${p.type}, ${p.mins} min, ${p.tss} TSS; steps ${JSON.stringify(steps)}). Instruction: ${v}. Return the replacement as one session in "sessions" with full steps, dated ${di}.`})});
+    try{const d=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"session",date:di,q:v,
+        session:{name:p.nm,type:p.type,mins:+p.mins||0,tss:+p.tss||0,detail:p.detail||"",steps:steps},
+        weekTarget:(typeof wkTarget==="function"?wkTarget(CURWK):null),
+        weekPlanned:Object.entries(S.plan||{}).filter(([k])=>k>=isoDay(mondayOf(new Date(di+"T12:00:00")))&&k<=isoDay(addD(mondayOf(new Date(di+"T12:00:00")),6))).reduce((a,[,v2])=>a+v2.reduce((x,y)=>x+(+y.tss||0),0),0)})});
       dsRender(out,d);const b=out.querySelector("[data-dsall]");
       if(b&&d.card&&d.card.sessions&&d.card.sessions[0]){b.textContent="REPLACE THIS SESSION";b.onclick=()=>{const x=d.card.sessions[0];S.plan[di][idx||0]={nm:x.name,tss:+x.tss||0,type:x.type||p.type,mins:+x.mins||0,detail:x.detail||"",steps:x.steps||null,ai:true};saveProfile();openSession(di,idx);if(window.TL&&TL.built)tlRender(true);drawMassif();drawTraj();};}}
     catch(e){out.innerHTML=`<div class="ds">Coach offline — ${e.message||e}</div>`;}};
@@ -4873,7 +4876,7 @@ async function openJersey(id){
   const show=t=>{const d=v4El("jds");if(d)d.innerHTML=t;};
   if(cached){show(cached);return;}
   if(!(LIVE&&COACH)){show("Connect the DS for advice on this classification.");return;}
-  try{const d=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"ask",q:`The ${k.n} (${k.c.toLowerCase()}) classification: ${c.line} In two sentences, how do I ${R.worn===id?"defend":"win"} it over the next four weeks, grounded in the evidence base? No sessions list.`})});
+  try{const d=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"jersey",jersey:{name:k.n,standing:c&&c.v,unit:c&&c.u},q:`The ${k.n} (${k.c.toLowerCase()}) classification: ${c.line} In two sentences, how do I ${R.worn===id?"defend":"win"} it over the next four weeks, grounded in the evidence base? No sessions list.`})});
     let card=d.card;if(!card&&d.text){try{const c=d.text.replace(/```json|```/g,"").trim();card=JSON.parse(c.slice(c.indexOf("{"),c.lastIndexOf("}")+1));}catch(e){const h=d.text.match(/"headline"\s*:\s*"([^"]+)"/);const ps=[...d.text.matchAll(/"x"\s*:\s*"([^"]+)"/g)].map(x=>x[1]);if(h)card={headline:h[1],points:ps.map(x=>({x}))};}}
     const t=card?`<b>${card.headline}</b> ${(card.points||[]).slice(0,2).map(p=>md(p.x).replace(/<\/?p>/g,"")).join(" ")}`:md(d.text);
     localStorage.setItem(ck,t);show(t);}catch(e){show("The DS is offline right now.");}

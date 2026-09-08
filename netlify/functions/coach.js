@@ -2,7 +2,7 @@ import { json, readJSON, getProfile, wellnessSummary, gated, writeJSON, INTERNAL
 export async function runCoach(body) {
   if (!process.env.ANTHROPIC_API_KEY) return json({ error: "no_key" }, 501);
   const { mode = "weekly", id = null, event = null, q = null } = body;
-  const CARDM = ["weekly", "readiness", "debrief", "ask", "condition", "recon", "engine"];
+  const CARDM = ["weekly", "readiness", "debrief", "ask", "condition", "recon", "engine", "session", "jersey"];
   const CARDRULES = `
 OUTPUT FORMAT — respond with ONLY this JSON object, no fences, nothing outside it:
 {"headline": string (≤16 words, the verdict, second person, plain English),
@@ -55,6 +55,25 @@ OUTPUT FORMAT — respond with ONLY this JSON object, no fences, nothing outside
       const avg = a => Math.round(a.reduce((x, y) => x + y, 0) / (a.length || 1));
       context.quarters = [avg(sl([0, .25])), avg(sl([.25, .5])), avg(sl([.5, .75])), avg(sl([.75, 1]))]; }
     ask = `The rider asks about this ride: "${q}". Answer directly and specifically from the data, under 120 words.`;
+  } else if (mode === "session") {
+    /* one planned session, reworked to the rider's instruction — nothing else */
+    const S0 = body.session || {};
+    context = { session: S0, date: body.date || null, wellness,
+      week: { target: body.weekTarget || null, plannedSoFar: body.weekPlanned || null },
+      profile: { ftp: prof.ftp, weight: prof.weight, zones: prof.tgt } };
+    ask = `The rider is looking at this planned session and asks for it to be changed: "${q}".
+
+Rework THIS session only. Rules:
+- Keep it the same day. Change duration, structure or intensity exactly as asked.
+- If they ask for a shorter session, keep the purpose and cut the right part: trim warm-up and cool-down first, then reduce repeats, never turn a threshold session into a spin unless they asked for that.
+- Recalculate mins and TSS honestly for what you prescribe.
+- Give the full step list with watts (a number, not a range) and seconds for every step, warm-up and cool-down included.
+- headline = the new session in one line. points = DO (the session in a sentence), WHY (what you kept and what you dropped, and why).
+- Put the replacement in "sessions" as a single entry dated ${body.date || "the same day"} with name, type, mins, tss, detail and steps.
+Do not summarise the rider's week, fitness or form.`;
+  } else if (mode === "jersey") {
+    context = { jersey: body.jersey || {}, wellness };
+    ask = `The rider holds the ${body.jersey && body.jersey.name || "jersey"} classification and asks: "${q || "how do I defend it?"}". Answer in two or three sentences about that classification only — what earns points in it, where they stand, and the next ride that would defend or extend it. No general training summary.`;
   } else if (mode === "engine") {
     /* the rider's power, and nothing else: they asked from the FTP card */
     context = { engine: body.engine || {}, wellness };
@@ -68,6 +87,11 @@ Answer THAT question about THEIR power. Rules:
 - If the honest answer is that FTP is not their limiter, say so and name what is.
 - Do not summarise their training week. Do not give a general condition report.
 Fill the card: headline = the answer in one line, stats = the two or three numbers that matter to it, points = DO / WHY / WATCH / NEXT.`;
+  } else if (mode === "ask") {
+    /* a question with no ride attached: answer the question, do not fall through to the weekly card */
+    context.recent = { pmcTail: (metrics.pmc || []).slice(-14), weeks: metrics.weeks, bests: metrics.bests };
+    context.extra = body.context || null;
+    ask = `The rider asks: "${q}". Answer that question directly from the data, under 140 words. Do not write a general weekly summary unless that is what they asked for.`;
   } else if (mode === "condition") {
     context.recent = { pmcTail: (metrics.pmc || []).slice(-21), weeks: metrics.weeks, curWeek: metrics.curWeek,
       bests: metrics.bests, tssSeason: metrics.tssSeason, chain: metrics.chain, zones28: metrics.zones28 };
@@ -94,7 +118,7 @@ Fill the card: headline = the answer in one line, stats = the two or three numbe
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "content-type": "application/json", "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
-    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "planweek" ? 2400 : mode === "build" ? 3600 : mode === "engine" ? 1100 : CARDM.includes(mode) ? 1400 : 700,
+    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "planweek" ? 2400 : mode === "build" ? 3600 : mode === "engine" ? 1100 : mode === "session" ? 1300 : mode === "jersey" ? 500 : CARDM.includes(mode) ? 1400 : 700,
       system: (mode === "build" ? `You are The DS, planning a periodised BUILD from today to a goal for one amateur rider. Respond with ONLY a JSON object, no fences:
 {"summary": string (2-3 sentences: the shape of the build and why, naming evidence used),
  "phases": [{"name":"Base"|"Build"|"Specific"|"Trip"|"Recover"|"Taper"|"Event","weeks":number,"focus":string ≤18 words}],
