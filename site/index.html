@@ -1587,6 +1587,31 @@ details.acc .accin>.panel{box-shadow:none;border:none;padding:0!important;margin
 
 .wfmode{display:flex;gap:6px;margin:8px 0 4px}
 .wfmode .rc-tab{flex:1;text-align:center}
+
+/* ── heart rate in the ride read ── */
+.rzh{font-family:'Space Grotesk';font-size:9.5px;font-weight:700;letter-spacing:.22em;color:var(--mist);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.rzh .rzl{font-size:8px;letter-spacing:.14em;color:var(--ink2);background:var(--hair);padding:3px 7px;border-radius:6px}
+.hzrow{display:grid;grid-template-columns:10px 26px 92px 1fr 54px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px dashed var(--hair)}
+.hzrow .zd{width:10px;height:10px;border-radius:3px}
+.hzrow .zn{font-family:'Archivo';font-weight:900;font-size:12px}
+.hzrow .znm{font-size:11.5px;color:var(--ink2)}
+.hbars{display:flex;flex-direction:column;gap:4px;min-width:0}
+.hb{position:relative;height:13px;border-radius:4px;background:var(--hair);overflow:hidden}
+.hb i{position:absolute;left:0;top:0;bottom:0;border-radius:4px}
+.hb b{position:absolute;right:6px;top:0;line-height:13px;font-family:'Space Grotesk';font-size:7px;font-weight:700;letter-spacing:.1em;color:var(--ink2)}
+.hzrow .zt{font-family:'Space Grotesk';font-size:9px;font-weight:700;color:var(--ink2);text-align:right}
+.hrfoot{font-family:'Fraunces',serif;font-style:italic;font-size:13px;color:var(--ink2);margin-top:14px;line-height:1.55}
+.hrfoot b{font-family:'Archivo';font-style:normal;font-weight:900;font-size:15px;color:var(--ink)}
+.brow{display:grid;grid-template-columns:56px 1fr 62px 58px 58px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px dashed var(--hair)}
+.brow .bd{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.12em;color:var(--mist)}
+.brow .bbar{height:8px;border-radius:4px;background:var(--hair);overflow:hidden}
+.brow .bbar i{display:block;height:100%;background:linear-gradient(90deg,var(--bleu),var(--ember))}
+.brow .bw{font-family:'Archivo';font-weight:900;font-size:14px;text-align:right}
+.brow .bw small{font-family:'Space Grotesk';font-size:8px;color:var(--mist)}
+.brow .bp,.brow .bh{font-family:'Space Grotesk';font-size:9px;font-weight:700;color:var(--ink2);text-align:right}
+.brow .bh{color:var(--polka)}
+@media(max-width:820px){.hzrow{grid-template-columns:10px 24px 1fr 46px;row-gap:6px}.hzrow .znm{display:none}
+  .brow{grid-template-columns:48px 1fr 54px 50px;}.brow .bh{display:none}}
 </style>
 </head>
 <body>
@@ -6629,6 +6654,110 @@ function startSky(){
     _br(ev,c);setTimeout(()=>{if(WFMODE==="avg")refreshAvg();else scopeRead();},40);
   };
   setTimeout(()=>{if(CUR()){refreshAvg();scopeRead();}},1500);
+})();
+
+
+/* ═══ v6.6 — the ride read: heart rate beside power ═══ */
+const HRZ=[["Z1","Recovery",0,.81,"#93A0AB"],["Z2","Endurance",.81,.90,"#26496E"],["Z3","Tempo",.90,.94,"#189B69"],
+           ["Z4","Threshold",.94,1.00,"#D99000"],["Z5","VO₂ and above",1.00,9,"#E23A2E"]];
+function lthr(){return +S.lthr||Math.round((+S.maxhr||190)*0.91);}
+function hrZoneOf(h){const L=lthr(),r=h/L;return HRZ.findIndex(z=>r>=z[2]&&r<z[3]);}
+function rideHasHR(){return (STREAM||[]).some(d=>d.hr>30);}
+/* the best sustained effort at each duration inside this one ride */
+function rideBests(){
+  const w=(STREAM||[]).map(d=>d.pw||0),h=(STREAM||[]).map(d=>d.hr||0);
+  const n=w.length;if(!n)return [];
+  const dt=(window.RIDESECS&&RIDESECS/n)||((RIDES[curRide]&&RIDES[curRide].secs)?RIDES[curRide].secs/n:2);
+  const out=[];
+  [30,60,300,600,1200].forEach(secs=>{
+    const k=Math.max(2,Math.round(secs/dt));if(k>n)return;
+    let sum=0,hsum=0,best=-1,bi=0,hAt=0;
+    for(let i=0;i<n;i++){sum+=w[i];hsum+=h[i];
+      if(i>=k){sum-=w[i-k];hsum-=h[i-k];}
+      if(i>=k-1){const a=sum/k;if(a>best){best=a;bi=i-k+1;hAt=hsum/k;}}}
+    if(best>0)out.push({secs,w:Math.round(best),hr:Math.round(hAt),at:bi/n});
+  });
+  return out;
+}
+/* how far heart rate drifted for the same power: the honest durability read */
+function rideDecouple(){
+  const S1=(STREAM||[]).filter(d=>d.pw>0&&d.hr>30);if(S1.length<60)return null;
+  const half=Math.floor(S1.length/2);
+  const ef=a=>{const p=a.reduce((x,d)=>x+d.pw,0)/a.length,hh=a.reduce((x,d)=>x+d.hr,0)/a.length;return hh?p/hh:null;};
+  const a=ef(S1.slice(0,half)),b=ef(S1.slice(half));
+  if(!a||!b)return null;
+  return {pct:+(((a-b)/a)*100).toFixed(1),first:+a.toFixed(2),second:+b.toFixed(2)};
+}
+function renderHRZones(){
+  let host=document.getElementById("rhrzones");
+  const zonesEl=document.getElementById("rzones");
+  if(!zonesEl)return;
+  if(!host){host=document.createElement("div");host.id="rhrzones";host.className=zonesEl.className;
+    zonesEl.parentNode.insertBefore(host,zonesEl.nextSibling);}
+  if(!rideHasHR()){host.innerHTML=`<h3 class="rzh">TIME IN HEART-RATE ZONE</h3><div class="ds">No heart rate recorded on this ride.</div>`;return;}
+  const counts=new Array(HRZ.length).fill(0);
+  STREAM.forEach(d=>{if(d.hr>30){const i=hrZoneOf(d.hr);if(i>=0)counts[i]++;}});
+  const tot=counts.reduce((a,b)=>a+b,0)||1;
+  /* the same ride in power terms, so the two can be read against each other */
+  const pc=new Array(ZONES.length).fill(0);
+  STREAM.forEach(d=>{const i=ZONES.findIndex(z=>d.pw>=z.min&&d.pw<z.max);if(i>=0)pc[i]++;});
+  const ptot=pc.reduce((a,b)=>a+b,0)||1;
+  const pwrEquiv=[pc[0],pc[1],pc[2],pc[3],pc.slice(4).reduce((a,b)=>a+b,0)];
+  const secs=n=>{const t=(RIDES[curRide]&&RIDES[curRide].secs)||STREAM.length*2;return Math.round(n/(STREAM.length||1)*t);};
+  const hm=s=>`${Math.floor(s/3600)?Math.floor(s/3600)+"h":""}${String(Math.floor(s%3600/60)).padStart(2,"0")}m`;
+  const dec=rideDecouple();
+  host.innerHTML=`<h3 class="rzh">TIME IN HEART-RATE ZONE <span class="rzl">LTHR ${lthr()} BPM</span></h3>`+
+    HRZ.map((z,i)=>{
+      const pct=Math.round(counts[i]/tot*100),ppct=Math.round(pwrEquiv[i]/ptot*100);
+      return `<div class="hzrow">
+        <div class="zd" style="background:${z[4]}"></div>
+        <span class="zn">${z[0]}</span><span class="znm">${z[1]}</span>
+        <div class="hbars">
+          <div class="hb"><i style="width:${pct}%;background:${z[4]}"></i><b>HR ${pct}%</b></div>
+          <div class="hb pw"><i style="width:${ppct}%;background:${z[4]};opacity:.45"></i><b>POWER ${ppct}%</b></div>
+        </div>
+        <span class="zt">${hm(secs(counts[i]))}</span></div>`;}).join("")+
+    (dec?`<div class="hrfoot"><b>${dec.pct>0?"+":""}${dec.pct}%</b> decoupling — power-to-heart-rate ${dec.first} in the first half, ${dec.second} in the second. ${
+      dec.pct<=5?"That is a durable ride: your heart held the same power to the end."
+      :dec.pct<=10?"A little drift: normal on a long or warm day, worth watching if it repeats when fresh."
+      :"Heart rate climbed for the same power — the ride ran past your endurance, or you were under-fuelled."}</div>`:"");
+}
+/* the key efforts inside the ride, with the heart rate that went with them */
+function renderRideBests(){
+  let host=document.getElementById("rbests");
+  const segs=document.getElementById("rsegs");if(!segs)return;
+  if(!host){host=document.createElement("div");host.id="rbests";host.className=segs.className;
+    segs.parentNode.insertBefore(host,segs);}
+  const B=rideBests();
+  if(!B.length){host.innerHTML="";return;}
+  const lbl=s=>s<60?s+" SEC":s<3600?Math.round(s/60)+" MIN":Math.round(s/3600)+" H";
+  host.innerHTML=`<h3 class="rzh">THE EFFORTS IN THIS RIDE</h3>`+B.map(b=>{
+    const pctFtp=Math.round(b.w/(S.ftp||185)*100);
+    return `<div class="brow"><span class="bd">${lbl(b.secs)}</span>
+      <div class="bbar"><i style="width:${Math.min(100,pctFtp/1.6)}%"></i></div>
+      <span class="bw">${b.w}<small> W</small></span>
+      <span class="bp">${pctFtp}% FTP</span>
+      <span class="bh">${b.hr?b.hr+" bpm":"—"}</span></div>`;}).join("");
+}
+/* heart rate drawn over the power trace */
+function drawHRTrace(){
+  const svg=document.getElementById("rwave");if(!svg||!rideHasHR())return;
+  const W=1200,H=170,pt=12,pb=16;
+  const data=STREAM.filter((_,i)=>i%2===0),hrs=data.map(d=>d.hr||0);
+  const valid=hrs.filter(h=>h>30);if(valid.length<10)return;
+  const lo=Math.min(...valid)*0.94,hi=Math.max(...valid)*1.04;
+  const px=i=>i/(hrs.length-1)*W,py=v=>H-pb-((v-lo)/(hi-lo))*(H-pt-pb);
+  let d="",started=false;
+  hrs.forEach((h,i)=>{if(h>30){d+=(started?"L":"M")+px(i).toFixed(1)+","+py(h).toFixed(1);started=true;}else started=false;});
+  const old=svg.querySelector("#rwave-hr");if(old)old.remove();
+  svg.insertAdjacentHTML("beforeend",`<g id="rwave-hr"><path d="${d}" fill="none" stroke="#E23A2E" stroke-width="1.6" stroke-opacity=".85" stroke-linejoin="round"/>
+    <text x="${W-4}" y="${py(Math.max(...valid))-4}" text-anchor="end" font-family="Space Grotesk" font-size="9" font-weight="700" fill="#E23A2E">${Math.round(Math.max(...valid))} BPM</text></g>`);
+}
+(function(){
+  const _lr=loadRide;loadRide=async function(){const r=await _lr.apply(this,arguments);
+    setTimeout(()=>{try{renderHRZones();renderRideBests();drawHRTrace();}catch(e){}},120);return r;};
+  const _dw=drawWave;drawWave=function(){_dw.apply(this,arguments);setTimeout(drawHRTrace,20);};
+  setTimeout(()=>{try{renderHRZones();renderRideBests();drawHRTrace();}catch(e){}},3000);
 })();
 
 </script>
