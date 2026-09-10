@@ -1564,6 +1564,29 @@ details.acc .accin>.panel{box-shadow:none;border:none;padding:0!important;margin
 .ftpask .ftprow .inp{flex:1 1 auto;width:auto;min-width:0;max-width:none;padding:11px 13px;font-size:12.5px;font-family:Inter,sans-serif;font-weight:500;letter-spacing:0}
 .ftpask .ftprow .aibtn{flex:0 0 auto;padding:11px 16px}
 @media(max-width:820px){.ftpask .ftprow{flex-wrap:wrap}.ftpask .ftprow .inp{flex:1 1 100%}.ftpask .ftprow .aibtn{flex:1 1 100%}}
+
+/* nothing empty may take up space */
+.panel:empty,.wrap:empty,.strip:empty,#wxstrip:empty,.statusline:empty,.dispatch:empty{display:none!important}
+#uhpanel:not(#src-tidy #uhpanel){display:none}
+#src-tidy #uhpanel{display:block}
+
+/* the flip says the essentials and stops */
+.stg .stx{-webkit-line-clamp:5;font-size:12px;line-height:1.5}
+.stg .stx b{font-size:13px}
+.stg .stx .stxgo{display:inline-block;margin-top:8px;font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.16em;opacity:.65}
+@media(max-width:820px){.stg .stx{-webkit-line-clamp:4}}
+
+.evlegs{display:flex;flex-direction:column;gap:6px}
+.evleg{display:grid;grid-template-columns:52px 1fr 1fr;gap:8px;align-items:center}
+.evleg .d{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.12em;color:var(--mist)}
+.evleg .u{position:relative}
+.evleg .u input{width:100%;max-width:none;padding-right:30px}
+.evleg .u span{position:absolute;right:9px;top:50%;transform:translateY(-50%);font-family:'Space Grotesk';font-size:8px;font-weight:700;color:var(--mist);pointer-events:none}
+.evlegsum{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.12em;color:var(--ink2);margin-top:8px}
+@media(max-width:820px){.evleg{grid-template-columns:44px 1fr 1fr}}
+
+.wfmode{display:flex;gap:6px;margin:8px 0 4px}
+.wfmode .rc-tab{flex:1;text-align:center}
 </style>
 </head>
 <body>
@@ -1846,6 +1869,11 @@ details.acc .accin>.panel{box-shadow:none;border:none;padding:0!important;margin
     <div class="frow"><span class="fl">PRIORITY</span><select class="inp" id="ev-pr"><option>A</option><option selected>B</option><option>C</option></select></div>
     <div class="frow"><span class="fl">FORMAT</span><select class="inp" id="ev-kind"><option value="day">Race / single day</option><option value="trip">Multi-day trip</option></select></div>
     <div class="frow" id="ev-daysrow" style="display:none"><span class="fl">DAYS RIDING</span><input class="inp" id="ev-days" type="number" value="4" min="2" max="14" style="width:84px"/></div>
+    <div id="ev-legsrow" style="display:none">
+      <div class="frow" style="align-items:flex-start"><span class="fl" style="margin-top:8px">EACH DAY</span>
+        <div style="flex:1;min-width:0"><div id="ev-legs" class="evlegs"></div>
+          <div class="evlegsum" id="ev-legsum"></div></div></div>
+    </div>
     <div class="frow" style="align-items:flex-start"><span class="fl" style="margin-top:8px">PURPOSE</span><input class="inp" id="ev-purpose" placeholder="Four days with friends — big cols, café stops, arrive fit enough to enjoy it" style="max-width:none;flex:1"/></div>
     <button class="logbtn" id="ev-add">ADD TO THE SEASON</button>
   </div>
@@ -1892,6 +1920,22 @@ details.acc .accin>.panel{box-shadow:none;border:none;padding:0!important;margin
         <div class="wf" id="wf-cdawrap"><div class="wl"><span>AERO · CdA</span><b id="wfv-cda">0.32</b></div><input type="range" id="wf-cda" min="0.24" max="0.42" step="0.01" value="0.32"/></div>
         <div class="rc-gread" style="align-items:center"><span>FTP ON THE DAY</span><span style="display:flex;gap:6px;align-items:center"><input id="wf-ftpin" type="number" style="width:70px;background:#0E151C;border:1px solid rgba(255,255,255,.14);border-radius:7px;padding:5px 8px;color:#FFD100;font-family:'Space Grotesk';font-weight:700;font-size:12px"/><b class="g1" id="wf-ftpday"></b><button class="rc-tab" id="wf-ftpauto" style="padding:5px 8px;font-size:8px">AUTO</button></span></div>
         <div class="rc-gread"><span>W/KG ON THE DAY</span><b class="g1" id="wf-wkgday"></b></div>
+        <div class="rc-sl" style="margin-top:14px">RIDE IT AS</div>
+        <div class="wfmode" id="wf-mode">
+          <button class="rc-tab on" data-wfm="ftp">A % OF FTP</button>
+          <button class="rc-tab" data-wfm="avg">AN AVERAGE RIDE</button>
+        </div>
+        <div id="wf-avgwrap" style="display:none">
+          <div class="wf"><div class="wl"><span>AVERAGE SPEED</span><b id="wfv-kmh">26.0 km/h</b></div><input type="range" id="wf-kmh" min="14" max="40" step="0.5" value="26"/></div>
+          <div class="wf"><div class="wl"><span>OR AVERAGE POWER</span><b id="wfv-avgw">—</b></div><input type="range" id="wf-avgw" min="80" max="320" step="5" value="150"/></div>
+          <div class="rc-gread"><span>THAT IS</span><b class="g1" id="wf-avgread">—</b></div>
+        </div>
+        <div class="rc-sl" style="margin-top:14px">TARGET</div>
+        <div class="wfmode" id="wf-scope">
+          <button class="rc-tab on" data-wfs="stage">THIS STAGE</button>
+          <button class="rc-tab" data-wfs="trip">THE WHOLE TRIP</button>
+        </div>
+        <div class="rc-gread" id="wf-scoperead"><span>ESTIMATE</span><b class="g1" id="wf-scopev">—</b></div>
       </div>
       <div class="rc-card">
         <div class="rc-sl">RACE YOUR GHOST</div>
@@ -3218,7 +3262,7 @@ renderDaysLive=function(){
     const tot=rides.reduce((s,r)=>s+r.tss,0);
     const fut=d>today;
     const hh=r=>`${Math.floor(r.secs/3600)}h${String(Math.floor(r.secs%3600/60)).padStart(2,"0")}`;
-    const stx=rides.length?rides.map(r=>`<b>${r.nm}</b><br/>${r.km} km · ${fmtInt(r.m)} m · ${hh(r)} · ${r.tss} TSS`).join("<br/><br/>")+`<br/><br/><span style="opacity:.7">CLICK — OPEN IN THE LABORATORY →</span>`:"";
+    const stx=rides.length?rides.map(r=>`<b>${r.nm}</b><br/>${r.km} km · ${fmtInt(r.m)} m · ${hh(r)} · ${r.tss} TSS`).join("<br/>")+`<br/><span class="stxgo">OPEN →</span>`:"";
     out+=`<div class="stg" data-wxday="${iso}" ${rides.length?`data-ride="${rides[0].id}"`:'style="cursor:default"'}>
       <div class="day">${d.toLocaleDateString("en-GB",{weekday:"short"}).toUpperCase()} ${d.getDate()}</div>
       <div class="nm" style="margin-top:14px">${rides.length?rides[0].nm:(fut?"—":"Rest day")}</div>
@@ -5769,7 +5813,7 @@ function wireScrub(evs){
     const cards=document.getElementById("ints");if(cards)put(cards);
     sec("SET-UP","Only when something needs doing.");
     if(!document.getElementById("uhpanel")){const u=document.createElement("div");u.className="panel";u.id="uhpanel";
-      u.innerHTML='<div class="ds">Connect on the live site to set the ring up.</div>';document.body.appendChild(u);}
+      u.innerHTML='<div class="ds">Connect on the live site to set the ring up.</div>';wrap.appendChild(u);}
     acc("APPLE HEALTH","Ring, watch and band into Massif","",null,document.getElementById("healthpanel"),false);
     acc("ULTRAHUMAN RING","Direct from the partner API","",null,document.getElementById("uhpanel"),false);
     acc("POWER STREAMS","Backfill your history","",null,document.getElementById("backfillpanel"),false);
@@ -6250,8 +6294,10 @@ function skyBand(){
   return sc>=70?"green":sc>=45?"amber":"red";
 }
 let SKYANIM=null,SKYSTATE=null;
+const SKYLITE=()=>window.matchMedia("(max-width:820px)").matches;
 function paintSky(force){
   const svg=document.getElementById("massif");if(!svg)return;
+  const LITE=SKYLITE();
   const band=skyBand();
   if(!band){const old=svg.querySelector("#m-sky");if(old)old.remove();return;}
   const T=SKYSET[band];
@@ -6259,11 +6305,11 @@ function paintSky(force){
   SKYSTATE=band;
   const W=1600,H=560,sunX=1180;
   const rng=(n,base,amp,seed)=>{const p=[];for(let i=0;i<=n;i++){const x=i/n;p.push(`${(x*W).toFixed(0)},${(H*(base-amp*(Math.sin(x*4.1+seed)*.5+Math.sin(x*9.7+seed*2)*.3+Math.sin(x*23+seed)*.15+.55))).toFixed(0)}`);}return p.join("L");};
-  const cloud=(x,y,w,h,op)=>{let g=`<g class="mcl" data-x="${x}" data-s="${(0.6+h/60).toFixed(2)}" opacity="${op}">`;const n=7;
+  const cloud=(x,y,w,h,op)=>{let g=`<g class="mcl" data-x="${x}" data-s="${(0.6+h/60).toFixed(2)}" opacity="${op}">`;const n=LITE?4:7;
     for(let i=0;i<n;i++){const t=i/(n-1),cx=x-w+2*w*t,r=h*(0.85+0.55*Math.sin(t*Math.PI)+((i*7)%3)*0.12),cy=y-r*0.35*Math.sin(t*Math.PI);
-      g+=`<circle cx="${cx.toFixed(0)}" cy="${cy.toFixed(0)}" r="${r.toFixed(0)}" fill="#fff" filter="url(#msoftc)"/>`;}
-    return g+`<ellipse cx="${x}" cy="${y+h*.6}" rx="${w*.95}" ry="${h*.42}" fill="#8E9BA6" opacity=".3" filter="url(#msoftc)"/></g>`;};
-  const stratus=(x,y,w,h,op)=>`<g class="mcl" data-x="${x}" data-s="${(0.35+h/80).toFixed(2)}" opacity="${op}"><ellipse cx="${x}" cy="${y}" rx="${w}" ry="${h}" fill="#1E2A3D" filter="url(#msoft)"/></g>`;
+      g+=`<circle cx="${cx.toFixed(0)}" cy="${cy.toFixed(0)}" r="${r.toFixed(0)}" fill="#fff"${LITE?' opacity=".9"':' filter="url(#msoftc)"'}/>`;}
+    return g+`<ellipse cx="${x}" cy="${y+h*.6}" rx="${w*.95}" ry="${h*.42}" fill="#8E9BA6" opacity=".3"${LITE?"":' filter="url(#msoftc)"'}/></g>`;};
+  const stratus=(x,y,w,h,op)=>`<g class="mcl" data-x="${x}" data-s="${(0.35+h/80).toFixed(2)}" opacity="${op}"><ellipse cx="${x}" cy="${y}" rx="${w}" ry="${h}" fill="#1E2A3D"${LITE?"":' filter="url(#msoft)"'}/></g>`;
   let s=`<g id="m-sky"><defs>
     <linearGradient id="mskyg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${T.top}"/><stop offset=".55" stop-color="${T.mid}"/><stop offset="1" stop-color="${T.hz}"/></linearGradient>
     <radialGradient id="mhalo" gradientUnits="userSpaceOnUse" cx="${sunX}" cy="${T.sunY}" r="360"><stop offset="0" stop-color="${T.sun}" stop-opacity="${T.halo}"/><stop offset=".35" stop-color="${T.sun}" stop-opacity="${T.halo*.28}"/><stop offset="1" stop-color="${T.sun}" stop-opacity="0"/></radialGradient>
@@ -6277,7 +6323,7 @@ function paintSky(force){
   <rect width="${W}" height="${H}" fill="url(#mskyg)"/>`;
   if(T.dusk)s+=`<rect y="${T.sunY-160}" width="${W}" height="${H}" fill="url(#mdusk)"/>`;
   /* cirrus: long soft strokes, drifting */
-  for(let i=0;i<T.cirrus;i++){const y=238+i*26,x0=120+i*380;s+=`<g class="mcl" data-x="${x0}" data-s="0.25" opacity="${.65-i*.12}"><path d="M${x0},${y} C${x0+200},${y-12} ${x0+420},${y+10} ${x0+620},${y-6}" stroke="#fff" stroke-width="${11-i*2}" stroke-linecap="round" fill="none" filter="url(#msoft)"/></g>`;}
+  for(let i=0;i<(LITE?Math.min(1,T.cirrus):T.cirrus);i++){const y=238+i*26,x0=120+i*380;s+=`<g class="mcl" data-x="${x0}" data-s="0.25" opacity="${.65-i*.12}"><path d="M${x0},${y} C${x0+200},${y-12} ${x0+420},${y+10} ${x0+620},${y-6}" stroke="#fff" stroke-width="${11-i*2}" stroke-linecap="round" fill="none"${LITE?' opacity=".5"':' filter="url(#msoft)"'}/></g>`;}
   /* the sun */
   s+=`<rect width="${W}" height="${H}" fill="url(#mhalo)"/>`;
   s+=`<circle id="m-sun" cx="${sunX}" cy="${T.sunY}" r="${T.sunR}" fill="${T.sun}" opacity="${T.dusk?.95:1}"/>`;
@@ -6290,7 +6336,7 @@ function paintSky(force){
   s+=`<path d="M0,${H}L${rng(80,.70,.14,2.9)}L${W},${H}Z" fill="${farCol}" opacity="${(T.dusk?.7:.16)*T.mid2}"/>`;
   if(T.haze)s+=`<g class="mhz" opacity="1"><rect x="-200" y="${H*.56}" width="${W+400}" height="120" fill="url(#mveil)"/></g>`;
   /* rain: a fine slow veil, only on the red evening */
-  if(T.rain){s+=`<g class="mrain">`;for(let i=0;i<90;i++){const x=(i*18.3+(i%5)*4)%W,y0=200+(i%7)*14,len=140+(i%4)*50;s+=`<line x1="${x+8}" y1="${y0}" x2="${x-6}" y2="${y0+len}" stroke="url(#mrain)" stroke-width="${.8+(i%3)*.3}" stroke-linecap="round"/>`;}s+=`</g>`;}
+  if(T.rain){s+=`<g class="mrain">`;for(let i=0;i<(LITE?34:90);i++){const x=(i*18.3+(i%5)*4)%W,y0=200+(i%7)*14,len=140+(i%4)*50;s+=`<line x1="${x+8}" y1="${y0}" x2="${x-6}" y2="${y0+len}" stroke="url(#mrain)" stroke-width="${.8+(i%3)*.3}" stroke-linecap="round"/>`;}s+=`</g>`;}
   s+=`</g>`;
   const old=svg.querySelector("#m-sky");if(old)old.remove();
   svg.insertAdjacentHTML("afterbegin",s);
@@ -6304,7 +6350,7 @@ function recolourRidge(T){
   /* a lit crest along the road ridden */
   let crest=svg.querySelector("#m-crest");
   if(!crest){crest=past.cloneNode(false);crest.id="m-crest";past.parentNode.insertBefore(crest,past);}
-  crest.setAttribute("d",past.getAttribute("d"));crest.setAttribute("stroke",T.crest);crest.setAttribute("stroke-width","14");crest.setAttribute("opacity",T.dusk?".28":".45");crest.setAttribute("filter","url(#mcrest)");
+  crest.setAttribute("d",past.getAttribute("d"));crest.setAttribute("stroke",T.crest);crest.setAttribute("stroke-width","14");crest.setAttribute("opacity",T.dusk?".28":".45");if(!SKYLITE())crest.setAttribute("filter","url(#mcrest)");else crest.removeAttribute("filter");
   /* the lollipop: pulse ring and the rider's dot */
   const circles=[...svg.querySelectorAll("#m-main > circle")];
   circles.forEach(c=>{if(c.getAttribute("fill")==="none")c.setAttribute("stroke",T.ridge);else if(c.getAttribute("r")==="8")c.setAttribute("fill",T.ridge);});
@@ -6315,14 +6361,18 @@ function recolourRidge(T){
 function startSky(){
   if(SKYANIM)cancelAnimationFrame(SKYANIM);
   if(window.matchMedia("(prefers-reduced-motion:reduce)").matches)return;
-  const t0=performance.now();
+  const t0=performance.now();const minFrame=SKYLITE()?1000/20:1000/60;let lastPaint=0;
   const tick=now=>{
     const svg=document.getElementById("massif"),sky=svg&&svg.querySelector("#m-sky");
     if(!sky){SKYANIM=null;return;}
     const scene=document.getElementById("scene-season")||document.querySelector("[id*=season]");
     const visible=!document.hidden&&(!scene||scene.offsetParent!==null);
     const t=(now-t0)/1000;
-    if(visible){
+    if(now-lastPaint<minFrame){SKYANIM=requestAnimationFrame(tick);return;}
+    lastPaint=now;
+    const hero=document.querySelector(".sky");
+    const onScreen=hero?(()=>{const r=hero.getBoundingClientRect();return r.bottom>0&&r.top<innerHeight;})():true;
+    if(visible&&onScreen){
       sky.querySelectorAll(".mcl").forEach(g=>{const sp=+g.dataset.s,x0=+g.dataset.x;const dx=((t*6*sp+x0)%2000)-x0-200;g.setAttribute("transform",`translate(${dx.toFixed(1)},${(Math.sin(t*.3+x0)*3).toFixed(1)})`);});
       const hz=sky.querySelector(".mhz");if(hz)hz.setAttribute("transform",`translate(${(Math.sin(t*.15)*60).toFixed(1)},0)`);
       const rn=sky.querySelector(".mrain");if(rn)rn.setAttribute("transform",`translate(${(-(t*40)%60).toFixed(1)},${((t*140)%70).toFixed(1)})`);
@@ -6422,6 +6472,163 @@ function startSky(){
   document.addEventListener("keydown",e=>{
     if(e.key==="Enter"&&e.target&&e.target.id==="ftpq"){e.preventDefault();askEngine(e.target.value);}
   });
+})();
+
+
+/* ═══ v6.5 — a multi-day trip is planned day by day ═══ */
+(function(){
+  const legsEl=()=>document.getElementById("ev-legs");
+  function readLegs(){
+    return [...document.querySelectorAll("#ev-legs .evleg")].map(r=>({
+      km:+r.querySelector("[data-lk]").value||0, m:+r.querySelector("[data-lm]").value||0 }));
+  }
+  function sumLegs(){
+    const L=readLegs(),km=L.reduce((a,x)=>a+x.km,0),m=L.reduce((a,x)=>a+x.m,0);
+    const el=document.getElementById("ev-legsum");
+    if(el)el.textContent=L.length?`${L.length} DAYS · ${Math.round(km)} KM · ${fmtInt(Math.round(m))} M TOTAL`:"";
+    /* the trip's own totals stay in step with its days */
+    const k=document.getElementById("ev-km"),mm=document.getElementById("ev-m");
+    if(k&&L.length)k.value=Math.round(km);
+    if(mm&&L.length)mm.value=Math.round(m);
+    return {km,m,legs:L};
+  }
+  window.evLegs=sumLegs;
+  function drawLegs(days,existing){
+    const host=legsEl();if(!host)return;
+    const cur=existing&&existing.length?existing:readLegs();
+    host.innerHTML=Array.from({length:days},(_,i)=>{
+      const L=cur[i]||{km:"",m:""};
+      return `<div class="evleg"><span class="d">DAY ${i+1}</span>
+        <label class="u"><input class="inp" type="number" min="0" data-lk value="${L.km||""}" placeholder="km"/><span>KM</span></label>
+        <label class="u"><input class="inp" type="number" min="0" data-lm value="${L.m||""}" placeholder="climb"/><span>M</span></label></div>`;}).join("");
+    host.querySelectorAll("input").forEach(inp=>inp.oninput=sumLegs);
+    sumLegs();
+  }
+  window.drawLegs=drawLegs;
+  function syncRows(){
+    const kind=document.getElementById("ev-kind"),days=document.getElementById("ev-days");
+    const row=document.getElementById("ev-legsrow");if(!kind||!row)return;
+    const isTrip=kind.value==="trip",n=Math.max(2,Math.min(14,+days.value||2));
+    row.style.display=isTrip?"block":"none";
+    if(isTrip&&legsEl().children.length!==n)drawLegs(n);
+    /* with legs in play, the single distance boxes become the read-only total */
+    ["ev-km","ev-m"].forEach(id=>{const el=document.getElementById(id);if(el){el.readOnly=isTrip;el.style.opacity=isTrip?".6":"1";el.title=isTrip?"The total of your days below":"";}});
+  }
+  ["ev-kind","ev-days"].forEach(id=>{const el=document.getElementById(id);if(el){el.addEventListener("change",syncRows);el.addEventListener("input",syncRows);}});
+  setTimeout(syncRows,600);
+  /* saving: the legs ride along with the event */
+  const _ap=document.getElementById("ev-add");
+  if(_ap)_ap.addEventListener("click",()=>{
+    setTimeout(()=>{
+      const kind=document.getElementById("ev-kind");if(!kind||kind.value!=="trip")return;
+      const legs=readLegs();if(!legs.length)return;
+      const ev=(window.EDIT_EV&&EVENTS.find(e=>e.id===window.EDIT_EV))||EVENTS[EVENTS.length-1];
+      if(!ev)return;
+      ev.legs=legs;ev.km=Math.round(legs.reduce((a,x)=>a+x.km,0));ev.m=Math.round(legs.reduce((a,x)=>a+x.m,0));
+      saveProfile();if(typeof massifSync==="function")massifSync("legs");
+    },60);
+  },true);
+  /* editing an existing trip fills its days back in */
+  const _pop=window.pop;
+  if(typeof pop==="function"){const _p=pop;window.pop=pop=function(el){_p(el);setTimeout(()=>{
+    const ev=window.EDIT_EV&&EVENTS.find(e=>e.id===window.EDIT_EV);
+    if(ev&&(ev.kind==="trip"||(ev.days||1)>1)){const d=document.getElementById("ev-days");if(d)d.value=ev.days||2;
+      const k=document.getElementById("ev-kind");if(k)k.value="trip";
+      syncRows();drawLegs(ev.days||2,ev.legs||[]);}
+  },40);};}
+  /* the day cards and the recon room read the legs when they exist */
+  window.legOf=function(ev,stage){
+    if(!ev||!ev.legs||!ev.legs.length)return null;
+    return ev.legs[Math.max(0,Math.min(ev.legs.length-1,(stage||1)-1))]||null;
+  };
+})();
+
+
+/* ═══ v6.5 — ride it as an average, and target a stage or the whole trip ═══ */
+(function(){
+  let WFMODE="ftp",WFSCOPE="stage";
+  const CUR=()=>(typeof RCX!=="undefined"?RCX:null);
+  const SIM=()=>(typeof RCSIM!=="undefined"?RCSIM:null);
+  const EVID=()=>(typeof rcEv!=="undefined"?rcEv:null);
+  const el=id=>document.getElementById(id);
+  /* what average speed implies in watts on this course, solved from the course itself */
+  function wattsForSpeed(course,kmh,weight){
+    const target=kmh/3.6;let lo=60,hi=420,w=150;
+    for(let i=0;i<22;i++){w=(lo+hi)/2;
+      let sim=null;try{sim=simulate(course,{ftp:w/0.72,weight,cda:+((el("wf-cda")||{}).value)||0.32,k:1});}catch(e){break;}
+      const v=(course.km*1000)/sim.total;
+      if(v<target)lo=w;else hi=w;}
+    return Math.round(w);
+  }
+  function speedForWatts(course,watts,weight){
+    let sim=null;try{sim=simulate(course,{ftp:watts/0.72,weight,cda:+((el("wf-cda")||{}).value)||0.32,k:1});}catch(e){return null;}
+    return {kmh:+((course.km*1000)/sim.total*3.6).toFixed(1),secs:sim.total};
+  }
+  function refreshAvg(){
+    if(!CUR())return;
+    const w=(typeof WF!=="undefined"&&WF.weight)||S.weight||70;
+    const kmh=+el("wf-kmh").value,avgw=+el("wf-avgw").value;
+    el("wfv-kmh").textContent=kmh.toFixed(1)+" km/h";
+    el("wfv-avgw").textContent=avgw+" W";
+    /* whichever the rider last moved leads; the other follows */
+    if(WFLAST==="kmh"){const need=wattsForSpeed(CUR(),kmh,w);el("wf-avgw").value=Math.max(80,Math.min(320,need));el("wfv-avgw").textContent=need+" W";
+      el("wf-avgread").textContent=`${need} W · ${(need/w).toFixed(2)} W/kg`;}
+    else{const sp=speedForWatts(CUR(),avgw,w);if(sp){el("wf-kmh").value=Math.max(14,Math.min(40,sp.kmh));el("wfv-kmh").textContent=sp.kmh.toFixed(1)+" km/h";
+      el("wf-avgread").textContent=`${sp.kmh.toFixed(1)} km/h · ${hms(sp.secs)} for the stage`;}}
+    scopeRead();
+  }
+  let WFLAST="kmh";
+  /* the estimate: this stage, or every stage of the trip added up */
+  function scopeRead(){
+    const ev=EVENTS.find(e=>e.id===EVID());if(!ev||!SIM())return;
+    const out=el("wf-scopev");if(!out)return;
+    if(WFSCOPE==="stage"){
+      out.textContent=`${hms(SIM().total)} · ${CUR().km} km · ${fmtInt(CUR().m)} m`;
+      return;
+    }
+    const ids=(ev.routes&&ev.routes.length?ev.routes:(ev.route?[ev.route]:[])).filter(id=>ROUTES[id]);
+    if(!ids.length){out.textContent="Attach the stages to see the trip";return;}
+    let secs=0,km=0,m=0,missing=0;
+    const w=(typeof WF!=="undefined"&&WF.weight)||S.weight||70;
+    ids.forEach((id,i)=>{
+      const c=ROUTES[id];km+=c.km||0;m+=c.m||0;
+      try{const fatigue=1-0.03*i;                              /* each day costs a little */
+        const sim=simulate(c,{ftp:(WFMODE==="avg"?(+el("wf-avgw").value)/0.72:(+el("wf-ftpin").value||S.ftp)),weight:w,cda:+((el("wf-cda")||{}).value)||0.32,k:fatigue});
+        secs+=sim.total;}catch(e){missing++;}});
+    const days=ev.days||ids.length;
+    out.innerHTML=`${hms(secs)} over ${ids.length} stage${ids.length>1?"s":""} · ${Math.round(km)} km · ${fmtInt(Math.round(m))} m`+
+      (ids.length<days?`<br/><span style="opacity:.6">${days-ids.length} day${days-ids.length>1?"s":""} without a route yet</span>`:"");
+  }
+  window.wfScopeRead=scopeRead;
+  window.__wfScope=v=>{WFSCOPE=v;document.querySelectorAll("[data-wfs]").forEach(b=>b.classList.toggle("on",b.dataset.wfs===v));scopeRead();};
+  window.__wfMode=v=>{WFMODE=v;document.querySelectorAll("[data-wfm]").forEach(b=>b.classList.toggle("on",b.dataset.wfm===v));
+    const w=el("wf-avgwrap");if(w)w.style.display=v==="avg"?"block":"none";if(v==="avg")refreshAvg();else scopeRead();};
+  function bindToggles(){
+    document.querySelectorAll("[data-wfs]").forEach(b=>{if(b.__b)return;b.__b=1;b.addEventListener("click",ev=>{ev.preventDefault();ev.stopPropagation();window.__wfScope(b.dataset.wfs);});});
+    document.querySelectorAll("[data-wfm]").forEach(b=>{if(b.__b)return;b.__b=1;b.addEventListener("click",ev=>{ev.preventDefault();ev.stopPropagation();window.__wfMode(b.dataset.wfm);});});
+  }
+  setInterval(bindToggles,1200);setTimeout(bindToggles,300);
+  document.addEventListener("click",e=>{
+    const m=e.target.closest&&e.target.closest("[data-wfm]");
+    if(m){WFMODE=m.dataset.wfm;document.querySelectorAll("[data-wfm]").forEach(b=>b.classList.toggle("on",b===m));
+      el("wf-avgwrap").style.display=WFMODE==="avg"?"block":"none";
+      if(WFMODE==="avg")refreshAvg();else scopeRead();
+      /* an average ride drives the simulation as much as an FTP does */
+      if(WFMODE==="avg"&&typeof buildReconCourse==="function"&&CUR()){const ev=EVENTS.find(x=>x.id===EVID());if(ev)buildReconCourse(ev,CUR());}
+      return;}
+    const sc=e.target.closest&&e.target.closest("[data-wfs]");
+    if(sc){WFSCOPE=sc.dataset.wfs;document.querySelectorAll("[data-wfs]").forEach(b=>b.classList.toggle("on",b===sc));scopeRead();}
+  });
+  ["wf-kmh","wf-avgw"].forEach(id=>{const i=el(id);if(i)i.addEventListener("input",()=>{WFLAST=id==="wf-kmh"?"kmh":"w";refreshAvg();});});
+  /* the recon room recalculates with whichever mode is live */
+  const _br=window.buildReconCourse;
+  if(_br)window.buildReconCourse=buildReconCourse=function(ev,c){
+    if(WFMODE==="avg"&&el("wf-avgw")){const w=(typeof WF!=="undefined"&&WF.weight)||S.weight||70;
+      const ftpEq=Math.round((+el("wf-avgw").value)/0.72);
+      const inp=el("wf-ftpin");if(inp)inp.value=ftpEq;}
+    _br(ev,c);setTimeout(()=>{if(WFMODE==="avg")refreshAvg();else scopeRead();},40);
+  };
+  setTimeout(()=>{if(CUR()){refreshAvg();scopeRead();}},1500);
 })();
 
 </script>
