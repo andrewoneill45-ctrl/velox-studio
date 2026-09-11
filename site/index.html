@@ -1519,7 +1519,8 @@ details.acc .accin>.panel{box-shadow:none;border:none;padding:0!important;margin
 
 @media(max-width:820px){
   /* the Laboratory's tabs and the scenario dock were sharing eight pixels */
-  #v-cond,#v-ride{padding-top:22px}
+  #v-cond,#v-ride{padding-top:14px}
+  .modetabs{margin-top:10px}
   #model-room{margin-top:0}
   .padd{min-height:36px;display:inline-flex;align-items:center;padding:0 2px}
 }
@@ -1620,6 +1621,58 @@ details.acc .accin>.panel{box-shadow:none;border:none;padding:0!important;margin
 .sky.cascade{animation:none!important;opacity:1!important;transform:none!important}
 @media(max-width:820px){.sky{margin-top:0!important}.main>.scene>.sky:first-child,.scene .sky:first-child{margin-top:0}
   #v-season>.sky,.scene.on>.sky{margin-top:0}}
+
+@media(max-width:820px){
+  /* section rhythm on Sources: label and title on one line, tighter margins */
+  .srchead{margin:12px 2px 6px;flex-wrap:wrap;align-items:center;gap:8px}
+  .srchead h3{font-size:16px;flex:1 1 auto}
+  .srchead .kk{flex:0 0 auto}
+  .srchead .line{display:none}
+  details.acc{margin-bottom:8px}
+  #ints{margin-bottom:0}
+  #src-tidy .panel{margin-bottom:8px}
+  #src-tidy details.acc .accin>.panel{margin-bottom:0}
+  /* one consistent gap between the big blocks everywhere */
+  .scene>.wrap{margin-bottom:14px}
+  .panel{margin-bottom:12px}
+  .mtwo,.mtop{gap:12px}
+}
+
+/* ═══ MOBILE POLISH (v6.7) ═══ */
+@media(max-width:820px){
+  /* the hero deserves real height on a phone */
+  #massif{height:200px!important}
+  .sky{min-height:200px}
+  /* the top bar reads on one line */
+  .ctx .scenename{max-width:40vw}
+  .ctx .sl,.ctx .wkg{display:none}
+  .ctx .meta{display:none}
+  /* the Roadbook's week band and its buttons */
+  .wksum{flex-wrap:wrap;gap:10px}
+  .wksum #wkai,.wksum #wkplan{flex:1 1 100%;min-height:44px;white-space:nowrap}
+  .wksum .inp{flex:1 1 auto;min-width:0}
+  /* the day cards give the ride room, not the empty rule */
+  #days .stg{min-height:0;padding:14px 16px 12px}
+  #days .stg .foot{padding-top:10px}
+  #days .stg .tss{font-size:26px}
+  /* the timeline strip is a scroller, not a squeeze */
+  #tlrail{height:210px}
+  .tlmini{padding:6px 10px}
+  /* the season's event rows are shorter on a phone */
+  #ribbon>.ribbon .rj{font-size:38px!important}
+  #ribbon>.ribbon{padding:14px 0!important;gap:10px}
+  #ribbon>.ribbon .rmid .rn{font-size:18px!important}
+  #ribbon>.ribbon .aibtn,#ribbon>.ribbon .rc-tab{min-height:42px}
+  /* the instrument rail: two clean columns, readiness across the top */
+  .instrail{grid-template-columns:1fr 1fr!important}
+  .ins.ready{grid-column:1/-1;flex-direction:row;align-items:center;gap:14px}
+  .ins.ready svg.rg{width:62px;height:62px}
+  .ins .fold{position:static;margin-top:6px}
+}
+@media(max-width:400px){
+  .ctx .scenename{max-width:34vw;font-size:14px}
+  #ribbon>.ribbon .rj{font-size:32px!important}
+}
 </style>
 </head>
 <body>
@@ -6766,6 +6819,45 @@ function drawHRTrace(){
     setTimeout(()=>{try{renderHRZones();renderRideBests();drawHRTrace();}catch(e){}},120);return r;};
   const _dw=drawWave;drawWave=function(){_dw.apply(this,arguments);setTimeout(drawHRTrace,20);};
   setTimeout(()=>{try{renderHRZones();renderRideBests();drawHRTrace();}catch(e){}},3000);
+})();
+
+
+/* ═══ v6.7 — the road chart reads on a narrow screen ═══ */
+(function(){
+  const small=()=>window.matchMedia("(max-width:820px)").matches;
+  const _dr=drawRoad;
+  drawRoad=function(evs,R){
+    _dr(evs,R);
+    if(!small())return;
+    const svg=document.getElementById("mroadsvg");if(!svg)return;
+    const vb=svg.getAttribute("viewBox");if(!vb)return;      /* nothing drawn yet */
+    /* month ticks: every other one, so they stop colliding */
+    const months=[...svg.querySelectorAll("text")].filter(t=>/^[A-Z]{3}$/.test(t.textContent.trim()));
+    months.forEach((t,i)=>{if(i%2)t.remove();});
+    /* gate labels: shorter, stacked, and never off the edge */
+    const w=+vb.split(" ")[2];
+    const gates=[...svg.querySelectorAll("text")].filter(t=>/[A-Z]{3,}/.test(t.textContent)&&!/^[A-Z]{3}$/.test(t.textContent.trim()));
+    const placed=[];
+    gates.forEach(t=>{
+      const x=Math.max(34,Math.min(w-34,+t.getAttribute("x")));
+      let y=+t.getAttribute("y");
+      while(placed.some(p=>Math.abs(p.x-x)<64&&Math.abs(p.y-y)<10))y-=10;
+      t.setAttribute("x",x);t.setAttribute("y",y);t.setAttribute("font-size","7");
+      placed.push({x,y});
+      const txt=t.textContent.trim();
+      if(txt.length>9&&!/%/.test(txt))t.textContent=txt.slice(0,8)+"…";
+    });
+  };
+})();
+
+
+/* the phone hero anchors on the present, not the past */
+(function(){
+  const fit=()=>{const svg=document.getElementById("massif");if(!svg)return;
+    svg.setAttribute("preserveAspectRatio",window.matchMedia("(max-width:820px)").matches?"xMaxYMax slice":"xMidYMax slice");};
+  fit();window.matchMedia("(max-width:820px)").addEventListener?.("change",fit);
+  const _dm=drawMassif;drawMassif=function(){_dm();fit();};
+  setTimeout(fit,1500);
 })();
 
 </script>
