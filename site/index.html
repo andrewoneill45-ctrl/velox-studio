@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-title" content="Massif">
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800;900&family=Fraunces:ital,opsz,wght@0,9..144,540;0,9..144,620;1,9..144,460&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@800;900&family=Fraunces:ital,opsz,wght@0,9..144,540;0,9..144,620;1,9..144,460&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
 :root{
   --bg:#F4F6F5; --panel:#FFFFFF; --ink:#141E28; --ink2:#44515D; --mist:#93A0AB;
@@ -1673,6 +1673,125 @@ details.acc .accin>.panel{box-shadow:none;border:none;padding:0!important;margin
   .ctx .scenename{max-width:34vw;font-size:14px}
   #ribbon>.ribbon .rj{font-size:32px!important}
 }
+
+/* ═══ v7.0 — TYPE: Anton carries the titles ═══ */
+:root{--display:'Anton',Impact,'Arial Narrow',sans-serif}
+.display,.scenename,.sky .title h1,#heroline,.heroline,.hero h1,
+.dispatch .dl+.snap .sv,
+.panel>h2,.mroad h2,.mpanel h2,.ceremony .ct,.jsh .jtitle,.rc-hero h1,.gword,.sh-title,.rcard .rt,.rc2 .bib .t,
+.wf-title,.orecon h1,.bh .bt,.srchead h3,.aihead .al.big,.instrail-title,.evtitle,
+#ribbon>.ribbon .rmid .rn,.pj .jn,.stamp .sn{
+  font-family:var(--display)!important;font-weight:400!important;font-style:normal!important;
+  text-transform:uppercase;letter-spacing:.02em;line-height:.98}
+.scenename{font-size:22px;letter-spacing:.04em}
+.sky .title h1,#heroline,.heroline{font-size:clamp(40px,4.6vw,66px)!important;letter-spacing:.015em;line-height:.96!important}
+.sky .title h1 i,#heroline i,.heroline i{font-style:normal;color:var(--jaune)}
+.mroad h2,.mpanel h2,.panel>h2{font-size:24px}
+.mroad h2 i,.mpanel h2 i,.panel>h2 i{font-style:normal;color:var(--mist)}
+.ceremony .ct{font-size:38px}
+.ceremony .ct i{font-style:normal;color:#B08900}
+#ribbon>.ribbon .rmid .rn{font-size:26px!important;letter-spacing:.03em}
+.srchead h3{font-size:18px;letter-spacing:.05em}
+.sh-title{font-size:30px!important;letter-spacing:.02em}
+.rc-hero h1{font-size:36px}
+.rcard .rt,.rc2 .bib .t{font-size:34px}
+.gword{font-size:clamp(60px,9vw,104px)!important;letter-spacing:.04em}
+.pj .jn{font-size:16px;letter-spacing:.06em}
+/* the kickers above titles stay in Space Grotesk; the editorial italic survives only in pull-quotes */
+@media(max-width:820px){.sky .title h1,#heroline,.heroline{font-size:34px!important}.scenename{font-size:17px}.mroad h2,.mpanel h2{font-size:20px}}
+
+/* ── the dispatch snapshot ── */
+.snap{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:12px;margin:14px 0 18px}
+.snap .sc{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px 14px;position:relative;min-width:0}
+.snap .sc.ready{display:flex;align-items:center;gap:16px;border-left:4px solid var(--c)}
+.snap .ring{width:72px;height:72px;flex:none}
+.snap .sk{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.2em;color:var(--mist)}
+.snap .sv{font-family:var(--display);font-size:38px;line-height:1;margin-top:6px;letter-spacing:.01em}
+.snap .sw{font-family:'Fraunces',serif;font-style:italic;font-size:15px;color:var(--ink2);margin-top:4px}
+.snap .sa{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.16em;margin-top:6px}
+.snap .sd{font-family:'Space Grotesk';font-size:8.5px;font-weight:700;letter-spacing:.08em;color:var(--mist);margin-top:6px}
+.snap .sd i{font-style:normal;font-family:'Archivo';font-weight:900;font-size:11px;margin-right:3px}
+.snap .sd i.up{color:#189B69}.snap .sd i.dn{color:#E23A2E}.snap .sd i.fl{color:var(--mist)}
+.snap .ssp{position:absolute;right:14px;bottom:12px;width:76px;height:28px;opacity:.9}
+.dispatch .ds1.ds1-quiet{font-size:16px!important;line-height:1.5!important;color:var(--ink2)!important;margin:0 0 6px}
+.dispatch .ds1.ds1-quiet b{font-weight:600;color:var(--ink)}
+.dfold{display:inline-block;margin:6px 0 4px;background:transparent;border:1px solid var(--line);border-radius:9px;padding:7px 11px;font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.16em;color:var(--ink2);cursor:pointer}
+.dispatch .dpts{display:none}
+.dispatch .dpts.open{display:grid}
+/* ── the massif tooltip ── */
+.mtip{position:fixed;z-index:80;pointer-events:none;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 14px 40px rgba(20,30,40,.16);padding:12px 14px;min-width:210px;max-width:290px;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s}
+.mtip.on{opacity:1;transform:none}
+.mtip .mk{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.18em;color:var(--mist)}
+.mtip .mbig{font-family:'Archivo';font-weight:900;font-size:24px;letter-spacing:-.02em;margin-top:3px;line-height:1.05}
+.mtip .mbig small{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.14em;color:var(--mist);margin-left:4px}
+.mtip .mm{font-size:11.5px;color:var(--ink2);margin-top:4px}
+.mtip .mq{font-family:'Fraunces',serif;font-style:italic;font-size:12px;color:var(--ink2);margin-top:6px}
+.mtip .mr{display:flex;justify-content:space-between;gap:10px;font-size:11px;padding:4px 0;border-top:1px dashed var(--hair);margin-top:2px}
+.mtip .mr b{font-family:'Space Grotesk';font-weight:700;white-space:nowrap}
+.mtip .mgo{font-family:'Space Grotesk';font-size:7px;font-weight:700;letter-spacing:.16em;color:var(--bleu);margin-top:8px}
+#massif{cursor:crosshair}
+@media(max-width:820px){.snap{grid-template-columns:1fr 1fr}.snap .sc.ready{grid-column:1/-1}.snap .sv{font-size:32px}.mtip{max-width:78vw}}
+
+/* ═══ v7.0 — RIDE ANALYSIS: the map across, the reads beneath ═══ */
+.ridegrid .cockpit.wide{padding:0;overflow:hidden;position:relative;min-height:0}
+.ridegrid .cockpit.wide #rmap,.ridegrid .cockpit.wide #rmapgl{height:340px!important;min-height:0!important}
+.ridegrid .cockpit.wide .ridetitle{position:absolute;left:22px;bottom:18px;z-index:3}
+.ridegrid .cockpit.wide .hud{position:absolute;top:16px;left:22px;right:22px;z-index:3;display:flex;gap:10px;flex-wrap:wrap}
+.ridegrid .cockpit.wide .maplg{position:absolute;right:22px;bottom:18px;z-index:3}
+.ridegrid .sidecol{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
+.ridegrid .sidecol>.panel{margin:0;padding:22px 24px}
+.ridegrid .sidecol #rzones{grid-column:1}
+.ridegrid .sidecol #rhrzones{grid-column:2}
+.ridegrid .sidecol #rbests{grid-column:3}
+.ridegrid .sidecol #rsegs{grid-column:1/-1}
+.ridegrid .wavepanel,.ridegrid .aipanel{padding:22px 24px}
+.ridegrid .rz .zrow,.ridegrid .hzrow,.ridegrid .brow{padding:8px 0}
+/* the ride chooser: one line, a proper select */
+.ridebar{display:flex!important;gap:10px;align-items:center;padding:12px 16px;background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:visible!important}
+.ridebar .rsel{display:none}
+.ridebar .rlab{font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.2em;color:var(--mist);white-space:nowrap}
+.ridebar select{flex:1;min-width:0;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-family:'Space Grotesk';font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--ink);background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2393A0AB' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 12px center;-webkit-appearance:none;appearance:none;padding-right:34px}
+.ridebar .rnav{display:flex;gap:6px}
+.ridebar .rnav button{width:36px;height:36px;border-radius:9px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:13px;color:var(--ink2)}
+.ridebar .rnav button:hover{border-color:var(--ink);color:var(--ink)}
+/* a selected segment lights on the map and on the wave */
+.seglist .segrow{cursor:pointer;border-radius:10px;padding:8px 8px;margin:0 -8px}
+.seglist .segrow:hover,.seglist .segrow.on{background:var(--hair)}
+#rbests .brow{cursor:pointer;border-radius:8px;padding:8px 6px;margin:0 -6px}
+#rbests .brow:hover,#rbests .brow.on{background:var(--hair)}
+#rwave .hlband{fill:#FFD100;opacity:.22}
+/* power distribution */
+.pdist{display:flex;align-items:flex-end;gap:2px;height:70px;margin-top:10px}
+.pdist .pdb{flex:1;display:block;background:var(--bleu);border-radius:2px 2px 0 0;min-height:1px;opacity:.85;width:auto}
+.pdist .pdb.z0{background:#93A0AB}.pdist .pdb.z1{background:#26496E}.pdist .pdb.z2{background:#189B69}.pdist .pdb.z3{background:#D99000}.pdist .pdb.z4{background:#E8611F}.pdist .pdb.z5{background:#E23A2E}.pdist .pdb.z6{background:#7A3FBF}
+.pdlab{display:flex;justify-content:space-between;font-family:'Space Grotesk';font-size:7px;font-weight:700;letter-spacing:.1em;color:var(--mist);margin-top:4px}
+.ivrow{display:grid;grid-template-columns:34px 1fr 64px 60px 56px;gap:8px;align-items:center;padding:7px 0;border-bottom:1px dashed var(--hair);font-size:11.5px;cursor:pointer;border-radius:8px}
+.ivrow:hover,.ivrow.on{background:var(--hair)}
+.ivrow .n{font-family:'Archivo';font-weight:900;font-size:12px;color:var(--mist)}
+.ivrow .w{font-family:'Archivo';font-weight:900;font-size:14px;text-align:right}
+.ivrow .w small{font-family:'Space Grotesk';font-size:8px;color:var(--mist)}
+.ivrow .t,.ivrow .h{font-family:'Space Grotesk';font-size:9px;font-weight:700;color:var(--ink2);text-align:right}
+.ivrow .h{color:var(--polka)}
+@media(max-width:1100px){.ridegrid .sidecol{grid-template-columns:1fr 1fr}.ridegrid .sidecol #rzones,.ridegrid .sidecol #rhrzones,.ridegrid .sidecol #rbests{grid-column:auto}}
+@media(max-width:820px){.ridegrid .sidecol{grid-template-columns:1fr}.ridegrid .cockpit.wide #rmap,.ridegrid .cockpit.wide #rmapgl{height:240px!important}
+  .ridegrid .cockpit.wide .hud{position:static;padding:12px 14px 0}.ridegrid .cockpit.wide .ridetitle{position:static;padding:8px 14px 12px}.ridegrid .cockpit.wide .maplg{display:none}
+  .ridebar{flex-wrap:wrap}.ridebar select{flex:1 1 100%}.ridebar .rlab{display:none}}
+
+.stl{display:flex;flex-direction:column;gap:6px}
+.str{display:grid;grid-template-columns:10px 84px 1fr;gap:10px;align-items:start;font-size:12px;padding:7px 10px;border-radius:9px;background:var(--hair)}
+.str i{width:9px;height:9px;border-radius:50%;margin-top:4px;background:var(--vert)}
+.str.bad{background:#FBE9E3}.str.bad i{background:var(--polka)}
+.str b{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.14em;margin-top:2px}
+.str span{color:var(--ink2);word-break:break-word}
+
+@media(max-width:820px){#rail-fold,.ins .fold{display:inline-block;min-height:32px;line-height:32px;padding:0 6px}}
+
+@media(max-width:820px){
+  .ridegrid .cockpit.wide .hud{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .ridegrid .cockpit.wide .hud>*{margin:0}
+  .ridegrid .cockpit.wide .ridetitle{text-align:left}
+  .ridegrid .cockpit.wide .ridetitle h3{font-size:20px}
+}
 </style>
 </head>
 <body>
@@ -1817,15 +1936,15 @@ details.acc .accin>.panel{box-shadow:none;border:none;padding:0!important;margin
       </div>
       <div id="v-rides" style="display:none">
         <div class="ridebar cascade" id="ridesel" style="--i:1"></div>
-        <div class="g12">
-          <div class="panel cockpit cascade" style="grid-column:span 8;--i:2">
+        <div class="g12 ridegrid">
+          <div class="panel cockpit cascade wide" style="grid-column:span 12;--i:2">
             <div id="rmapgl"></div>
             <canvas id="rmap"></canvas>
             <div class="hud" id="rhud"></div>
             <div class="ridetitle"><h3 id="rh-name"></h3><div class="rm" id="rh-meta"></div></div>
             <div class="maplg" id="rmaplg"></div>
           </div>
-          <div class="sidecol" style="grid-column:span 4">
+          <div class="sidecol" style="grid-column:span 12">
             <div class="panel rz cascade" id="rzones" style="--i:3"></div>
             <div class="panel seglist cascade" id="rsegs" style="--i:4"></div>
           </div>
@@ -2204,7 +2323,8 @@ function drawMassif(){
       <circle cx="${fx}" cy="${fy}" r="4" fill="#fff" stroke="#141E28" stroke-width="2"/>
       <line x1="${fx}" y1="${fy}" x2="${fx}" y2="${fy-30}" stroke="#141E28" stroke-width="2"/>
       <path d="M${fx} ${fy-30} h20 l-5 5.5 5 5.5 h-20 Z" fill="${c}" stroke="#141E28" stroke-width="1.4"/>
-      <text x="${fx}" y="${fy-39}" text-anchor="middle" font-family="Space Grotesk" font-size="11" font-weight="700" letter-spacing="2" fill="#44515D">${e.n}${e.dd>1?" · "+e.dd+"D":""}${e.j!=null?" · J-"+e.j:""}</text>`;
+      <text class="mflag" data-ev="${e.id||""}" x="${fx>W*0.82?fx-8:fx}" y="${fy-39}" text-anchor="${fx>W*0.82?"end":fx<W*0.1?"start":"middle"}" font-family="Space Grotesk" font-size="11" font-weight="700" letter-spacing="2" fill="#44515D">${e.n}${e.dd>1?" · "+e.dd+"D":""}${e.j!=null?" · J-"+e.j:""}</text>
+      <rect class="mflaghit" data-ev="${e.id||""}" x="${fx-22}" y="${fy-52}" width="44" height="64" fill="transparent" style="cursor:pointer"/>`;
   });
   let months="",lastM=-1;
   for(let i=0;i<T.length;i++){const d=new Date(SEASON0);d.setDate(d.getDate()+i*7);
@@ -2864,7 +2984,7 @@ function drawTraj(){
 }
 /* ═══ INIT ═══ */
 window.SEASON_FLAGS=[];
-function refreshFlags(){window.SEASON_FLAGS=EVENTS.map(e=>({i:Math.floor((new Date(e.date)-SEASON0)/(7*864e5)),n:String(e.short||e.name||"").split(" ").pop(),A:e.pr==="A",j:J(e),dd:e.days||1}));}
+function refreshFlags(){window.SEASON_FLAGS=EVENTS.map(e=>({id:e.id,i:Math.floor((new Date(e.date)-SEASON0)/(7*864e5)),n:String(e.short||e.name||"").replace(/^(the|isle of|col d[eu]|mont) /i,m=>m).slice(0,14).toUpperCase(),full:e.name,A:e.pr==="A",j:J(e),dd:e.days||1,date:e.date}));}
 const _renderSeasonHead=renderSeasonHead;
 renderSeasonHead=function(){refreshFlags();_renderSeasonHead();};
 renderJerseys();drawJerseyP();renderLadder();renderLog();renderWkFront();renderBests();
@@ -6858,6 +6978,246 @@ function drawHRTrace(){
   fit();window.matchMedia("(max-width:820px)").addEventListener?.("change",fit);
   const _dm=drawMassif;drawMassif=function(){_dm();fit();};
   setTimeout(fit,1500);
+})();
+
+
+/* ═══ v7.0 — the dispatch as a snapshot; the massif you can touch ═══ */
+/* ── B. the snapshot ── */
+function dispatchSnapshot(){
+  const el=document.getElementById("dispatch");if(!el)return;
+  const W=(typeof WELL!=="undefined"&&WELL)||window.WELL,R=W&&W.readiness;
+  const pm=(typeof pmcFromActs==="function"?pmcFromActs():[])||[],last=pm[pm.length-1]||{},ago=pm[pm.length-8]||last;
+  const band=R?(/vert|green/i.test(R.state)?"g":/amber/i.test(R.state)?"a":"r"):null;
+  const col={g:"#189B69",a:"#D99000",r:"#E23A2E"}[band]||"#93A0AB";
+  const spark=(key,colr)=>{const a=pm.slice(-28).map(d=>d[key]||0);if(a.length<3)return"";
+    const mn=Math.min(...a),mx=Math.max(...a),r=(mx-mn)||1;
+    const pts=a.map((v,i)=>`${(i/(a.length-1)*100).toFixed(1)},${(26-((v-mn)/r)*22).toFixed(1)}`).join(" ");
+    return `<svg viewBox="0 0 100 28" preserveAspectRatio="none" class="ssp"><polyline points="${pts}" fill="none" stroke="${colr}" stroke-width="2" stroke-linejoin="round"/></svg>`;};
+  const d=(a,b)=>{const v=Math.round((a||0)-(b||0));return v?`<i class="${v>0?"up":"dn"}">${v>0?"+":""}${v}</i>`:`<i class="fl">·</i>`;};
+  const tsb=Math.round(last.tsb||0);
+  const formCol=tsb>5?"#189B69":tsb<-20?"#E23A2E":tsb<-10?"#D99000":"#141E28";
+  const circ=2*Math.PI*30,dash=R?circ*(R.score||0)/100:0;
+  const verdict=R?(R.advice||(band==="g"?"CLEARED TO TRAIN":band==="a"?"TRAIN, BUT LISTEN":"REST TODAY")):"NO READINESS DATA YET";
+  let snap=el.querySelector(".snap");
+  if(!snap){snap=document.createElement("div");snap.className="snap";const dl=el.querySelector(".dl");if(dl&&dl.nextSibling)el.insertBefore(snap,dl.nextSibling);else el.prepend(snap);}
+  snap.innerHTML=`
+    <div class="sc ready" style="--c:${col}">
+      <svg viewBox="0 0 72 72" class="ring"><circle cx="36" cy="36" r="30" fill="none" stroke="#EEF2F4" stroke-width="7"/>
+        <circle cx="36" cy="36" r="30" fill="none" stroke="${col}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${dash.toFixed(1)} ${circ.toFixed(1)}" transform="rotate(-90 36 36)"/></svg>
+      <div class="rt"><div class="sk">READINESS</div><div class="sv" style="color:${col}">${R?R.score:"—"}</div><div class="sw">${R?R.state:"waiting for Apple Health"}</div><div class="sa" style="color:${col}">${verdict}</div></div>
+    </div>
+    <div class="sc"><div class="sk">FITNESS</div><div class="sv">${Math.round(last.ctl||0)}</div><div class="sd">${d(last.ctl,ago.ctl)} in 7 days</div>${spark("ctl","#26496E")}</div>
+    <div class="sc"><div class="sk">FATIGUE</div><div class="sv">${Math.round(last.atl||0)}</div><div class="sd">${d(last.atl,ago.atl)} in 7 days</div>${spark("atl","#E23A2E")}</div>
+    <div class="sc"><div class="sk">FORM</div><div class="sv" style="color:${formCol}">${tsb>0?"+":""}${tsb}</div><div class="sd">${tsb>5?"fresh":tsb>=-10?"in balance":tsb>=-25?"loaded":"deep fatigue"}</div>${spark("tsb","#B08900")}</div>`;
+  /* the sentence becomes a footnote; the points fold behind one line */
+  const ds1=el.querySelector(".ds1");if(ds1)ds1.classList.add("ds1-quiet");
+  const pts=el.querySelector(".dpts");
+  if(pts&&!el.querySelector(".dfold")){
+    const f=document.createElement("button");f.className="dfold";f.textContent="THE DS'S NOTES ▾";
+    f.onclick=()=>{const open=pts.classList.toggle("open");f.textContent=open?"THE DS'S NOTES ▴":"THE DS'S NOTES ▾";};
+    pts.parentNode.insertBefore(f,pts);
+  }
+}
+(function(){
+  const _rd=renderDispatch;renderDispatch=function(){_rd.apply(this,arguments);try{dispatchSnapshot();}catch(e){}};
+  setTimeout(()=>{try{dispatchSnapshot();}catch(e){}},2500);
+})();
+/* ── C. the massif you can touch ── */
+(function(){
+  let tip=null;
+  const ensureTip=()=>{if(tip)return tip;tip=document.createElement("div");tip.className="mtip";document.body.appendChild(tip);return tip;};
+  const hide=()=>{if(tip)tip.classList.remove("on");};
+  function weekInfo(i){
+    const mon=addD(new Date(SEASON0),i*7),k=isoDay(mondayOf(mon));
+    const w=(window.TL&&TL.built)?TL.weeks.get(k):null;
+    const T=window.TSSWK||[];const planned=(typeof wkTarget==="function")?wkTarget(i):0;
+    const rides=w?w.rides:[];
+    return {label:`WEEK ${i+1} · ${mon.toLocaleDateString("en-GB",{day:"numeric",month:"short"}).toUpperCase()}`,
+      tss:w?Math.round(w.tss):Math.round(T[i]||0),km:w?Math.round(w.km):null,m:w?Math.round(w.m):null,
+      rides,planned,future:i>CURWK};
+  }
+  function showWeek(i,x,y){
+    const t=ensureTip(),info=weekInfo(i);
+    const list=info.rides.slice(0,4).map(r=>`<div class="mr"><span>${r.nm}</span><b>${r.tss} TSS</b></div>`).join("");
+    t.innerHTML=`<div class="mk">${info.label}${i===CURWK?" · THIS WEEK":""}</div>
+      <div class="mbig">${info.future?(info.planned?info.planned+"<small> TSS PLANNED</small>":"<small>NOTHING PLANNED</small>"):info.tss+"<small> TSS</small>"}</div>
+      ${info.km!=null&&!info.future?`<div class="mm">${info.km} km · ${fmtInt(info.m)} m · ${info.rides.length} ride${info.rides.length===1?"":"s"}</div>`:""}
+      ${list}${info.rides.length>4?`<div class="mm">+${info.rides.length-4} more</div>`:""}
+      <div class="mgo">CLICK — OPEN THIS WEEK IN THE ROADBOOK →</div>`;
+    place(x,y);
+  }
+  function showEvent(id,x,y){
+    const e=EVENTS.find(v=>v.id===id);if(!e)return;const t=ensureTip();
+    const d=new Date(e.date+"T12:00:00"),days=e.days||1,end=addD(d,days-1);
+    const routes=(e.routes&&e.routes.length?e.routes:(e.route?[e.route]:[])).filter(r=>ROUTES[r]).length;
+    const pf=(typeof projForm==="function")?projForm(e):null;
+    t.innerHTML=`<div class="mk">${(e.pr||"B")}-EVENT · J-${J(e)}</div>
+      <div class="mbig" style="font-family:var(--display);font-size:20px;letter-spacing:.03em">${e.name.toUpperCase()}</div>
+      <div class="mm">${d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"})}${days>1?" → "+end.toLocaleDateString("en-GB",{day:"numeric",month:"short"})+" · "+days+" days":""}</div>
+      ${e.km||e.m?`<div class="mm">${e.km?e.km+" km":""}${e.km&&e.m?" · ":""}${e.m?fmtInt(e.m)+" m":""}</div>`:""}
+      <div class="mm">${routes?routes+" of "+days+" stage"+(days>1?"s":"")+" attached":"no route attached yet"}${pf!=null?` · projected form <b style="color:${pf>=0?"#189B69":"#D99000"}">${pf>0?"+":""}${pf}</b>`:""}</div>
+      ${e.purpose?`<div class="mq">“${e.purpose}”</div>`:""}
+      <div class="mgo">CLICK — OPEN THE RECON ROOM →</div>`;
+    place(x,y);
+  }
+  function place(x,y){const t=ensureTip();t.classList.add("on");
+    const w=t.offsetWidth||260,h=t.offsetHeight||120;
+    let lx=x+14,ly=y-h-14;if(lx+w>innerWidth-8)lx=x-w-14;if(ly<8)ly=y+16;
+    t.style.left=lx+"px";t.style.top=ly+"px";}
+  function wire(){
+    const svg=document.getElementById("massif");if(!svg||svg.__wired)return;svg.__wired=true;
+    svg.addEventListener("mousemove",e=>{
+      const hit=e.target.closest&&e.target.closest(".mflaghit,.mflag");
+      if(hit&&hit.dataset.ev){showEvent(hit.dataset.ev,e.clientX,e.clientY);return;}
+      const r=svg.getBoundingClientRect(),vb=svg.viewBox.baseVal;
+      /* the ridge occupies the lower band; translate x into a week */
+      const scale=Math.max(r.width/vb.width,r.height/vb.height);
+      const vx=(e.clientX-r.left)/scale+ (vb.width-r.width/scale)/2;
+      const T=window.TSSWK||[];const n=T.length||36;
+      const pl=60,pr=60;const i=Math.round((vx-pl)/((vb.width-pl-pr)/(n-1)));
+      if(i<0||i>=n){hide();return;}
+      const ry=(e.clientY-r.top)/r.height;
+      if(ry<0.35){hide();return;}
+      showWeek(i,e.clientX,e.clientY);
+    });
+    svg.addEventListener("mouseleave",hide);
+    svg.addEventListener("click",e=>{
+      const hit=e.target.closest&&e.target.closest(".mflaghit,.mflag");
+      if(hit&&hit.dataset.ev){hide();if(typeof openRecon==="function")openRecon(hit.dataset.ev);return;}
+      const r=svg.getBoundingClientRect(),vb=svg.viewBox.baseVal,scale=Math.max(r.width/vb.width,r.height/vb.height);
+      const vx=(e.clientX-r.left)/scale+(vb.width-r.width/scale)/2;const T=window.TSSWK||[],n=T.length||36;
+      const i=Math.round((vx-60)/((vb.width-120)/(n-1)));
+      if(i>=0&&i<n){hide();const k=isoDay(mondayOf(addD(new Date(SEASON0),i*7)));if(window.TL){TL.sel=k;}showScene("plan");}
+    });
+    /* touch: a tap shows the card, a second tap follows it */
+    svg.addEventListener("touchstart",e=>{const t=e.touches[0];const hit=document.elementFromPoint(t.clientX,t.clientY);
+      const f=hit&&hit.closest&&hit.closest(".mflaghit,.mflag");if(f&&f.dataset.ev){showEvent(f.dataset.ev,t.clientX,t.clientY);}},{passive:true});
+  }
+  const _dm=drawMassif;drawMassif=function(){_dm();setTimeout(wire,60);};
+  setTimeout(wire,2200);
+  document.addEventListener("scroll",hide,{passive:true});
+})();
+
+
+/* ═══ v7.0 — the ride read, deeper: chooser, map highlight, intervals, distribution ═══ */
+(function(){
+  /* ── the chooser ── */
+  const _rrs=renderRideSel;
+  renderRideSel=function(){
+    _rrs();
+    const bar=document.getElementById("ridesel");if(!bar)return;
+    const opts=RIDES.map((r,i)=>`<option value="${i}" ${i===curRide?"selected":""}>${r.dt} · ${r.nm.split(" — ")[0].split(" ×")[0]} · ${r.meta.split(" · ")[0]}${r.tss?" · "+r.tss+" TSS":""}</option>`).join("");
+    const sel=document.createElement("div");sel.className="rchoose";sel.style.cssText="display:flex;gap:10px;align-items:center;flex:1;min-width:0";
+    sel.innerHTML=`<span class="rlab">RIDE</span><select id="rpick">${opts}</select><div class="rnav"><button id="rprev" title="Newer">‹</button><button id="rnext" title="Older">›</button></div>`;
+    bar.appendChild(sel);
+    const go=i=>{if(i<0||i>=RIDES.length)return;curRide=i;cursor=null;activeZone=null;clearInterval(aiTimer);
+      const t=document.getElementById("raitext");if(t)t.style.display="none";const b=document.getElementById("raibtn");if(b){b.textContent="ANALYSE THIS RIDE";b.disabled=false;}
+      loadRide();renderRideSel();};
+    document.getElementById("rpick").onchange=e=>go(+e.target.value);
+    document.getElementById("rprev").onclick=()=>go(curRide-1);
+    document.getElementById("rnext").onclick=()=>go(curRide+1);
+  };
+  setTimeout(()=>{try{renderRideSel();}catch(e){}},400);
+  /* ── a highlight the map and the wave share ── */
+  let HL=null;
+  function highlight(i0,i1){
+    HL=(i0==null)?null:{i0:Math.max(0,i0),i1:Math.min(STREAM.length-1,i1)};
+    /* the wave */
+    const svg=document.getElementById("rwave");
+    if(svg){const old=svg.querySelector(".hlband");if(old)old.remove();
+      if(HL){const n=STREAM.length,W=1200;const x0=HL.i0/n*W,x1=HL.i1/n*W;
+        svg.insertAdjacentHTML("afterbegin",`<rect class="hlband" x="${x0.toFixed(1)}" y="0" width="${(x1-x0).toFixed(1)}" height="170"/>`);}}
+    /* the map: a gold line over the section, on Mapbox or on the canvas fallback */
+    if(window.GL&&GLACTIVE&&ROUTE.length){
+      const coords=HL?ROUTE.slice(Math.round(HL.i0/STREAM.length*ROUTE.length),Math.round(HL.i1/STREAM.length*ROUTE.length)+1).map(p=>[p.lng,p.lat]):[];
+      const gj={type:"Feature",geometry:{type:"LineString",coordinates:coords.length>1?coords:[[0,0],[0,0]]}};
+      if(GL.getSource("hl"))GL.getSource("hl").setData(gj);
+      else{GL.addSource("hl",{type:"geojson",data:gj});GL.addLayer({id:"hl-glow",type:"line",source:"hl",paint:{"line-color":"#FFD100","line-width":14,"line-opacity":.35,"line-blur":4}});
+        GL.addLayer({id:"hl",type:"line",source:"hl",paint:{"line-color":"#FFD100","line-width":5}});}
+      if(HL&&coords.length>1){const b=coords.reduce((bb,c)=>bb.extend(c),new mapboxgl.LngLatBounds(coords[0],coords[0]));GL.fitBounds(b,{padding:80,duration:600,maxZoom:14});}
+    }else if(typeof drawRMap==="function"){drawRMap();
+      if(HL&&ROUTE.length){const c=document.getElementById("rmap"),ctx=c.getContext("2d");/* the fallback simply redraws; the band on the wave still shows */}}
+  }
+  window.rideHighlight=highlight;
+  /* ── intervals: the efforts the ride actually contained ── */
+  function detectIntervals(){
+    const n=STREAM.length;if(n<60)return [];
+    const secs=(RIDES[curRide]&&RIDES[curRide].secs)||n*2,dt=secs/n;
+    const thr=(S.ftp||185)*0.88,w=Math.max(3,Math.round(20/dt));   // 20-second smoothing
+    const sm=STREAM.map((_,i)=>{let s=0,c=0;for(let k=Math.max(0,i-w);k<=Math.min(n-1,i+w);k++){s+=STREAM[k].pw||0;c++;}return s/c;});
+    const out=[];let start=null;
+    for(let i=0;i<n;i++){
+      if(sm[i]>=thr){if(start==null)start=i;}
+      else if(start!=null){if((i-start)*dt>=45)out.push([start,i-1]);start=null;}
+    }
+    if(start!=null&&(n-start)*dt>=45)out.push([start,n-1]);
+    /* merge gaps under 15 s, then score each */
+    const merged=[];out.forEach(iv=>{const last=merged[merged.length-1];if(last&&(iv[0]-last[1])*dt<15)last[1]=iv[1];else merged.push(iv.slice());});
+    return merged.map(([a,b])=>{const seg=STREAM.slice(a,b+1);const pw=seg.reduce((x,d)=>x+(d.pw||0),0)/seg.length;
+      const hr=seg.filter(d=>d.hr>30);return {i0:a,i1:b,secs:Math.round((b-a+1)*dt),w:Math.round(pw),pct:Math.round(pw/(S.ftp||185)*100),
+        hr:hr.length?Math.round(hr.reduce((x,d)=>x+d.hr,0)/hr.length):null,hrMax:hr.length?Math.max(...hr.map(d=>d.hr)):null};}).filter(x=>x.secs>=45).slice(0,12);
+  }
+  function renderIntervals(){
+    let host=document.getElementById("rints");
+    const segs=document.getElementById("rsegs");if(!segs)return;
+    if(!host){host=document.createElement("div");host.id="rints";host.className=segs.className;segs.parentNode.insertBefore(host,segs);}
+    const iv=detectIntervals();
+    const hm=s=>s>=60?`${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`:s+"s";
+    host.innerHTML=`<h3 class="rzh">THE INTERVALS <span class="rzl">${iv.length?iv.length+" ABOVE 88% FTP":"NONE ABOVE 88% FTP"}</span></h3>`+
+      (iv.length?iv.map((x,i)=>`<div class="ivrow" data-i0="${x.i0}" data-i1="${x.i1}"><span class="n">${i+1}</span><span>${hm(x.secs)} at <b>${x.pct}%</b></span><span class="w">${x.w}<small> W</small></span><span class="t">${hm(x.secs)}</span><span class="h">${x.hr?x.hr+" bpm":"—"}</span></div>`).join("")
+      :`<div class="ds">A ride without sustained efforts above threshold — an endurance day, by the numbers.</div>`);
+    host.querySelectorAll(".ivrow").forEach(r=>r.onclick=()=>{host.querySelectorAll(".ivrow").forEach(x=>x.classList.toggle("on",x===r));highlight(+r.dataset.i0,+r.dataset.i1);});
+  }
+  /* ── the distribution: where the watts actually were ── */
+  function renderDistribution(){
+    let host=document.getElementById("rdist");
+    const zones=document.getElementById("rzones");if(!zones)return;
+    if(!host){host=document.createElement("div");host.className="pdistwrap";zones.appendChild(host);host.id="rdist";}
+    const pw=STREAM.map(d=>d.pw||0).filter(v=>v>0);if(!pw.length){host.innerHTML="";return;}
+    const max=Math.max(...pw),bins=30,step=Math.max(10,Math.ceil(max/bins/10)*10),counts=[];
+    for(let i=0;i<bins;i++)counts[i]=0;
+    pw.forEach(v=>{const b=Math.min(bins-1,Math.floor(v/step));counts[b]++;});
+    const top=Math.max(1,...counts);
+    const zoneCls=w=>{const i=ZONES.findIndex(z=>w>=z.min&&w<z.max);return "z"+Math.max(0,i);};
+    host.innerHTML=`<div class="rzh" style="margin-top:16px">POWER DISTRIBUTION <span class="rzl">${step} W BINS</span></div>
+      <div class="pdist">${Array.from({length:bins},(_,i)=>`<span class="pdb ${zoneCls((i+0.5)*step)}" style="height:${Math.max(1,Math.round((counts[i]||0)/top*68))}px" title="${i*step}–${(i+1)*step} W"></span>`).join("")}</div>
+      <div class="pdlab"><span>0 W</span><span>${Math.round(bins*step/2)} W</span><span>${bins*step} W</span></div>`;
+  }
+  /* segments and efforts light the map when clicked */
+  function wireSegs(){
+    document.querySelectorAll("#rsegs .segrow").forEach((r,i)=>{r.onclick=()=>{
+      const R=RIDES[curRide]&&RIDES[curRide].segs&&RIDES[curRide].segs[i];
+      document.querySelectorAll("#rsegs .segrow").forEach(x=>x.classList.toggle("on",x===r));
+      if(R&&R.i0!=null)highlight(R.i0,R.i1);else if(i===0)highlight(0,STREAM.length-1);};});
+    document.querySelectorAll("#rbests .brow").forEach(r=>{r.onclick=()=>{
+      const B=rideBests();const lbl=r.querySelector(".bd").textContent;const b=B.find(x=>{const s=x.secs;const l=s<60?s+" SEC":s<3600?Math.round(s/60)+" MIN":Math.round(s/3600)+" H";return l===lbl;});
+      document.querySelectorAll("#rbests .brow").forEach(x=>x.classList.toggle("on",x===r));
+      if(b){const n=STREAM.length,secs=(RIDES[curRide]&&RIDES[curRide].secs)||n*2,k=Math.round(b.secs/(secs/n));const i0=Math.round(b.at*n);highlight(i0,i0+k);}};});
+  }
+  const _lr=loadRide;loadRide=async function(){const r=await _lr.apply(this,arguments);
+    setTimeout(()=>{try{renderIntervals();renderDistribution();wireSegs();highlight(null);}catch(e){}},180);return r;};
+  setTimeout(()=>{try{renderIntervals();renderDistribution();wireSegs();}catch(e){}},3200);
+})();
+
+
+/* ═══ v7.0 — a sync test that names the broken link ═══ */
+(function(){
+  async function runSyncTest(){
+    const host=document.getElementById("statuspanel");if(!host)return;
+    let box=document.getElementById("synctest");
+    if(!box){box=document.createElement("div");box.id="synctest";box.style.marginTop="12px";host.appendChild(box);}
+    box.innerHTML='<div class="ds">Walking the chain: token → Strava → webhook → catch-up → morning → compute → Apple Health…</div>';
+    try{
+      const r=await api("/api/synctest");
+      box.innerHTML=`<div class="stl">${r.steps.map(s=>`<div class="str ${s.ok?"ok":"bad"}"><i></i><b>${s.name.toUpperCase()}</b><span>${s.detail}</span></div>`).join("")}</div>
+        <div class="ds" style="margin-top:8px">Red is where it breaks. Send me this if anything is red.</div>`;
+    }catch(e){box.innerHTML=`<div class="ds">The test could not run: ${e.message||e}</div>`;}
+  }
+  window.runSyncTest=runSyncTest;
+  const _rs=renderStatus;renderStatus=function(){_rs();
+    const sp=document.getElementById("statuspanel");
+    if(sp&&!sp.querySelector("#synctest-btn")){const b=document.createElement("button");b.id="synctest-btn";b.className="tlbtn";b.textContent="TEST THE SYNC CHAIN";b.style.marginTop="10px";b.onclick=runSyncTest;sp.appendChild(b);}
+  };
 })();
 
 </script>
