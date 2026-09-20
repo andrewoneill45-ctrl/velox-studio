@@ -1792,6 +1792,58 @@ details.acc .accin>.panel{box-shadow:none;border:none;padding:0!important;margin
   .ridegrid .cockpit.wide .ridetitle{text-align:left}
   .ridegrid .cockpit.wide .ridetitle h3{font-size:20px}
 }
+
+/* ═══ v7.1 — Season tiles, snapshot, rail; Laboratory cockpit ═══ */
+/* 1. tiles in the display face */
+.tile .tn,.strip .tn,.tile b.tn{font-family:var(--display)!important;font-weight:400!important;letter-spacing:.01em;font-size:56px;line-height:.95}
+.tile .tn small,.tile .tn i{font-family:'Space Grotesk';font-size:14px;letter-spacing:.06em}
+/* 2. the snapshot: deeper, the number in the ring, the sparkline centred */
+.snap{grid-template-columns:.9fr 1.1fr 1.1fr 1.1fr;gap:14px}
+.snap .sc{padding:22px 22px 18px;min-height:190px;display:flex;flex-direction:column}
+.snap .sc.ready{flex-direction:row;align-items:center;gap:18px;padding-right:18px}
+.snap .sc.ready .ring{width:104px;height:104px;position:relative;flex:none}
+.snap .sc.ready .ring svg{width:104px;height:104px}
+.snap .sc.ready .ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:38px;color:var(--c);letter-spacing:.01em}
+.snap .sc.ready .rt .sv{display:none}
+.snap .sc.ready .rt .sw{font-size:18px;margin-top:4px}
+.snap .sc:not(.ready) .sv{font-size:64px;margin-top:8px;line-height:.95}
+.snap .sc:not(.ready) .ssp{position:static;width:100%;height:44px;margin:12px 0 10px;opacity:1;order:2}
+.snap .sc:not(.ready) .sd{order:3}
+.snap .sc:not(.ready) .sv{order:1}
+.snap .sc:not(.ready) .sk{order:0}
+.snap .ssp polyline{stroke-width:1.6}
+.snap .sc:not(.ready) .sd{margin-top:0;font-size:9px}
+/* 3. the rail: five instruments, spread */
+.instrail{grid-template-columns:repeat(5,1fr)!important}
+.instrail .ins.ready,.instrail .ins[data-k="form"],.instrail .ins[data-k="fitness"]{display:none!important}
+.instrail .ins{padding:26px 28px 22px}
+.instrail .ins .iv{font-size:34px}
+/* laboratory cockpit: explicit geometry, the map pinned while you scroll */
+.ridegrid .cockpit.wide{height:360px;padding:0;overflow:hidden;position:sticky;top:72px;z-index:6;background:#F7F8F7}
+.ridegrid .cockpit.wide #rmap,.ridegrid .cockpit.wide #rmapgl{position:absolute;inset:0;width:100%;height:100%!important;min-height:0!important}
+.ridegrid .cockpit.wide .ridetitle{position:absolute!important;left:22px!important;bottom:18px!important;top:auto!important;right:auto!important;z-index:4;text-align:left;margin:0;padding:10px 14px;background:rgba(247,248,247,.82);backdrop-filter:blur(6px);border-radius:12px}
+.ridegrid .cockpit.wide .ridetitle h3{font-family:var(--display)!important;font-weight:400!important;text-transform:uppercase;letter-spacing:.03em;font-size:26px;line-height:1;margin:0}
+.ridegrid .cockpit.wide .ridetitle .rm{margin-top:4px}
+.ridegrid .cockpit.wide .hud{position:absolute;top:16px;left:16px;right:auto;z-index:4;display:grid;grid-template-columns:1fr 1fr;gap:8px;width:300px}
+/* 4. the reads: one grid where everything fits */
+.ridegrid .sidecol{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto auto;gap:16px;align-items:stretch}
+.ridegrid .sidecol #rzones{grid-column:1;grid-row:1/3}
+.ridegrid .sidecol #rhrzones{grid-column:2;grid-row:1/3}
+.ridegrid .sidecol #rbests{grid-column:3;grid-row:1}
+.ridegrid .sidecol #rints{grid-column:3;grid-row:2}
+.ridegrid .sidecol #rsegs{grid-column:1/-1;grid-row:3}
+.ridegrid .sidecol>.panel{display:flex;flex-direction:column}
+@media(max-width:1100px){.ridegrid .sidecol{grid-template-columns:1fr 1fr}.ridegrid .sidecol #rzones,.ridegrid .sidecol #rhrzones,.ridegrid .sidecol #rbests,.ridegrid .sidecol #rints{grid-column:auto;grid-row:auto}.ridegrid .sidecol #rsegs{grid-row:auto}}
+@media(max-width:820px){
+  .snap{grid-template-columns:1fr 1fr}.snap .sc.ready{grid-column:1/-1;min-height:0}.snap .sc:not(.ready) .sv{font-size:44px}.snap .sc{min-height:0}
+  .instrail{grid-template-columns:1fr 1fr!important}
+  .tile .tn{font-size:40px}
+  .ridegrid .cockpit.wide{position:relative;top:auto;height:auto;min-height:260px}
+  .ridegrid .cockpit.wide #rmap,.ridegrid .cockpit.wide #rmapgl{position:relative;height:240px!important}
+  .ridegrid .cockpit.wide .hud{position:static;width:auto;padding:12px 14px 0}
+  .ridegrid .cockpit.wide .ridetitle{position:static!important;background:transparent;backdrop-filter:none;padding:8px 14px 12px}
+  .ridegrid .sidecol{grid-template-columns:1fr}.ridegrid .sidecol>*{grid-column:auto!important;grid-row:auto!important}
+}
 </style>
 </head>
 <body>
@@ -7002,8 +7054,8 @@ function dispatchSnapshot(){
   if(!snap){snap=document.createElement("div");snap.className="snap";const dl=el.querySelector(".dl");if(dl&&dl.nextSibling)el.insertBefore(snap,dl.nextSibling);else el.prepend(snap);}
   snap.innerHTML=`
     <div class="sc ready" style="--c:${col}">
-      <svg viewBox="0 0 72 72" class="ring"><circle cx="36" cy="36" r="30" fill="none" stroke="#EEF2F4" stroke-width="7"/>
-        <circle cx="36" cy="36" r="30" fill="none" stroke="${col}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${dash.toFixed(1)} ${circ.toFixed(1)}" transform="rotate(-90 36 36)"/></svg>
+      <div class="ring"><svg viewBox="0 0 72 72"><circle cx="36" cy="36" r="30" fill="none" stroke="#EEF2F4" stroke-width="7"/>
+        <circle cx="36" cy="36" r="30" fill="none" stroke="${col}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${dash.toFixed(1)} ${circ.toFixed(1)}" transform="rotate(-90 36 36)"/></svg><b>${R?R.score:"—"}</b></div>
       <div class="rt"><div class="sk">READINESS</div><div class="sv" style="color:${col}">${R?R.score:"—"}</div><div class="sw">${R?R.state:"waiting for Apple Health"}</div><div class="sa" style="color:${col}">${verdict}</div></div>
     </div>
     <div class="sc"><div class="sk">FITNESS</div><div class="sv">${Math.round(last.ctl||0)}</div><div class="sd">${d(last.ctl,ago.ctl)} in 7 days</div>${spark("ctl","#26496E")}</div>
@@ -7218,6 +7270,22 @@ function dispatchSnapshot(){
     const sp=document.getElementById("statuspanel");
     if(sp&&!sp.querySelector("#synctest-btn")){const b=document.createElement("button");b.id="synctest-btn";b.className="tlbtn";b.textContent="TEST THE SYNC CHAIN";b.style.marginTop="10px";b.onclick=runSyncTest;sp.appendChild(b);}
   };
+})();
+
+
+/* ═══ v7.1 — rail cells tagged; the GL map told its size ═══ */
+(function(){
+  function tagRail(){document.querySelectorAll(".instrail .ins").forEach(c=>{const l=(c.querySelector(".il")||{}).textContent||"";
+    const k=l.trim().toLowerCase();if(/^form/.test(k))c.dataset.k="form";else if(/^fitness/.test(k))c.dataset.k="fitness";});}
+  const _rr=window.renderReadiness;if(_rr)renderReadiness=function(){_rr.apply(this,arguments);tagRail();};
+  const _rd=renderDispatch;renderDispatch=function(){_rd.apply(this,arguments);tagRail();};
+  setTimeout(tagRail,2600);setTimeout(tagRail,5000);
+  const nudge=()=>{try{if(window.GL&&GL.resize){GL.resize();}}catch(e){}};
+  const _lr=loadRide;loadRide=async function(){const r=await _lr.apply(this,arguments);setTimeout(nudge,150);setTimeout(nudge,700);setTimeout(nudge,1600);return r;};
+  document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest(".modetabs button"))setTimeout(nudge,400);});
+  /* if the GL map has no drawn size after loading, fall back to the drawn route rather than a blank */
+  setInterval(()=>{const el=document.getElementById("rmapgl");if(!el||!el.classList.contains("on")||!window.GL)return;
+    const c=el.querySelector("canvas");if(c&&(c.width===0||c.height===0)){nudge();}},2500);
 })();
 
 </script>
