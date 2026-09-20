@@ -1853,6 +1853,32 @@ details.acc .accin>.panel{box-shadow:none;border:none;padding:0!important;margin
 .sky{min-height:260px}
 #massif{min-height:240px}
 @media(max-width:820px){.sky{min-height:200px}#massif{min-height:200px}}
+
+/* ═══ v7.3 — Season: rail wordmark, pills, rail on one line, ridden in rose ═══ */
+/* 1. the wordmark on the rail */
+.rail .key{font-family:var(--display)!important;font-size:15px!important;font-weight:400!important;letter-spacing:.14em;color:var(--rose)!important;opacity:1!important;text-transform:uppercase}
+/* 2. this week's plan, in the rose */
+.btn.btn-ghost#hero-plan{background:var(--rose)!important;color:#fff!important;border-color:var(--rose)!important}
+.btn.btn-ghost#hero-plan:hover{background:var(--rose-d)!important}
+/* 4. every DS pill that was ember is now rose */
+.aibtn.ember,.aibtn[style*="ember"],#wkai,.ribbon .aibtn,.ribbon .btn-ds,button.ds-pill,.orecon .aibtn,.rc-actions .aibtn.ember{background:var(--rose)!important;color:#fff!important}
+.aibtn.ember:hover,#wkai:hover,.ribbon .aibtn:hover{background:var(--rose-d)!important}
+/* 5. ridden blocks and their badges */
+.wbc .art.ridden,.stg .art.ridden{background:var(--rose)!important}
+.chip2.ridden,.typechip.ridden,.stg .chip2[style*="ember"],.wbc .chip2[style*="ember"]{background:var(--rose)!important;color:#fff!important}
+/* 3. the rail on one line: five instruments, the duplicates gone */
+.instrail{grid-template-columns:repeat(5,1fr)!important;grid-auto-rows:auto}
+.instrail .ins.ready,.instrail .ins[data-k="form"],.instrail .ins[data-k="fitness"]{display:none!important}
+.instrail .ins{border-top:none;border-bottom:none}
+/* the words sit beneath the metrics */
+.snapwrap{margin-top:10px}
+.snapwrap .dl{font-family:'Space Grotesk';font-size:8px;font-weight:700;letter-spacing:.2em;color:var(--mist);margin-bottom:10px}
+#instrail{margin:0 0 18px;border-top:1px solid var(--line)}
+#dispatch .dl{display:none}
+@media(max-width:820px){.instrail{grid-template-columns:1fr 1fr!important}}
+
+/* the recon pill: ink with the rose, so two pink pills never stack */
+.aibtn.rib-recon{background:var(--ink)!important;color:var(--rose)!important}
 </style>
 </head>
 <body>
@@ -4722,7 +4748,7 @@ function renderRail(){
 }
 function silhouette(c){const P=c.points,W=150,H=48,mn=Math.min(...P.map(p=>p.alt)),mx=Math.max(...P.map(p=>p.alt)),r=Math.max(50,mx-mn);
   const n=60,pts=[];for(let i=0;i<=n;i++){const p=P[Math.floor(i/n*(P.length-1))];pts.push([i/n*W,H-4-((p.alt-mn)/(r*1.05))*(H-10)]);}
-  return `<svg viewBox="0 0 ${W} ${H}"><path d="M0,${H} L${pts.map(p=>p.map(x=>x.toFixed(1)).join(",")).join("L")} L${W},${H} Z" fill="rgba(38,73,110,.10)"/><path d="M${pts.map(p=>p.map(x=>x.toFixed(1)).join(",")).join("L")}" fill="none" stroke="#141E28" stroke-width="1.6" stroke-linejoin="round"/></svg>`;}
+  return `<svg viewBox="0 0 ${W} ${H}"><path d="M0,${H} L${pts.map(p=>p.map(x=>x.toFixed(1)).join(",")).join("L")} L${W},${H} Z" fill="rgba(232,70,124,.12)"/><path d="M${pts.map(p=>p.map(x=>x.toFixed(1)).join(",")).join("L")}" fill="none" stroke="#E8467C" stroke-width="2" stroke-linejoin="round"/></svg>`;}
 function projForm(ev){const pm=pmcFromActs();if(!pm.length||!ev)return null;let ctl=pm[pm.length-1].ctl,atl=pm[pm.length-1].atl;
   const days=Math.max(0,J(ev)),liveLoad=Math.max(20,atl||40);
   for(let d=1;d<=days;d++){const wi=CURWK+Math.floor(d/7),tgt=wkTarget(wi);let load=tgt?tgt/7:liveLoad;if(d>days-7)load*=.45;ctl+=(load-ctl)/42;atl+=(load-atl)/7;}
@@ -4755,7 +4781,7 @@ function renderWeekBand(){
     const rides=(w?w.rides:[]).filter(r=>r.d===di),plans=(S.plan&&S.plan[di])||[];
     const t=rides.reduce((s,r)=>s+(r.tss||0),0),pt=plans.reduce((s,p)=>s+(+p.tss||0),0);
     tot+=t;pl+=pt;mx=Math.max(mx,t,pt);days.push({d,di,rides,plans,t,pt});}
-  const inten=r=>{const ph=r.secs?r.tss/(r.secs/3600):0;return ph<45?"var(--vert)":ph<65?"#D99000":"var(--ember)";};
+  const inten=r=>{const ph=r.secs?r.tss/(r.secs/3600):0;return ph<45?"var(--vert)":ph<65?"#D99000":"var(--rose)";};
   el.innerHTML=`<div class="wl"><span>THE WEEK — S${CURWK+1} · RIDDEN <b style="color:var(--ink)">${Math.round(tot)} TSS</b>${pl?` · PLANNED <b style="color:var(--ink)">${pl}</b>`:""}${S.weekTargets&&S.weekTargets[k]?` · TARGET <b style="color:var(--ink)">${S.weekTargets[k]}</b>`:""}</span><span>SOLID = RIDDEN · DASHED = PLANNED · CLICK A DAY</span></div>
     <div class="wb">${days.map(x=>{const today=x.di===todayIso,past=x.di<todayIso;
       let bar,name,val;
@@ -7059,8 +7085,16 @@ function dispatchSnapshot(){
   const formCol=tsb>5?"#189B69":tsb<-20?"#E23A2E":tsb<-10?"#D99000":"#141E28";
   const circ=2*Math.PI*30,dash=R?circ*(R.score||0)/100:0;
   const verdict=R?(R.advice||(band==="g"?"CLEARED TO TRAIN":band==="a"?"TRAIN, BUT LISTEN":"REST TODAY")):"NO READINESS DATA YET";
-  let snap=el.querySelector(".snap");
-  if(!snap){snap=document.createElement("div");snap.className="snap";const dl=el.querySelector(".dl");if(dl&&dl.nextSibling)el.insertBefore(snap,dl.nextSibling);else el.prepend(snap);}
+  /* the snapshot lives in its own section above the rail; the dispatch's words follow the rail */
+  let wrap=document.getElementById("snapwrap");
+  if(!wrap){wrap=document.createElement("section");wrap.id="snapwrap";wrap.className="snapwrap";el.parentNode.insertBefore(wrap,el);}
+  const rail=document.getElementById("instrail");
+  if(rail&&rail.previousElementSibling!==wrap)el.parentNode.insertBefore(rail,el);      /* order: snapwrap → rail → dispatch */
+  const dl=el.querySelector(".dl");
+  let head=wrap.querySelector(".dl");if(!head){head=document.createElement("div");head.className="dl";wrap.appendChild(head);}
+  if(dl){head.textContent=dl.textContent;dl.remove();}
+  let snap=wrap.querySelector(".snap");
+  if(!snap){snap=document.createElement("div");snap.className="snap";wrap.appendChild(snap);}
   snap.innerHTML=`
     <div class="sc ready" style="--c:${col}">
       <div class="ring"><svg viewBox="0 0 72 72"><circle cx="36" cy="36" r="30" fill="none" stroke="#EEF2F4" stroke-width="7"/>
@@ -7295,6 +7329,17 @@ function dispatchSnapshot(){
   /* if the GL map has no drawn size after loading, fall back to the drawn route rather than a blank */
   setInterval(()=>{const el=document.getElementById("rmapgl");if(!el||!el.classList.contains("on")||!window.GL)return;
     const c=el.querySelector("canvas");if(c&&(c.width===0||c.height===0)){nudge();}},2500);
+})();
+
+
+/* ═══ v7.3 — the rail's duplicates hidden for good; ridden badges in the rose ═══ */
+(function(){
+  function tag(){document.querySelectorAll(".instrail .ins").forEach(c=>{const l=((c.querySelector(".il")||{}).textContent||"").trim().toUpperCase();
+    if(/^FORM\b/.test(l))c.dataset.k="form";else if(/^FITNESS\b/.test(l))c.dataset.k="fitness";else if(/^READINESS\b/.test(l))c.classList.add("ready");});}
+  const rail=document.getElementById("instrail");if(rail)new MutationObserver(tag).observe(rail,{childList:true,subtree:true});
+  setTimeout(tag,2400);setTimeout(tag,4500);
+  const paint=()=>document.querySelectorAll(".chip2,.typechip").forEach(c=>{if(/^RIDDEN$/i.test(c.textContent.trim())){c.style.background="var(--rose)";c.style.color="#fff";}});
+  new MutationObserver(paint).observe(document.body,{childList:true,subtree:true});setTimeout(paint,2500);
 })();
 
 </script>
