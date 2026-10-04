@@ -3923,10 +3923,10 @@ async function aiBuild(k,instruction){
   const stopWait=(window.dsWaiting||(()=>()=>{}))(st);
   try{
     const d=await api("/api/coach",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({mode:"planweek",context:aiContext(k),instruction:instruction||null})});
-    stopWait();st.textContent="";
+    stopWait();st.textContent=d.repaired?"The reply was cut short; I kept the days that came through whole.":"";
     let plan=d.plan;
     if(!plan&&d.text){try{const c=d.text.replace(/```json|```/g,"").trim();plan=JSON.parse(c.slice(c.indexOf("{"),c.lastIndexOf("}")+1));}catch(e){stopWait();}}
-    if(!plan){out.innerHTML=`<div class="panel" style="padding:22px 26px;margin-top:14px"><div class="aisum">"The plan came back incomplete. Let me try again."</div><button class="aibtn" id="ai-retry">TRY AGAIN</button></div>`;document.getElementById("ai-retry").onclick=()=>aiBuild(k,instruction);return;}
+    if(!plan){out.innerHTML=`<div class="panel" style="padding:22px 26px;margin-top:14px"><div class="aisum">"The plan came back incomplete. ${d.reason?d.reason.charAt(0).toUpperCase()+d.reason.slice(1)+".":"Let me try again."}"</div>${d.error?`<div class="ds" style="margin-top:6px">${d.error}</div>`:""}<button class="aibtn" id="ai-retry">TRY AGAIN</button></div>`;document.getElementById("ai-retry").onclick=()=>aiBuild(k,instruction);return;}
     d.plan=plan;
     AIW.proposal=d.plan;renderProposal(k);
   }catch(e){st.textContent="Coach offline — "+String(e.message||e);}

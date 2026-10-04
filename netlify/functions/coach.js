@@ -118,7 +118,7 @@ Fill the card: headline = the answer in one line, stats = the two or three numbe
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "content-type": "application/json", "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
-    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "planweek" ? 2400 : mode === "build" ? 3600 : mode === "engine" ? 1100 : mode === "session" ? 1300 : mode === "jersey" ? 500 : CARDM.includes(mode) ? 1400 : 700,
+    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "planweek" ? 5000 : mode === "build" ? 4200 : mode === "engine" ? 1100 : mode === "session" ? 1300 : mode === "jersey" ? 500 : CARDM.includes(mode) ? 1400 : 700,
       system: (mode === "build" ? `You are The DS, planning a periodised BUILD from today to a goal for one amateur rider. Respond with ONLY a JSON object, no fences:
 {"summary": string (2-3 sentences: the shape of the build and why, naming evidence used),
  "phases": [{"name":"Base"|"Build"|"Specific"|"Trip"|"Recover"|"Taper"|"Event","weeks":number,"focus":string ≤18 words}],
@@ -142,10 +142,32 @@ Rules: if wellness.readiness exists, let this morning's readiness shape today an
     catch { return json({ build: null, text }); }
   }
   if (mode === "planweek") {
-    try { const clean = text.replace(/```json|```/g, "").trim();
-      const plan = JSON.parse(clean.slice(clean.indexOf("{"), clean.lastIndexOf("}") + 1));
-      return json({ plan, text }); }
-    catch { return json({ plan: null, text }); }
+    const stop = d.stop_reason || null;
+    const clean = text.replace(/```json|```/g, "").trim();
+    const slice = clean.slice(clean.indexOf("{"), clean.lastIndexOf("}") + 1);
+    const tryParse = (t) => { try { return JSON.parse(t); } catch { return null; } };
+    let plan = tryParse(slice);
+    let repaired = false;
+    if (!plan) {
+      /* a reply cut mid-session: drop the broken tail and close what is open */
+      let t = clean.slice(clean.indexOf("{"));
+      const lastGood = t.lastIndexOf("},");
+      if (lastGood > 0) t = t.slice(0, lastGood + 1);
+      /* close whatever is still open, innermost first, ignoring brackets inside strings */
+      const stack = []; let inStr = false, esc = false;
+      for (const ch of t) {
+        if (inStr) { if (esc) esc = false; else if (ch === "\\") esc = true; else if (ch === '"') inStr = false; continue; }
+        if (ch === '"') inStr = true; else if (ch === "{" || ch === "[") stack.push(ch); else if (ch === "}" || ch === "]") stack.pop();
+      }
+      if (inStr) t += '"';
+      while (stack.length) t += stack.pop() === "{" ? "}" : "]";
+      plan = tryParse(t); repaired = !!plan;
+    }
+    if (plan && (!Array.isArray(plan.sessions) || !plan.sessions.length)) {
+      return json({ plan: null, text, reason: "the DS returned no sessions" + (plan.question ? ": it asked — " + plan.question : "") });
+    }
+    if (!plan) return json({ plan: null, text, reason: stop === "max_tokens" ? "the reply ran past its length limit — shorten the note or ask for fewer days" : "the reply could not be read as a plan (" + (stop || "unknown") + ")" });
+    return json({ plan, text, repaired, stop });
   }
   if (CARDM.includes(mode)) {
     try { const clean = text.replace(/```json|```/g, "").trim();
