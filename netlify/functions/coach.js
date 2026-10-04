@@ -118,7 +118,7 @@ Fill the card: headline = the answer in one line, stats = the two or three numbe
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "content-type": "application/json", "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
-    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: mode === "planweek" ? 5000 : mode === "build" ? 4200 : mode === "engine" ? 1100 : mode === "session" ? 1300 : mode === "jersey" ? 500 : CARDM.includes(mode) ? 1400 : 700,
+    body: JSON.stringify({ model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6", max_tokens: body._cap || (mode === "planweek" ? 4000 : mode === "build" ? 4000 : mode === "engine" ? 1100 : mode === "session" ? 1300 : mode === "jersey" ? 500 : CARDM.includes(mode) ? 1400 : 700),
       system: (mode === "build" ? `You are The DS, planning a periodised BUILD from today to a goal for one amateur rider. Respond with ONLY a JSON object, no fences:
 {"summary": string (2-3 sentences: the shape of the build and why, naming evidence used),
  "phases": [{"name":"Base"|"Build"|"Specific"|"Trip"|"Recover"|"Taper"|"Event","weeks":number,"focus":string ≤18 words}],
@@ -132,7 +132,13 @@ You are now planning ONE training week. Respond with ONLY a JSON object — no p
  "sessions": [{"date":"YYYY-MM-DD","name":string,"type":"Recovery"|"Endurance"|"Tempo"|"Threshold"|"VO2 Max"|"Race"|"Strength","mins":number,"tss":number,"detail":string (max 60 words),"steps": [{"kind":"warmup"|"steady"|"intervals"|"cooldown","mins":number,"pct":number (% of FTP for steady; warmup/cooldown ramp uses pctFrom/pctTo),"pctFrom":number,"pctTo":number,"reps":number,"onMins":number,"onPct":number,"offMins":number,"offPct":number}] (REQUIRED for every ride session — the exact prescription, no prose approximations; Strength sessions may omit)}]}
 Rules: if wellness.readiness exists, let this morning's readiness shape today and the next two days (Red = rest or very easy, Amber = no intensity today); use only the days listed in week.available and never exceed that day's "mins"; base load on last week's TSS, current form (TSB) and the rider's stated feeling — tired means lower load; place hard days before rest; taper if an A-event is within 10 days; "detail" says exactly how to ride it with watt targets from the rider's FTP and zones. Rest days are simply omitted; if the rider mentions strength work, add "Strength" sessions (tss 15–30) on non-riding days. Keep the whole response under 1500 tokens. Sessions should sum to a sensible weekly TSS (target if given).` : ""),
       messages: [{ role: "user", content: ask + "\n\nDATA:\n" + JSON.stringify(context) }] })});
-  if (!r.ok) return json({ error: "anthropic_" + r.status, detail: await r.text() }, 502);
+  if (!r.ok) {
+    const raw = await r.text(); let msg = raw;
+    try { const j = JSON.parse(raw); msg = (j.error && j.error.message) || raw; } catch {}
+    /* a model with a smaller output window: try once more inside it */
+    if (r.status === 400 && /max_tokens/i.test(msg) && !body._retried) return runCoach({ ...body, _retried: true, _cap: 3000 });
+    return json({ error: "anthropic_" + r.status, detail: msg.slice(0, 300), model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6" }, 502);
+  }
   const d = await r.json();
   const text = d.content?.filter(c => c.type === "text").map(c => c.text).join("\n") || "";
   if (mode === "build") {
