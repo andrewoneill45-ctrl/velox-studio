@@ -1879,6 +1879,214 @@ details.acc .accin>.panel{box-shadow:none;border:none;padding:0!important;margin
 
 /* the recon pill: ink with the rose, so two pink pills never stack */
 .aibtn.rib-recon{background:var(--ink)!important;color:var(--rose)!important}
+
+/* ═══════════════════════════════════════════════════════════════
+   MASSIF ON A PHONE — v7.5
+   One layer, written as an app: short screens, swipeable strips,
+   sticky bars, no entry animation, no hover machinery.
+   ═══════════════════════════════════════════════════════════════ */
+@media(max-width:820px){
+  /* ── the frame ── */
+  html{scroll-behavior:auto;-webkit-text-size-adjust:100%}
+  body{overscroll-behavior-y:none}
+  .main{padding-bottom:calc(74px + env(safe-area-inset-bottom))!important}
+  .cascade,.sky.cascade{opacity:1!important;transform:none!important;animation:none!important;transition:none!important}
+  .mtip{display:none!important}
+  .ctx{height:52px!important;padding:0 14px!important;gap:10px!important}
+  .ctx .scenename{font-size:17px!important}
+  .rail{height:calc(62px + env(safe-area-inset-bottom))!important;padding:6px 6px env(safe-area-inset-bottom)!important;border-top:1px solid var(--line);background:rgba(247,248,247,.94)!important;backdrop-filter:blur(14px)}
+  .rail button{height:50px!important;border-radius:12px!important}
+  /* every horizontal strip snaps, scrolls with momentum, hides its bar */
+  .hstrip{display:flex!important;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:2px 16px 10px;margin:0 -16px;scrollbar-width:none}
+  .hstrip::-webkit-scrollbar{display:none}
+  .hstrip>*{flex:0 0 auto;scroll-snap-align:start}
+  .wrap{padding-left:16px!important;padding-right:16px!important}
+  .panel{padding:16px!important;border-radius:14px!important}
+  /* type on a phone */
+  .sky .title h1,#heroline,.heroline{font-size:30px!important;line-height:.98!important}
+  .mroad h2,.mpanel h2,.panel>h2{font-size:19px!important}
+  .ds,.ds1{font-size:13.5px!important;line-height:1.5!important}
+
+  /* ── SEASON ── */
+  .sky{min-height:0!important}
+  #massif{height:170px!important;min-height:170px!important}
+  .sky .title{padding:10px 16px 0!important}
+  #kicker{margin-top:10px!important;font-size:7.5px}
+  #herolede{display:none}
+  .skyactions,.hero .btns,.herobtns{display:flex;gap:8px;margin:12px 0 12px!important}
+  .skyactions .btn,.hero .btns .btn{flex:1;min-height:42px;padding:10px 8px!important;font-size:8px!important;letter-spacing:.14em!important;white-space:nowrap}
+  /* the four tiles: one swipeable row of compact cards */
+  .strip{margin-top:0!important}
+  .strip .g4{display:flex!important;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:2px 16px 8px;margin:0 -16px;border:none!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;scrollbar-width:none}
+  .strip .g4::-webkit-scrollbar{display:none}
+  .strip .g4 .tile{flex:0 0 62vw;scroll-snap-align:start;border:1px solid var(--line);border-radius:14px;padding:14px 16px 12px!important}
+  .tile .tn{font-size:34px!important}
+  .tile .tl,.tile .tk{font-size:7px!important}
+  .tile .td,.tile .ts{font-size:12px!important;line-height:1.4}
+  /* the snapshot: readiness in one compact band, the three numbers in one row */
+  .snapwrap{margin-top:6px!important}
+  .snap{display:grid!important;grid-template-columns:1fr 1fr 1fr!important;gap:8px!important;margin:8px 0 10px!important}
+  .snap .sc{min-height:0!important;padding:12px 12px 10px!important;border-radius:12px!important;display:flex!important;flex-direction:column!important}
+  .snap .sc.ready{grid-column:1/-1;flex-direction:row!important;align-items:center;gap:14px;padding:12px 14px!important}
+  .snap .sc.ready .ring,.snap .sc.ready .ring svg{width:64px!important;height:64px!important}
+  .snap .sc.ready .ring b{font-size:22px!important}
+  .snap .sc.ready .rt .sw{font-size:19px!important}
+  .snap .sc.ready .rt .sa{margin-top:4px!important;font-size:7.5px!important}
+  .snap .sc:not(.ready) .sv{font-size:30px!important;margin-top:4px!important}
+  .snap .sc:not(.ready) .ssp{height:24px!important;margin:8px 0 4px!important}
+  .snap .sc:not(.ready) .sd{font-size:7.5px!important}
+  .snap .sk{font-size:7px!important}
+  /* the rail: one swipeable row of instruments */
+  #instrail{display:flex!important;grid-template-columns:none!important;gap:0;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;margin:0 -16px 10px!important;padding:0 16px;border-top:none!important;border-bottom:none!important;scrollbar-width:none}
+  #instrail::-webkit-scrollbar{display:none}
+  #instrail .ins{flex:0 0 46vw;scroll-snap-align:start;padding:12px 14px 10px!important;border:1px solid var(--line);border-radius:12px;margin-right:8px;background:#fff}
+  #instrail .ins .iv{font-size:24px!important}
+  #instrail .ins .il{font-size:7px!important}
+  #instrail .ins .id{font-size:7px!important}
+  #instrail .ins svg{height:22px!important}
+  /* the dispatch words */
+  #dispatch{padding:4px 0 0!important}
+  #dispatch .ds1.ds1-quiet{font-size:14px!important;margin:4px 0 8px!important}
+  #dispatch .dsrc,#dispatch .grounded{display:none!important}
+  #dispatch .statusline,#dispatch .chips{flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px 6px}
+  #dispatch .statusline::-webkit-scrollbar{display:none}
+  #dispatch .statusline>*{flex:0 0 auto;white-space:nowrap}
+  /* events: one compact card each, side by side in a strip */
+  #ribbon{display:flex!important;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;margin:0 -16px!important;padding:4px 16px 10px!important;scrollbar-width:none;border:none!important;flex-wrap:nowrap!important}
+  #ribbon::-webkit-scrollbar{display:none}
+  #ribbon .roadlab{flex:0 0 100%;display:none}
+  #ribbon>.ribbon{flex:0 0 84vw!important;scroll-snap-align:start;display:block!important;padding:14px 16px 12px!important;border:1px solid var(--line)!important;border-radius:14px!important;background:#fff}
+  #ribbon>.ribbon .rj{display:flex;align-items:baseline;gap:10px;font-size:34px!important;line-height:1!important;margin-bottom:6px}
+  #ribbon>.ribbon .rj small{font-size:6.5px!important;margin:0!important}
+  #ribbon>.ribbon .rmid .rn{font-size:19px!important;line-height:1.05!important}
+  #ribbon>.ribbon .rmid .rn span{display:none}
+  #ribbon>.ribbon .rmid .rd{font-size:7px!important;margin-top:4px}
+  #ribbon>.ribbon .rmid .rp{display:none!important}
+  #ribbon>.ribbon .stages{display:flex!important;gap:8px;overflow-x:auto;scrollbar-width:none;margin:10px -16px 0;padding:0 16px}
+  #ribbon>.ribbon .stages::-webkit-scrollbar{display:none}
+  #ribbon>.ribbon .stg2{flex:0 0 104px!important;min-width:0}
+  #ribbon>.ribbon .stg2 .sl{font-size:6.5px!important;line-height:1.3}
+  #ribbon>.ribbon .rright{text-align:left!important;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+  #ribbon>.ribbon .rright .pf{flex:0 0 100%;font-size:6.5px!important;margin:0!important}
+  #ribbon>.ribbon .rright .pv{font-size:22px!important;margin:0 8px 0 0!important;order:-1;flex:0 0 auto}
+  #ribbon>.ribbon .rright .pf{order:-2}
+  #ribbon>.ribbon .rright .aibtn{min-height:36px!important;padding:8px 12px!important;font-size:7.5px!important;margin:0!important;flex:1 1 auto}
+  #ribbon>.ribbon .rright br{display:none}
+  /* the week band is already a strip; make it snap, and smaller */
+  .weekband .wl,.wl{font-size:7px!important;flex-wrap:wrap;gap:6px!important}
+  .wl .hint,.wl span:last-child:not(:first-child){display:none}
+  .wb2{scroll-snap-type:x mandatory;gap:8px!important;margin:0 -16px;padding:2px 16px 8px}
+  .wbc{flex:0 0 46vw!important;scroll-snap-align:start;min-height:150px!important;padding:12px!important}
+  .wxweek{display:none!important}
+  .palmares,#palmares{padding:14px 0 10px!important}
+  .palmares .pbest,.pal .pb{font-size:22px!important}
+
+  /* ── ROADBOOK ── */
+  .tlwrap{margin:0 -16px 10px;border-radius:0!important;border-left:none!important;border-right:none!important}
+  #tlrail{height:150px!important}
+  .tlmini{padding:6px 10px!important}
+  .wksum{padding:12px 14px!important;gap:10px!important;position:sticky;top:52px;z-index:20;background:rgba(247,248,247,.94);backdrop-filter:blur(12px);border-radius:12px!important}
+  .wksum .inp{width:68px!important;min-width:0!important}
+  .wksum #wkai,.wksum #wkplan{flex:1 1 calc(50% - 5px)!important;min-height:40px!important;font-size:7.5px!important;padding:8px 6px!important;white-space:nowrap}
+  /* day cards become rows: the day, the session, the load, in one line */
+  #days{display:flex!important;flex-direction:column!important;gap:0!important;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+  #days .stg{min-height:0!important;padding:12px 14px!important;flex-direction:row!important;align-items:center!important;gap:12px;border-bottom:1px solid var(--hair);border-radius:0!important;border-left:none!important;border-right:none!important;border-top:none!important}
+  #days .stg:last-child{border-bottom:none}
+  #days .stg .day{flex:0 0 52px;font-size:8px!important;line-height:1.25;display:block!important}
+  #days .stg .day .wxmini{display:block;margin:4px 0 0!important;padding:0!important;font-size:6.5px!important;gap:3px}
+  #days .stg .nm{flex:1 1 auto;min-width:0;font-size:14px!important;line-height:1.2!important;margin:0!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #days .stg .ds,#days .stg .typechip,#days .stg .chip2,#days .stg .art,#days .stg .steps,#days .stg .stx,#days .stg .openlink,#days .stg .miss,#days .stg .tick{display:none!important}
+  #days .stg .foot{margin:0!important;padding:0!important;flex:0 0 auto;display:flex;align-items:center;gap:8px}
+  #days .stg .foot .tss{font-size:18px!important}
+  #days .stg .foot .tss small{font-size:7px!important}
+  #days .stg .foot .acts{display:none!important}
+  #days .stg.planned .nm::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--rose);margin-right:7px;vertical-align:middle}
+  #days .stg.has .nm::before,#days .stg:has(.stx) .nm::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--bleu);margin-right:7px;vertical-align:middle}
+  #days .stg:hover,#days .stg.pin{background:#fff!important}
+  .rbwx{display:none!important}
+  .planner{padding:14px!important}
+  .planner .frow{flex-wrap:wrap}
+  .planner .inp{flex:1 1 100%}
+
+  /* ── LABORATORY ── */
+  .modetabs{margin:8px 0 8px!important;gap:12px!important}
+  .modetabs button{font-size:10px!important}
+  .mdock{gap:6px!important;margin-bottom:8px!important}
+  .mscen button{min-height:36px!important;padding:8px 12px!important;font-size:7.5px!important}
+  .mask input{min-height:40px}
+  .mask button{min-height:40px}
+  .mlevers{padding:14px!important}
+  .mlevers h3{font-size:17px!important;margin-bottom:10px!important}
+  .mlv{margin-bottom:8px!important}
+  .mlv .ml{font-size:7px!important}
+  .mlv .mv{font-size:18px!important}
+  .mlv input[type=range]{height:28px!important;margin-top:2px!important}
+  .mlv .mh{font-size:6.5px!important;margin-top:2px!important}
+  .mshape button{min-height:34px!important;font-size:7px!important}
+  .mbuys .r{font-size:11.5px!important;padding:5px 0!important}
+  #msc-commit{min-height:42px!important;margin-top:10px!important}
+  #mroadwrap{min-height:180px!important}
+  .mgates{display:flex!important;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -16px;padding:2px 16px 8px;scrollbar-width:none}
+  .mgates::-webkit-scrollbar{display:none}
+  .mgate{flex:0 0 70vw;scroll-snap-align:start;padding:12px!important}
+  .mgate .n{font-size:15px!important}
+  .mledger .r{font-size:12px!important;padding:7px 0!important}
+  /* the ride read: everything in a column, map 220 tall, chooser compact */
+  .ridebar{padding:8px 10px!important;margin-bottom:8px!important}
+  .ridebar select{min-height:38px}
+  .ridegrid .cockpit.wide{height:auto!important;min-height:0!important}
+  .ridegrid .cockpit.wide #rmap,.ridegrid .cockpit.wide #rmapgl{height:220px!important}
+  .ridegrid .cockpit.wide .hud{padding:10px 12px 0!important;gap:6px!important}
+  .ridegrid .cockpit.wide .hud>*{padding:8px 10px!important}
+  .ridegrid .cockpit.wide .ridetitle{padding:6px 12px 10px!important}
+  .ridegrid .cockpit.wide .ridetitle h3{font-size:18px!important}
+  .ridegrid .sidecol{gap:10px!important}
+  .ridegrid .sidecol>.panel{padding:14px!important}
+  .rzh{font-size:8px!important;margin-bottom:8px!important}
+  .hzrow,.brow,.ivrow{padding:6px 0!important}
+  .wavepanel{padding:14px!important}
+
+  /* ── JERSEYS ── */
+  .ceremony{padding:14px 16px 10px!important}
+  .ceremony .ct{font-size:26px!important}
+  .ceremony .cstats{gap:8px 12px!important}
+  .podium{display:flex!important;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -16px;padding:2px 16px 10px;scrollbar-width:none}
+  .podium::-webkit-scrollbar{display:none}
+  .podium .pj{flex:0 0 58vw;scroll-snap-align:start}
+  .passport{grid-template-columns:1fr 1fr!important;gap:8px!important}
+  .passport .stamp{padding:12px!important}
+
+  /* ── SOURCES ── */
+  #src-tidy .srchead{margin:10px 2px 6px!important}
+  details.acc>summary{min-height:48px;padding:12px 14px!important}
+  .int{padding:12px 14px!important}
+}
+@media(max-width:400px){
+  .snap .sc:not(.ready) .sv{font-size:26px!important}
+  #ribbon>.ribbon{flex-basis:88vw!important}
+  .strip .g4 .tile{flex-basis:66vw}
+}
+
+@media(max-width:820px){
+  /* the Roadbook opens on the week; the big timeline folds behind a toggle */
+  #tlscroll{display:none!important}
+  .tlwrap.open #tlscroll{display:block!important}
+  .tlwrap .tltop .sg{display:none}
+  .tlwrap .tltop,.tlwrap .tlnav{padding:8px 12px!important;gap:6px!important}
+  .tlwrap .tltop button,.tlwrap .tlnav button{min-height:36px!important;padding:8px 10px!important;font-size:7.5px!important;flex:1}
+  .tlwrap .tlmini{padding:6px 12px 10px!important}
+  .tlfold{display:block;width:100%;background:transparent;border:none;border-top:1px solid var(--hair);padding:9px;font-family:'Space Grotesk';font-size:7.5px;font-weight:700;letter-spacing:.16em;color:var(--mist)}
+  .tlhead,.tllab{font-size:7px!important;margin:10px 16px 6px!important;line-height:1.5}
+}
+@media(min-width:821px){.tlfold{display:none}}
+
+@media(max-width:820px){
+  .mtwo,.mtop,#model-room .mtwo,#model-room>div{display:block!important;grid-template-columns:none!important;width:100%!important;max-width:100%!important;min-width:0!important}
+  .mlevers,.mroad,.mpanel,.mdemand,.mledger{width:100%!important;max-width:100%!important;min-width:0!important;margin:0 0 12px!important;box-sizing:border-box}
+  .mlv input[type=range]{height:34px!important}
+  .tlfold{min-height:40px!important}
+  .brow,.hzrow,.ivrow,#rsegs .segrow{min-height:34px!important}
+}
 </style>
 </head>
 <body>
@@ -7340,6 +7548,16 @@ function dispatchSnapshot(){
   setTimeout(tag,2400);setTimeout(tag,4500);
   const paint=()=>document.querySelectorAll(".chip2,.typechip").forEach(c=>{if(/^RIDDEN$/i.test(c.textContent.trim())){c.style.background="var(--rose)";c.style.color="#fff";}});
   new MutationObserver(paint).observe(document.body,{childList:true,subtree:true});setTimeout(paint,2500);
+})();
+
+
+/* the timeline's fold on a phone */
+(function(){
+  function fold(){const w=document.querySelector(".tlwrap");if(!w||w.querySelector(".tlfold"))return;
+    const b=document.createElement("button");b.className="tlfold";b.textContent="SHOW THE FULL TIMELINE ▾";
+    b.onclick=()=>{const o=w.classList.toggle("open");b.textContent=o?"HIDE THE TIMELINE ▴":"SHOW THE FULL TIMELINE ▾";if(o&&window.tlRender)setTimeout(()=>tlRender(true),60);};
+    w.appendChild(b);}
+  setTimeout(fold,2500);const _ss=showScene;showScene=function(id){_ss(id);if(id==="plan")setTimeout(fold,200);};
 })();
 
 </script>
