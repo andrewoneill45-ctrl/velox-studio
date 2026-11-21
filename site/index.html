@@ -7661,5 +7661,400 @@ function simulate(course,r){
 
 
 </script>
+<style>
+/* ═══ v8.0 — Today: the Season opens on the morning roadbook ═══ */
+#s-season.todayon>.sky,#s-season.todayon>.strip,#s-season.todayon>#v4,#s-season.todayon>.legacy{display:none!important}
+#today{display:none;max-width:1360px;margin:0 auto;padding:28px 40px 72px;color:#141E28;font-family:Inter,system-ui,sans-serif}
+#s-season.todayon>#today{display:block}
+#today *{box-sizing:border-box}
+#today .t-k{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;letter-spacing:.13em;color:#4A5764;text-transform:uppercase}
+#today .t-row{display:flex;gap:20px;flex-wrap:wrap;align-items:stretch}
+#today .t-card{background:#fff;border-radius:26px;padding:22px 24px;min-width:0}
+#today .t-dark{background:#141E28;color:#fff;border-radius:28px;padding:26px 28px;min-width:0}
+#today .t-dark .t-k{color:#F08AAE}
+#today .t-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+#today .t-h1{margin:10px 0 0;font-family:Fraunces,Georgia,serif;font-weight:540;font-size:64px;line-height:1;letter-spacing:-.025em}
+#today .t-h1 em{font-weight:460;font-style:italic;color:#C42F62}
+#today .t-h1.rest em{color:#A65A0F}
+#today .t-big{font-family:Fraunces,Georgia,serif;font-weight:540;font-size:52px;line-height:1}
+#today .t-big small{font-size:20px}
+#today .t-lab{font-size:13px;color:#4A5764;margin-top:6px}
+#today .t-g{color:#13875B}#today .t-a{color:#A65A0F}#today .t-r{color:#C2372B}
+#today .t-quote{margin:0;font-family:Fraunces,Georgia,serif;font-weight:460;font-size:20px;line-height:1.45}
+#today .t-quote b{font-weight:620}
+#today .t-sig{margin-top:10px;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;color:#4A5764}
+#today .t-chips{display:flex;gap:8px;flex-wrap:wrap}
+#today .t-chip{padding:7px 12px;border-radius:999px;background:#243241;font-size:13px;font-weight:600}
+#today .t-btns{display:flex;gap:10px;flex-wrap:wrap}
+#today .t-btn{min-height:48px;padding:0 20px;border-radius:14px;border:1.5px solid #3A4A5A;background:transparent;color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;cursor:pointer}
+#today .t-btn.pri{background:#E8467C;border-color:#E8467C;color:#141E28}
+#today .t-btn.ink{background:#141E28;border-color:#141E28;color:#fff}
+#today .t-btn.line{border-color:#141E28;color:#141E28}
+#today .t-btn:hover{filter:brightness(1.08)}
+#today .t-link{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:#C42F62;text-decoration:none;background:none;border:none;cursor:pointer;padding:8px 0;min-height:44px}
+#today .t-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+#today .t-stat .l{font-size:12px;color:#4A5764}
+#today .t-stat .v{font-weight:600;font-size:17px;margin-top:2px}
+#today .t-hours{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;text-align:center}
+#today .t-hr{padding:10px 0;border-radius:12px}
+#today .t-hr.ok{background:#E9F4EF}
+#today .t-hr .h{font-size:12px;color:#4A5764}#today .t-hr.ok .h,#today .t-hr.ok .p{color:#13875B;font-weight:600}
+#today .t-hr .c{font-size:17px;font-weight:600;margin-top:4px}
+#today .t-hr .p{font-size:11px;color:#4A5764;margin-top:2px}
+#today .t-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;align-items:end;height:112px;margin-top:12px}
+#today .t-wd{display:flex;flex-direction:column;justify-content:flex-end;height:100%;gap:6px;text-align:center;background:none;border:none;padding:0;cursor:pointer;font:inherit;color:inherit}
+#today .t-wd .b{border-radius:6px;background:#141E28;min-height:4px}
+#today .t-wd .b.plan{background:transparent;border:1.5px dashed #93A0AB}
+#today .t-wd .b.today{background:transparent;border:2px dashed #E8467C}
+#today .t-wd .b.none{background:#E3E8EB;height:4px}
+#today .t-wd .n{font-size:11px;color:#4A5764}
+#today .t-wd.now .n{color:#C42F62;font-weight:700}
+#today .t-jers{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;text-align:center;margin-top:12px}
+#today .t-jer{background:none;border:none;padding:0;cursor:pointer;font:inherit;color:inherit}
+#today .t-jer svg{width:74px;height:68px}
+#today .t-jer .v{font-weight:600;font-size:15px;margin-top:4px}
+#today .t-jer .u{font-size:12px;color:#4A5764}
+#today .t-bar{height:6px;border-radius:3px;background:#E7ECEA;overflow:hidden}
+#today .t-bar i{display:block;height:6px;background:#141E28}
+#today .t-classic{display:block;margin:28px auto 0;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;color:#4A5764;background:none;border:none;cursor:pointer;min-height:44px}
+#today .t-vstats{flex:1 1 220px}
+#today .t-why{margin:0;padding:0 0 0 18px;font-size:14px;line-height:1.5;color:#4A5764}
+#today .t-why li{margin:2px 0}
+#today .t-streak{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px;margin-top:14px}
+#today .t-streak span{height:10px;border-radius:5px;background:#E8467C}
+#today .t-streak span.o{background:transparent;border:1.5px dashed #F2B36A}
+#s-season:not(.todayon) .t-back{display:block}
+.t-back{display:none;margin:18px auto 0;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;color:#C42F62;background:none;border:none;cursor:pointer;min-height:44px}
+@media(max-width:820px){
+  #today{padding:14px 16px 110px}
+  #today .t-h1{font-size:40px}
+  #today .t-big{font-size:42px}
+  #today .t-card{padding:18px;border-radius:24px}
+  #today .t-dark{padding:20px;border-radius:24px}
+  #today .t-row{gap:14px}
+  #today .t-quote{font-size:17px}
+  #today .t-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #today .t-hours{grid-template-columns:repeat(7,minmax(0,1fr))}
+  #today .t-hours .t-hr:nth-child(8){display:none}
+  #today .t-jer svg{width:56px;height:52px}
+  #today .t-ring{width:88px;height:88px}
+  #today .t-vstats{flex:1 1 150px}
+  #today .t-btn{flex:1 1 150px}
+}
+</style>
+<script>
+/* ═══ v8.0 — Today: one decision first, then the ride, the body, the week and the mountain ═══
+   Draws from what the app already holds: WELL (ring or Apple Health readiness),
+   pmcFromActs() (fitness, fatigue, form), S.plan (today's session), ROUTES,
+   WX (the forecast), TL.acts (rides), EVENTS (the goal) and classify() (jerseys).
+   The old Season sections keep running underneath, hidden; "Classic view"
+   brings them back on this device. */
+(function(){
+  const $=id=>document.getElementById(id);
+  const esc=s=>String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+  const nowD=()=>window.LIVE?new Date():(typeof DNOW!=="undefined"?DNOW:new Date());
+  const sign=v=>(v>0?"+":"")+v;
+  const pref=()=>{try{return localStorage.getItem("vx_today")!=="classic";}catch(e){return true;}};
+  const setPref=on=>{try{localStorage.setItem("vx_today",on?"today":"classic");}catch(e){}};
+  const durTxt=s=>{const h=Math.floor(s/3600),m=Math.round(s%3600/60);return h?`${h} h ${String(m).padStart(2,"0")}`:`${m} min`;};
+  const hrTxt=h=>`${Math.floor(h)} h ${String(Math.round((h%1)*60)).padStart(2,"0")}`;
+  const formWord=t=>t>=5?"fresh":t>=-10?"balanced":t>=-25?"loaded":"deep fatigue";
+  const formCls=t=>t>=-10?"t-g":t>=-25?"t-a":"t-r";
+
+  function host(){
+    const sec=$("s-season");if(!sec)return null;
+    let el=$("today");
+    if(!el){el=document.createElement("section");el.id="today";el.setAttribute("aria-label","Today");sec.insertBefore(el,sec.firstChild);
+      const back=document.createElement("button");back.className="t-back";back.textContent="BACK TO TODAY";back.onclick=()=>{setPref(true);sec.classList.add("todayon");render();window.scrollTo(0,0);};
+      sec.appendChild(back);}
+    sec.classList.toggle("todayon",pref());
+    return el;
+  }
+
+  /* the decision: ride, ease back or rest */
+  function decide(){
+    const W=window.WELL,R=W&&W.readiness||null;
+    const pm=(typeof pmcFromActs==="function"?pmcFromActs():[])||[],last=pm[pm.length-1]||{};
+    const tsb=Math.round(last.tsb||0);
+    const band=R?(/vert|green/i.test(R.state)?"g":/amber/i.test(R.state)?"a":"r"):(tsb<-30?"r":tsb<-18?"a":"g");
+    const today=isoDay(nowD()),plans=(S.plan&&S.plan[today])||[],p=plans[0]||null;
+    const acts=(window.TL&&TL.built)?TL.acts:[];
+    const done=acts.filter(a=>a.d===today);
+    const restPlan=p&&(/rest/i.test(p.type||"")||/rest day/i.test(p.nm||""));
+    const mode=done.length?"done":(band==="r"||restPlan)?"rest":p?"ride":"open";
+    return {W,R,pm,last,tsb,band,today,plans,p,acts,done,mode};
+  }
+  function headline(x){
+    if(x.mode==="done"){const t=Math.round(x.done.reduce((s,a)=>s+(a.tss||0),0));return [`${t} TSS banked.`,"Now recover well.",""];}
+    if(x.mode==="rest")return ["Rest day.","The road will wait.","rest"];
+    let tail="Ride it as written.";
+    if(x.p){const st=sessionStats(x.p),mins=+x.p.mins||st.secs/60;
+      if(/recover/i.test(x.p.type||""))tail="Spin it out.";
+      else if(st.IF>=0.85||st.peak>=105)tail="Make the efforts count.";
+      else if(mins>=150)tail="Go long today.";}
+    else tail="Ride as you feel.";
+    if(x.band==="a")return ["Train, but listen.",x.p?"Keep it honest today.":"Easy if you go.",""];
+    return [x.R?"Green light.":"Today.",tail,""];
+  }
+
+  function fitness(x){
+    const pm=x.pm;if(!pm.length)return `<section class="t-card"><div class="t-k">Your fitness</div><p class="t-lab">Fitness, fatigue and form appear after your first sync.</p></section>`;
+    const last=x.last,ctl=Math.round(last.ctl||0),atl=Math.round(last.atl||0);
+    const ago=pm[Math.max(0,pm.length-29)]||last,d28=Math.round((last.ctl||0)-(ago.ctl||0));
+    const s0=isoDay(SEASON0),best=Math.round(Math.max(...pm.filter(d=>d.d>=s0).map(d=>d.ctl||0),ctl));
+    const ser=pm.slice(-84),mx=Math.max(...ser.map(d=>Math.max(d.ctl||0,d.atl||0)),10)*1.08,W=640,H=120,base=H-14;
+    const pt=(d,i,k)=>`${(i/(ser.length-1||1)*W).toFixed(1)},${(base-(d[k]||0)/mx*(base-6)).toFixed(1)}`;
+    const ctlL=ser.map((d,i)=>pt(d,i,"ctl")).join(" "),atlL=ser.map((d,i)=>pt(d,i,"atl")).join(" ");
+    const months=[];ser.forEach((d,i)=>{const dt=new Date(d.d+"T12:00:00");if(dt.getDate()===1)months.push([i,dt.toLocaleDateString("en-GB",{month:"short"})]);});
+    const wkg=(S.ftp/S.weight).toFixed(2);
+    return `<section class="t-card" style="display:flex;gap:32px;flex-wrap:wrap;align-items:center">
+      <div style="flex:1 1 420px;min-width:0">
+        <div class="t-head"><span class="t-k">Your fitness</span><span class="${d28>=0?"t-g":"t-a"}" style="font-size:13px;font-weight:600">${sign(d28)} in four weeks · season best ${best}</span></div>
+        <div class="t-stats" style="margin-top:12px">
+          <div><div class="t-big">${ctl}</div><div class="t-lab">Fitness</div></div>
+          <div><div class="t-big">${atl}</div><div class="t-lab">Fatigue</div></div>
+          <div><div class="t-big ${formCls(x.tsb)}">${sign(x.tsb)}</div><div class="t-lab">Form · ${formWord(x.tsb)}</div></div>
+          <div><div class="t-big">${S.ftp}<small> W</small></div><div class="t-lab">FTP · ${wkg} W/kg</div></div>
+        </div>
+      </div>
+      <div style="flex:1.3 1 420px;min-width:0">
+        <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="none" role="img" aria-label="Fitness and fatigue over the last twelve weeks">
+          <polygon points="0,${base} ${ctlL} ${W},${base}" fill="#26496E" fill-opacity=".1"/>
+          <polyline points="${ctlL}" fill="none" stroke="#26496E" stroke-width="3" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+          <polyline points="${atlL}" fill="none" stroke="#E8467C" stroke-width="2" stroke-dasharray="5 4" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+          <line x1="0" y1="${base}" x2="${W}" y2="${base}" stroke="#E3E8EB" vector-effect="non-scaling-stroke"/>
+        </svg>
+        <div style="display:flex;gap:16px;font-size:12px;color:#4A5764;margin-top:6px;flex-wrap:wrap"><span><b style="color:#26496E">—</b> Fitness</span><span><b style="color:#E8467C">- -</b> Fatigue</span><span style="flex:1"></span>${months.slice(-3).map(m=>`<span>${m[1]}</span>`).join("")}<span style="font-weight:600;color:#141E28">Today</span></div>
+      </div></section>`;
+  }
+
+  function verdict(x){
+    const R=x.R,L=(x.W&&x.W.latest)||{},b=(R&&R.baseline)||{};
+    const col={g:"#13875B",a:"#C46A12",r:"#C2372B"}[x.band];
+    const circ=2*Math.PI*44,score=R?Math.round(R.score||0):null;
+    const ringSvg=`<svg class="t-ring" width="112" height="112" viewBox="0 0 104 104" role="img" aria-label="${score==null?"No readiness yet":"Readiness "+score+" out of 100"}">
+      <circle cx="52" cy="52" r="44" fill="none" stroke="#E7ECEA" stroke-width="10"/>
+      ${score==null?"":`<circle cx="52" cy="52" r="44" fill="none" stroke="${col}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${(circ*score/100).toFixed(1)} ${circ.toFixed(1)}" transform="rotate(-90 52 52)"/>`}
+      <text x="52" y="57" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="34" font-weight="540" fill="#141E28">${score==null?"—":score}</text>
+      <text x="52" y="75" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="9" font-weight="700" letter-spacing="1.2" fill="#4A5764">${R?(x.band==="g"?"READY":x.band==="a"?"CAUTION":"RECOVER"):"NO DATA"}</text></svg>`;
+    const pct=(v,base)=>base?Math.round((v-base)/base*100):null;
+    const hv=L.hrv!=null?pct(L.hrv,b.hrv):null,rh=L.rhr!=null&&b.rhr!=null?Math.round(L.rhr-b.rhr):null;
+    const row=(l,v)=>`<div><div class="l">${l}</div><div class="v">${v}</div></div>`;
+    const rc=typeof readyCard==="function"?readyCard():null;
+    let say,sig;
+    if(rc&&(rc.headline||(rc.points||[]).length)){const pt=(rc.points||[]).find(p=>p.t==="DO")||(rc.points||[])[0];
+      say=`${esc(rc.headline||"")}${pt?" "+plain(pt.x):""}`;sig="THE DS · THIS MORNING";}
+    else if(R){say=esc(R.advice?R.advice.charAt(0)+R.advice.slice(1).toLowerCase()+".":"");sig="READINESS";}
+    else{say="Connect the ring or Apple Health in Sources, and the DS will read your night every morning.";sig="READINESS";}
+    return `<section class="t-card" style="display:flex;flex-direction:column;gap:16px;flex:1 1 380px">
+      <div style="display:flex;gap:22px;align-items:center;flex-wrap:wrap">${ringSvg}
+        <div class="t-stats t-vstats" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+          ${row("HRV",L.hrv!=null?`${Math.round(L.hrv)} ms${hv!=null?` <span class="${hv>=0?"t-g":"t-a"}" style="font-size:13px">${hv>=0?"↑":"↓"} ${Math.abs(hv)}%</span>`:""}`:"—")}
+          ${row("Sleep",L.sleep>0?hrTxt(L.sleep):"—")}
+          ${row("Resting HR",L.rhr!=null?`${Math.round(L.rhr)} bpm${rh?` <span class="${rh<=0?"t-g":"t-a"}" style="font-size:13px">${rh>0?"↑":"↓"} ${Math.abs(rh)}</span>`:""}`:"—")}
+          ${row("Form",`${sign(x.tsb)} <span class="${formCls(x.tsb)}" style="font-size:13px">${formWord(x.tsb)}</span>`)}
+        </div></div>
+      ${say?`<figure style="margin:0"><blockquote class="t-quote">“${say}”</blockquote><figcaption class="t-sig">${sig}</figcaption></figure>`:""}
+      ${R&&(R.why||[]).length?`<ul class="t-why">${R.why.slice(0,3).map(w=>`<li>${plain(esc(String(w).replace(/<[^>]+>/g,"")))}</li>`).join("")}</ul>`:""}
+    </section>`;
+  }
+
+  function routeArt(c){
+    const P=c.points||[];if(P.length<2)return "";
+    const lats=P.map(p=>p.lat),lngs=P.map(p=>p.lng),la0=Math.min(...lats),la1=Math.max(...lats),lo0=Math.min(...lngs),lo1=Math.max(...lngs);
+    const k=Math.cos((la0+la1)/2*Math.PI/180),sx=(lo1-lo0)*k||1e-6,sy=(la1-la0)||1e-6,s=Math.min(150/sx,110/sy);
+    const step=Math.max(1,Math.floor(P.length/240));
+    const map=P.filter((_,i)=>i%step===0).map(p=>`${(15+(p.lng-lo0)*k*s+(150-sx*s)/2).toFixed(1)},${(15+(la1-p.lat)*s+(110-sy*s)/2).toFixed(1)}`).join(" ");
+    const mn=Math.min(...P.map(p=>p.alt)),mx=Math.max(...P.map(p=>p.alt)),r=Math.max(50,mx-mn),n=90;
+    const el=[];for(let i=0;i<=n;i++){const p=P[Math.floor(i/n*(P.length-1))];el.push(`${(i/n*360).toFixed(1)},${(56-((p.alt-mn)/(r*1.05))*48).toFixed(1)}`);}
+    const s0=P[0];
+    return `<div style="display:flex;gap:16px;background:#1C2836;border-radius:20px;padding:16px;flex-wrap:wrap;align-items:center">
+      <svg width="180" height="140" viewBox="0 0 180 140" role="img" aria-label="Map of ${esc(c.name||"the route")}"><rect width="180" height="140" rx="14" fill="#243241"/><polyline points="${map}" fill="none" stroke="#F08AAE" stroke-width="3" stroke-linejoin="round"/><circle cx="${(15+(s0.lng-lo0)*k*s+(150-sx*s)/2).toFixed(1)}" cy="${(15+(la1-s0.lat)*s+(110-sy*s)/2).toFixed(1)}" r="5.5" fill="#fff"/></svg>
+      <div style="flex:1 1 240px;min-width:0;display:flex;flex-direction:column;gap:10px">
+        <div><div style="font-weight:600;font-size:17px">${esc(c.name||"The route")}</div><div style="font-size:13px;color:#B8C3CC;margin-top:4px">${c.km} km · ${fmtInt(c.m)} m${(c.climbs||[]).length?` · ${c.climbs.length} climb${c.climbs.length===1?"":"s"}`:""}</div></div>
+        <svg viewBox="0 0 360 60" width="100%" height="60" preserveAspectRatio="none" role="img" aria-label="Elevation profile"><polygon points="0,60 ${el.join(" ")} 360,60" fill="#F08AAE" fill-opacity=".28"/><polyline points="${el.join(" ")}" fill="none" stroke="#F08AAE" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>
+      </div></div>`;
+  }
+
+  function rideCard(x){
+    if(x.mode==="done"){const a=x.done[x.done.length-1];
+      return `<section class="t-dark" style="flex:1.35 1 520px;display:flex;flex-direction:column;gap:16px">
+        <div class="t-head"><span class="t-k">Ridden today</span><span style="font-family:'Space Grotesk';font-size:13px;font-weight:600;color:#B8C3CC">${Math.round(a.tss||0)} TSS</span></div>
+        <h2 style="margin:0;font-family:Fraunces,Georgia,serif;font-weight:540;font-size:34px;line-height:1.1">${esc(a.nm)}</h2>
+        <div class="t-chips"><span class="t-chip">${durTxt(a.secs||0)}</span><span class="t-chip">${Math.round(a.km||0)} km</span><span class="t-chip">${fmtInt(a.m)} m</span>${a.np?`<span class="t-chip">NP ${a.np} W</span>`:""}</div>
+        <div class="t-btns"><button class="t-btn pri" data-t="lab" data-id="${esc(a.id)}">Read the ride</button><button class="t-btn" data-t="plan">Tomorrow in the Roadbook</button></div></section>`;}
+    if(x.mode==="rest")return restCards(x);
+    if(!x.p)return `<section class="t-dark" style="flex:1.35 1 520px;display:flex;flex-direction:column;gap:16px;justify-content:center">
+      <span class="t-k">Today’s ride</span>
+      <h2 style="margin:0;font-family:Fraunces,Georgia,serif;font-weight:540;font-size:34px;line-height:1.1">Nothing written for today.</h2>
+      <p style="margin:0;font-size:15px;line-height:1.5;color:#D5DCE2">Ride as you feel, or ask the DS to write today’s session into the plan.</p>
+      <div class="t-btns"><button class="t-btn pri" data-t="plan">Open the Roadbook</button></div></section>`;
+    const p=x.p,st=sessionStats(p),secs=(+p.mins?p.mins*60:st.secs),tss=+p.tss||st.tss;
+    const rid=typeof planRouteId==="function"?planRouteId(p):null,c=rid&&ROUTES[rid];
+    if(rid&&!c&&typeof loadRoute==="function")loadRoute(rid).then(r=>{if(r)render();});
+    const icu=typeof ICU!=="undefined"&&ICU&&ICU.configured;
+    return `<section class="t-dark" style="flex:1.35 1 520px;display:flex;flex-direction:column;gap:16px">
+      <div class="t-head"><span class="t-k">Today’s ride</span><span style="font-family:'Space Grotesk';font-size:13px;font-weight:600;color:#B8C3CC">${durTxt(secs)} · TSS ${tss} · IF ${st.IF}${p.type?" · "+esc(p.type):""}</span></div>
+      <h2 style="margin:0;font-family:Fraunces,Georgia,serif;font-weight:540;font-size:34px;line-height:1.1">${esc(p.nm)}</h2>
+      ${p.type==="Strength"?"":`<div style="background:#F3F5F4;border-radius:16px;padding:10px 10px 4px">${workoutSvg(p,700,104,false).replace("<svg",'<svg width="100%" height="104" role="img" aria-label="The session, block by block"')}</div>`}
+      ${p.why||p.notes?`<p style="margin:0;font-size:15px;line-height:1.5;color:#D5DCE2">${plain(esc(p.why||p.notes))}</p>`:""}
+      ${c?routeArt(c):""}
+      <div class="t-btns"><button class="t-btn pri" data-t="session">Open the session</button>${icu?`<button class="t-btn" data-t="karoo">Send to Karoo</button>`:""}<button class="t-btn" data-t="plan">Change it in the Roadbook</button></div>
+    </section>`;
+  }
+
+  function restCards(x){
+    const acts=x.acts,days=new Set(acts.map(a=>a.d));let streak=0;
+    for(let i=0;i<60;i++){const d=isoDay(addD(nowD(),-i));if(i===0&&!days.has(d))continue;if(days.has(d))streak++;else break;}
+    const next=[];for(let i=1;i<=7;i++){const di=isoDay(addD(nowD(),i)),pl=(S.plan&&S.plan[di])||[];if(pl.length){next.push([di,pl[0]]);break;}}
+    const nx=next[0],easy=Math.round(S.ftp*.55);
+    const dots=Array.from({length:10},(_,i)=>`<span class="${i<Math.min(streak,9)?"":"o"}"></span>`).join("");
+    return `<section class="t-dark" style="flex:1.35 1 520px;display:flex;flex-direction:column;gap:14px">
+      ${streak>=2?`<span class="t-k" style="color:#F2B36A">The streak</span>
+      <div style="display:flex;align-items:baseline;gap:12px"><span class="t-big" style="color:#fff">${streak}</span><span style="font-family:Fraunces,Georgia,serif;font-style:italic;font-weight:460;font-size:22px">days on the bike in a row</span></div>
+      <div class="t-streak" aria-hidden="true">${dots}</div>`:`<span class="t-k" style="color:#F2B36A">Why rest today</span>
+      <h2 style="margin:0;font-family:Fraunces,Georgia,serif;font-weight:540;font-size:32px;line-height:1.12">A ride today costs more than it banks.</h2>`}
+      <p style="margin:0;font-size:15px;line-height:1.5;color:#D5DCE2">Rest is part of the plan: fitness holds for days, fatigue clears in two. <b style="color:#fff">If you must turn the pedals: 40 minutes, flat, under ${easy} W.</b></p>
+      ${nx?`<div style="background:#1C2836;border-radius:18px;padding:16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+        <div style="flex:1 1 220px"><div class="t-k" style="color:#B8C3CC">What this rest pays for</div><div style="font-family:Fraunces,Georgia,serif;font-size:22px;font-weight:540;margin-top:6px">${new Date(nx[0]+"T12:00:00").toLocaleDateString("en-GB",{weekday:"long"})}: ${esc(nx[1].nm)}</div></div>
+        <div style="width:160px">${workoutSvg(nx[1],160,52,false).replace("<svg",'<svg width="160" height="52" aria-hidden="true"')}</div></div>`:""}
+      <div class="t-btns"><button class="t-btn" data-t="plan">Open the Roadbook</button></div>
+    </section>`;
+  }
+
+  function windowCard(x){
+    const WXd=window.WX||(typeof WX!=="undefined"?WX:null);
+    if(!WXd||!(WXd.hourly||[]).length)return `<section class="t-card" style="flex:1.3 1 420px"><div class="t-k">The ride window</div><p class="t-lab">The forecast appears once Massif knows where you ride from.</p></section>`;
+    const now=nowD(),hNow=window.LIVE?now.getHours():7;
+    const hrs=WXd.hourly.filter(h=>h.t.startsWith(x.today)).map(h=>({...h,hr:+h.t.slice(11,13)})).filter(h=>h.hr>=Math.max(7,hNow)&&h.hr<=19);
+    if(!hrs.length)return `<section class="t-card" style="flex:1.3 1 420px"><div class="t-k">The ride window</div><p style="margin:10px 0 0;font-size:16px;line-height:1.45">The light has gone for today. Tomorrow’s window opens in the morning.</p></section>`;
+    let best=null,run=null;
+    hrs.forEach(h=>{if((h.pop||0)<35){if(!run)run={a:h,b:h,n:0,max:-99};run.b=h;run.n++;run.max=Math.max(run.max,h.temp);if(!best||run.n>best.n)best={...run};}else run=null;});
+    const hh=n=>n===12?"midday":n>12?`${n-12}`:`${n}`;
+    let line;
+    if(best){const end=best.b.hr+1;const dir=compass(best.a.dir);
+      line=`<b>Go at ${hh(best.a.hr)}.</b> Dry until ${hh(end)}, ${Math.round(best.max)}°, wind from the ${dir} at ${Math.round(best.a.wind||0)} km/h: ride out into it and come home with it.`;}
+    else{const mp=Math.max(...hrs.map(h=>h.pop||0));line=`<b>Wet all day</b> (up to ${mp}% chance of rain). Indoors, or go with a jacket and mudguards.`;}
+    const day=(WXd.days||[]).find(d=>d.date===x.today);
+    const kit=day&&typeof wxAdvice==="function"?wxAdvice(day):"";
+    const show=hrs.slice(0,8);
+    return `<section class="t-card" style="flex:1.3 1 420px">
+      <div class="t-head"><span class="t-k">The ride window</span>${kit?`<span style="font-size:13px;color:#4A5764">Wear ${esc(kit)}</span>`:""}</div>
+      <p style="margin:10px 0 16px;font-size:16px;line-height:1.45">${line}</p>
+      <div class="t-hours">${show.map(h=>{const ok=best&&h.hr>=best.a.hr&&h.hr<=best.b.hr;return `<div class="t-hr ${ok?"ok":""}"><div class="h">${String(h.hr).padStart(2,"0")}</div><div class="c">${Math.round(h.temp)}°</div><div class="p">${Math.round(h.pop||0)}%</div></div>`;}).join("")}</div>
+    </section>`;
+  }
+
+  function weekCard(x){
+    const mon=mondayOf(nowD()),k=isoDay(mon),w=(window.TL&&TL.built)?TL.weeks.get(k):null;
+    const days=[];let mx=60,tot=0,pl=0;
+    for(let i=0;i<7;i++){const d=addD(mon,i),di=isoDay(d),rides=(w?w.rides:[]).filter(r=>r.d===di),plans=(S.plan&&S.plan[di])||[];
+      const t=rides.reduce((s,r)=>s+(r.tss||0),0),pt=plans.reduce((s,p)=>s+(+p.tss||0),0);tot+=t;pl+=pt;mx=Math.max(mx,t,pt);days.push({d,di,t,pt,rides});}
+    const tgt=(S.weekTargets&&+S.weekTargets[k])||0;
+    const ahead=tgt?Math.round(tot/tgt*100):null;
+    return `<section class="t-card" style="flex:1 1 320px">
+      <div class="t-head"><span class="t-k">The week</span><button class="t-link" data-t="plan">Open the plan →</button></div>
+      <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><span class="t-big" style="font-size:44px">${Math.round(tot)}</span><span style="font-size:13px;color:#4A5764">${tgt?`of ${Math.round(tgt)} TSS · ${ahead}%`:"TSS ridden"}${!tgt&&pl?` · ${Math.round(pl)} planned`:""}</span></div>
+      <div class="t-week">${days.map(z=>{const today=z.di===x.today,past=z.di<x.today;
+        const h=v=>Math.max(6,Math.round(v/mx*84));
+        const bar=z.t?`<div class="b" style="height:${h(z.t)}px"></div>`:z.pt?`<div class="b ${today?"today":"plan"}" style="height:${h(z.pt)}px"></div>`:`<div class="b none"></div>`;
+        return `<button class="t-wd ${today?"now":""}" data-di="${z.di}" aria-label="${z.d.toLocaleDateString("en-GB",{weekday:"long"})}: ${Math.round(z.t)} TSS ridden${z.pt?`, ${z.pt} planned`:""}">${bar}<span class="n">${today?"Today":z.d.toLocaleDateString("en-GB",{weekday:"short"})}</span></button>`;}).join("")}</div>
+    </section>`;
+  }
+
+  function roadCard(x){
+    const ev=fut().find(e=>e.pr==="A")||fut()[0];
+    if(!ev)return `<section class="t-card"><div class="t-k">The road ahead</div><p style="margin:10px 0 0;font-size:16px">Add an event in your rider profile and the season aims itself at it.</p></section>`;
+    const rid=ev.route||(ev.stageRoute&&ev.stageRoute[1]),c=rid&&ROUTES[rid];
+    if(rid&&!c&&typeof loadRoute==="function")loadRoute(rid).then(r=>{if(r)render();});
+    const pf=typeof projForm==="function"?projForm(ev):null;
+    const s0=new Date(SEASON0),evd=new Date(ev.date+"T12:00:00"),prog=Math.max(0,Math.min(1,(nowD()-s0)/Math.max(1,evd-s0)));
+    let prof="";
+    if(c&&(c.points||[]).length>1){const P=c.points,mn=Math.min(...P.map(p=>p.alt)),mx=Math.max(...P.map(p=>p.alt)),r=Math.max(80,mx-mn),W=760,H=240,n=160;
+      const X=i=>i/(P.length-1)*W,Y=a=>H-12-((a-mn)/(r*1.12))*(H-60);
+      const pts=[];for(let i=0;i<=n;i++){const j=Math.floor(i/n*(P.length-1));pts.push(`${X(j).toFixed(1)},${Y(P[j].alt).toFixed(1)}`);}
+      const cl=(c.climbs||[]).slice().sort((a,b)=>b.top-a.top).slice(0,4);
+      prof=`<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="xMidYMax meet" role="img" aria-label="${esc(ev.name)} profile, ${c.km} km and ${fmtInt(c.m)} m of climbing" style="flex:2 1 480px;min-width:0">
+        <defs><linearGradient id="tdmg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#141E28" stop-opacity=".92"/><stop offset="1" stop-color="#141E28" stop-opacity=".6"/></linearGradient></defs>
+        <polygon points="0,${H} ${pts.join(" ")} ${W},${H}" fill="url(#tdmg)"/>
+        ${cl.map(k=>{const xx=X(k.i1),yy=Y(P[k.i1].alt);return `<circle cx="${xx.toFixed(1)}" cy="${yy.toFixed(1)}" r="5" fill="#E8467C"/><text x="${Math.min(W-40,Math.max(40,xx)).toFixed(1)}" y="${(yy-12).toFixed(1)}" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="12" font-weight="700" fill="#141E28">${esc(String(k.n).toUpperCase())}</text><text x="${Math.min(W-40,Math.max(40,xx)).toFixed(1)}" y="${(yy-26).toFixed(1)}" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="11" font-weight="700" fill="#4A5764">${fmtInt(k.top)} m</text>`;}).join("")}
+      </svg>`;}
+    return `<section class="t-card" style="display:flex;gap:32px;flex-wrap:wrap;align-items:center;padding:26px 28px">
+      <div style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:10px">
+        <span class="t-k">The road to ${esc(ev.short||ev.name)}</span>
+        <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span class="t-big" style="font-size:84px;line-height:.95">${J(ev)}</span><span style="font-family:Fraunces,Georgia,serif;font-style:italic;font-weight:460;font-size:24px">day${J(ev)===1?"":"s"} to go</span></div>
+        <div style="font-size:15px;color:#4A5764">${esc(evDate(ev))}${ev.where?" · "+esc(ev.where):""}${(c||ev).km?` · ${(c||ev).km} km`:""}${(c||ev).m?` · ${fmtInt((c||ev).m)} m`:""}</div>
+        <div class="t-stats" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:6px">
+          <div class="t-stat"><div class="l">Form on the day</div><div class="v ${pf==null?"":pf>=0?"t-g":"t-a"}">${pf==null?"—":sign(pf)+" projected"}</div></div>
+          <div class="t-stat"><div class="l">The season so far</div><div class="v">${Math.round(prog*100)}% of the road</div></div>
+        </div>
+        <div class="t-bar" style="margin-top:4px"><i style="width:${(prog*100).toFixed(1)}%"></i></div>
+        <div class="t-btns" style="margin-top:8px"><button class="t-btn ink" data-t="recon" data-ev="${esc(ev.id)}">Enter the Recon Room</button></div>
+      </div>
+      ${prof||`<div style="flex:2 1 480px;min-width:0;color:#4A5764;font-size:14px">Attach the course in the Recon Room and its profile appears here.</div>`}
+    </section>`;
+  }
+
+  function jerseysCard(){
+    if(!(window.TL&&TL.built)||typeof classify!=="function")return "";
+    let R;try{R=classify();}catch(e){return "";}
+    const C=R.C,keys=["yellow","polka","green","white"].filter(k=>C[k]);
+    return `<section class="t-card" style="flex:1 1 440px">
+      <div class="t-head"><span class="t-k">The jerseys</span><button class="t-link" data-t="jerseys">The ceremony →</button></div>
+      <div class="t-jers">${keys.map(k=>`<button class="t-jer" data-t="jersey" data-j="${k}" aria-label="${esc(JK[k].n)}: ${esc(C[k].v)} ${esc(C[k].u)}">${jerseySvg(k,"",C[k].v,"").replace("<svg",'<svg aria-hidden="true"')}<div class="v">${esc(C[k].v)}</div><div class="u">${esc(String(C[k].u).toLowerCase())}${R.worn===k?" · worn":""}</div></button>`).join("")}</div>
+    </section>`;
+  }
+
+  function lastRideCard(x){
+    const a=x.acts.filter(r=>r.d<x.today).sort((p,q)=>p.d<q.d?1:-1)[0];
+    if(!a)return "";
+    const when=new Date(a.d+"T12:00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
+    return `<section class="t-card" style="flex:1 1 440px;display:flex;flex-direction:column;gap:12px">
+      <div class="t-head"><span class="t-k">Last ride · ${esc(when)}</span><button class="t-link" data-t="lab" data-id="${esc(a.id)}">The debrief →</button></div>
+      <div style="font-family:Fraunces,Georgia,serif;font-size:26px;font-weight:540;line-height:1.2">${esc(a.nm)}</div>
+      <div class="t-stats">
+        <div class="t-stat"><div class="l">Time</div><div class="v">${durTxt(a.secs||0)}</div></div>
+        <div class="t-stat"><div class="l">Distance</div><div class="v">${Math.round(a.km||0)} km</div></div>
+        <div class="t-stat"><div class="l">Climbing</div><div class="v">${fmtInt(a.m)} m</div></div>
+        <div class="t-stat"><div class="l">TSS</div><div class="v">${Math.round(a.tss||0)}</div></div>
+      </div></section>`;
+  }
+
+  function render(){
+    const el=host();if(!el||!pref())return;
+    let x;try{x=decide();}catch(e){console.warn("today",e);return;}
+    const [a,b,cls]=headline(x);
+    const wkLabel=`Week ${CURWK+1}`;
+    el.innerHTML=`
+      <div class="t-k">${nowD().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"})} · ${wkLabel}</div>
+      <h1 class="t-h1 ${cls}">${a}<br><em>${b}</em></h1>
+      <div style="display:flex;flex-direction:column;gap:20px;margin-top:26px">
+        ${fitness(x)}
+        <div class="t-row">${verdict(x)}${rideCard(x)}</div>
+        <div class="t-row">${windowCard(x)}${weekCard(x)}</div>
+        ${roadCard(x)}
+        <div class="t-row">${jerseysCard()}${lastRideCard(x)}</div>
+      </div>
+      <button class="t-classic" data-t="classic">Classic view</button>`;
+    el.querySelectorAll("[data-t]").forEach(btn=>btn.onclick=async()=>{const t=btn.dataset.t;
+      if(t==="session")openSession(x.today,0);
+      else if(t==="plan"){showScene("plan");if(window.TL&&TL.built){const k=isoDay(mondayOf(nowD()));tlSelect(k);tlScrollTo(k);}}
+      else if(t==="lab")gotoLab(btn.dataset.id);
+      else if(t==="recon")openRecon(btn.dataset.ev);
+      else if(t==="jerseys")showScene("jerseys");
+      else if(t==="jersey"){showScene("jerseys");if(typeof openJersey==="function")setTimeout(()=>openJersey(btn.dataset.j),200);}
+      else if(t==="karoo"){btn.textContent="Sending…";try{const r=await api("/api/intervals?days=21");btn.textContent=r.ok?"Sent ✓":"Failed";}catch(e){btn.textContent="Failed";}}
+      else if(t==="classic"){setPref(false);$("s-season").classList.remove("todayon");window.scrollTo(0,0);}});
+    el.querySelectorAll(".t-wd").forEach(b=>b.onclick=()=>{const di=b.dataset.di,r=(x.acts||[]).find(a=>a.d===di);
+      if(r)gotoLab(r.id);else if(S.plan&&S.plan[di]&&S.plan[di].length)openSession(di,0);else{showScene("plan");}});
+  }
+  window.renderToday=render;
+  /* repaint wherever the Season repaints */
+  const _rv8=renderV4;renderV4=function(){_rv8();render();};
+  if(typeof loadWx==="function")loadWx().then(()=>render());
+  render();
+})();
+</script>
+
 </body>
 </html>
